@@ -1,0 +1,17 @@
+name: UnitedClans
+version: '${project.version}'
+main: unitedclans.UnitedClans
+api-version: '1.20'
+authors: [MouseJava]
+description: The plugin implements the clan system in Minecraft
+commands:
+  createclan:
+    description: This command allows you to create a clan
+    usage: /<command> <clan name>
+    aliases:
+      - cclan
+  deleteclan:
+    description: This command allows you to delete a clan
+    usage: /<command> <clan name>
+    aliases:
+      - dclan
