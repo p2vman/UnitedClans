@@ -20,7 +20,7 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         try {
             con = DriverManager.getConnection("jdbc:sqlite:plugins/UnitedClans/ucdatabase.db");
             Statement stmt = con.createStatement();
-            String tablePLAYERS = "CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT)";
+            String tablePLAYERS = "CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT, InviteChecker INTEGER)";
             stmt.executeUpdate(tablePLAYERS);
             String tableCLANS = "CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT)";
             stmt.executeUpdate(tableCLANS);
@@ -32,8 +32,10 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getLogger().info("[UnitedClans] UnitedClans is enabled");
         getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(con), this);
         getServer().getPluginCommand("createclan").setExecutor(new CreateClanCommand(con));
+        getServer().getPluginCommand("createclan").setTabCompleter(new CreateClanTabCompleter());
         getServer().getPluginCommand("deleteclan").setExecutor(new DeleteClanCommand(con));
-        //getServer().getPluginCommand("createclan").setTabCompleter(new AddBlacklistTabCompleter());
+        getServer().getPluginCommand("deleteclan").setTabCompleter(new DeleteClanTabCompleter());
+        getServer().getPluginCommand("inviteclan").setExecutor(new InviteClanCommand(this, con));
     }
 
     @Override

@@ -15,3 +15,8 @@ commands:
     usage: /<command> <clan name>
     aliases:
       - dclan
+  inviteclan:
+    description: This command allows you to add a player to a clan
+    usage: /<command> <player>
+    aliases:
+      - iclan

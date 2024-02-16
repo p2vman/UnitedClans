@@ -3,6 +3,7 @@
 messages:
   invalidcommand: '§cThe command was entered incorrectly'
   wrongclanname: '§cWrong clan name'
+  wrongplayername: '§cWrong player name'
   clannametaken: '§cThis clan name is already taken'
   youmemberclan: '§eYou are already a member of a clan'
   younotmemberclan: '§eYou are not a member of a clan'
@@ -10,6 +11,7 @@ messages:
   successcreateclan: '§aYou have successfully created a clan'
   notleader: '§eYou are not the leader of this clan'
   successdeleteclan: '§aClan successfully deleted'
+  playermemberclan: '§eThis player is already in the clan'
 
 roles:
   leader: 'Leader'
