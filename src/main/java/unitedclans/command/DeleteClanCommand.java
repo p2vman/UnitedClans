@@ -50,14 +50,9 @@ public class DeleteClanCommand implements CommandExecutor {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.notleader"));
                 return true;
             }
-            ResultSet rsgetUUID = stmt.executeQuery("SELECT UUID FROM PLAYERS WHERE ClanID IS " + ClanID + ";");
-            while (rsgetUUID.next()) {
-                String uuidget = rsgetUUID.getString("UUID");
-                String tablePLAYERS1 = "UPDATE PLAYERS SET ClanID = " + 0 + " WHERE UUID IS '" + uuidget + "';";
-                stmt.executeUpdate(tablePLAYERS1);
-                String tablePLAYERS2 = "UPDATE PLAYERS SET ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE UUID IS '" + uuidget + "';";
-                stmt.executeUpdate(tablePLAYERS2);
-            }
+
+            String tablePLAYERS = "UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE ClanID IS '" + ClanID + "';";
+            stmt.executeUpdate(tablePLAYERS);
             String tableCLANS = "DELETE FROM CLANS WHERE ClanID IS '" + ClanID + "';";
             stmt.executeUpdate(tableCLANS);
             stmt.close();

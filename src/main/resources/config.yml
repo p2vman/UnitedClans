@@ -10,8 +10,15 @@ messages:
   younotmemberthisclan: '§eYou are not a member of this clan'
   successcreateclan: '§aYou have successfully created a clan'
   notleader: '§eYou are not the leader of this clan'
+  alreadysentinvitation: '§eAt the moment, someone has already sent an invitation to this player'
+  invitationsent: '§aThe invitation has been sent'
   successdeleteclan: '§aClan successfully deleted'
   playermemberclan: '§eThis player is already in the clan'
+  invitation: '§bYou have received an invitation to the§r §e§l%clan%§r §bclan from the player§r §e§l%player%§r'
+  younotinvited: '§eYou have no active invitations'
+  sendinvitationyourself: '§eYou cannot send an invitation to yourself'
+  successfullyjoinedclan: '§bYou have successfully joined the clan§r §e§l%clan%§r'
+  playerjoined: '§bPlayer§r §e§l%player%§r §bjoined the clan§r'
 
 roles:
   leader: 'Leader'

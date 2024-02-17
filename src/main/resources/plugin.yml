@@ -20,3 +20,8 @@ commands:
     usage: /<command> <player>
     aliases:
       - iclan
+  acceptclan:
+    description: This command allows you to accept an invitation to a clan
+    usage: /<command>
+    aliases:
+      - aclan

@@ -21,8 +21,8 @@ public class PlayerJoinEventHandler implements Listener {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery( "SELECT UUID FROM PLAYERS WHERE UUID IS '" + uuid + "';" );
             if (!rs.next()) {
-                String tablePLAYERS = "INSERT INTO PLAYERS (UUID, PlayerName, ClanID, ClanRole, InviteChecker) " +
-                        "VALUES ('" + uuid + "', '" + playerJoin.getPlayer().getName() + "', " + 0 + ", '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "', " + 0 + ");";
+                String tablePLAYERS = "INSERT INTO PLAYERS (UUID, PlayerName, ClanID, ClanRole) " +
+                        "VALUES ('" + uuid + "', '" + playerJoin.getPlayer().getName() + "', " + 0 + ", '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "');";
                 stmt.executeUpdate(tablePLAYERS);
                 stmt.close();
             }
