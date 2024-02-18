@@ -1,5 +1,6 @@
 package unitedclans.command;
 
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,13 +18,14 @@ public class CreateClanCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
+        Player playerSender = (Player) sender;
+        UUID uuid = playerSender.getUniqueId();
+        String clanNameInput = args[0];
         if (args.length <= 0 || args.length >= 2) {
             sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.invalidcommand"));
+            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return false;
         }
-        Player player = (Player) sender;
-        UUID uuid = player.getUniqueId();
-        String clanNameInput = args[0];
         if (clanNameInput == null) {
             sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.wrongclanname"));
             return true;
@@ -36,12 +38,14 @@ public class CreateClanCommand implements CommandExecutor {
             ResultSet rsChekerPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
             if (rsChekerPlayer.getInt("ClanID") != 0) {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.youmemberclan"));
+                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
 
             ResultSet rsChekerClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "';");
             if (rsChekerClanName.next()) {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.clannametaken"));
+                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
 
@@ -51,7 +55,9 @@ public class CreateClanCommand implements CommandExecutor {
             String tablePLAYERS = "UPDATE PLAYERS SET ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "' WHERE UUID IS '" + uuid + "';";
             stmt.executeUpdate(tablePLAYERS);
             stmt.close();
-            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.successcreateclan"));
+            String createclanmsg = UnitedClans.getInstance().getConfig().getString("messages.successcreateclan");
+            sender.sendMessage(createclanmsg.replace("%clan%", clanNameInput));
+            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
