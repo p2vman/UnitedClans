@@ -54,8 +54,8 @@ public class InviteClanCommand implements CommandExecutor {
             ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
             String getRoleUUID = rsSender.getString("ClanRole");
             Integer getClanID = rsSender.getInt("ClanID");
-            if (!Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.notleader"));
+            if (!Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.leader")) && !Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.norightsinvite"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }

@@ -25,3 +25,8 @@ commands:
     usage: /<command>
     aliases:
       - aclan
+  kickclan:
+    description: This command allows you to kick a player from the clan
+    usage: /<command> <player>
+    aliases:
+      - kclan

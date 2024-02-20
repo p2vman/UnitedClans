@@ -10,6 +10,8 @@ messages:
   younotmemberthisclan: '§eYou are not a member of this clan'
   successcreateclan: '§bYou have successfully created the§r §e§l%clan%§r §bclan'
   notleader: '§eYou are not the leader of this clan'
+  norightsinvite: '§eYou do not have enough rights to invite a player'
+  norightskick: '§eYou do not have enough rights to kick a player'
   alreadysentinvitation: '§eAt the moment, someone has already sent an invitation to this player'
   invitationsent: '§bThe invitation has been sent'
   successdeleteclan: '§bThe§r §e§l%clan%§r §bclan was successfully deleted§r'
@@ -21,7 +23,12 @@ messages:
   younotinvited: '§eYou have no active invitations'
   sendinvitationyourself: '§eYou cannot send an invitation to yourself'
   successfullyjoinedclan: '§bYou have successfully joined the clan§r §e§l%clan%§r'
-  playerjoined: '§bPlayer§r §e§l%player%§r §bjoined the clan§r'
+  playerjoined: '§bPlayer§r §e§l%player%§r §bjoined the clan'
+  playernotyourclan: '§eThis player is not in your clan'
+  roleishigher: '§eYou cannot kick a player because his role is higher or the same as yours'
+  playerwaskicked: '§bPlayer§r §e§l%player%§r §bwas kicked out of the clan'
+  kickyourself: '§eYou cannot kick yourself out'
+  youwaskicked: '§bYou were kicked out of the§r §e§l%clan%§r §bclan'
 
 roles:
   leader: 'Leader'
