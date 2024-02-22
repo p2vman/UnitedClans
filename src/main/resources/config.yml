@@ -29,6 +29,9 @@ messages:
   playerwaskicked: '§bPlayer§r §e§l%player%§r §bwas kicked out of the clan'
   kickyourself: '§eYou cannot kick yourself out'
   youwaskicked: '§bYou were kicked out of the§r §e§l%clan%§r §bclan'
+  youleader: '§eYou cannot leave the clan because you are leader'
+  playerleave: '§bPlayer§r §e§l%player%§r §bleft the clan'
+  successfullyleft: '§bYou have successfully left the§r §e§l%clan%§r §bclan'
 
 roles:
   leader: 'Leader'

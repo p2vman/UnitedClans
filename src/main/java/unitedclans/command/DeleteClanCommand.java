@@ -71,10 +71,8 @@ public class DeleteClanCommand implements CommandExecutor {
                 playerClan.playSound(playerClan.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
-            String tablePLAYERS = "UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE ClanID IS '" + getClanID + "';";
-            stmt.executeUpdate(tablePLAYERS);
-            String tableCLANS = "DELETE FROM CLANS WHERE ClanID IS '" + getClanID + "';";
-            stmt.executeUpdate(tableCLANS);
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE ClanID IS '" + getClanID + "';");
+            stmt.executeUpdate("DELETE FROM CLANS WHERE ClanID IS '" + getClanID + "';");
             stmt.close();
             String deleteclanmsg = UnitedClans.getInstance().getConfig().getString("messages.successdeleteclan");
             sender.sendMessage(deleteclanmsg.replace("%clan%", getClanName));

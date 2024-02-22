@@ -21,11 +21,13 @@ public class AcceptClanCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length >= 1) {
-            return false;
-        }
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
+        if (args.length >= 1) {
+            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.invalidcommand"));
+            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
+            return false;
+        }
         try {
             Statement stmt = con.createStatement();
             ResultSet rsInvitation = stmt.executeQuery("SELECT * FROM INVITATIONS WHERE UUID IS '" + uuid + "';");
@@ -48,10 +50,8 @@ public class AcceptClanCommand implements CommandExecutor {
             sender.sendMessage(joinedclanmsg.replace("%clan%",rsClanName.getString("ClanName")));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
-            String tablePLAYERS = "UPDATE PLAYERS SET ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "' WHERE UUID IS '" + uuid + "';";
-            stmt.executeUpdate(tablePLAYERS);
-            String tableINVITATIONS = "DELETE FROM INVITATIONS WHERE UUID IS '" + uuid + "'";
-            stmt.executeUpdate(tableINVITATIONS);
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "' WHERE UUID IS '" + uuid + "';");
+            stmt.executeUpdate("DELETE FROM INVITATIONS WHERE UUID IS '" + uuid + "'");
             stmt.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());

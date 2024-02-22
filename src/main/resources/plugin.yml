@@ -30,3 +30,8 @@ commands:
     usage: /<command> <player>
     aliases:
       - kclan
+  leaveclan:
+    description: This command allows the player to leave the clan
+    usage: /<command>
+    aliases:
+      - lclan

@@ -52,6 +52,11 @@ public class KickClanCommand implements CommandExecutor {
             ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
             String getRoleUUID = rsSender.getString("ClanRole");
             Integer getClanID = rsSender.getInt("ClanID");
+            if (getClanID == 0) {
+                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.younotmemberclan"));
+                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
+                return true;
+            }
             if (KickedPlayerClanID != getClanID) {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.playernotyourclan"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
@@ -68,8 +73,7 @@ public class KickClanCommand implements CommandExecutor {
                 return true;
             }
 
-            String tablePLAYERS = "UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE PlayerName IS '" + playerName + "';";
-            stmt.executeUpdate(tablePLAYERS);
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE PlayerName IS '" + playerName + "';");
 
             ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanID + ";");
             String playerkickedmsg = UnitedClans.getInstance().getConfig().getString("messages.playerwaskicked");
@@ -94,4 +98,3 @@ public class KickClanCommand implements CommandExecutor {
         return true;
     }
 }
-

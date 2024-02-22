@@ -66,9 +66,7 @@ public class InviteClanCommand implements CommandExecutor {
                 return true;
             }
 
-            String tableINVITATIONS1 = "INSERT INTO INVITATIONS (UUID, PlayerName, ClanID) " +
-                    "VALUES ('" + playerName.getUniqueId() + "', '" + playerName.getName() + "', " + getClanID + ");";
-            stmt.executeUpdate(tableINVITATIONS1);
+            stmt.executeUpdate("INSERT INTO INVITATIONS (UUID, PlayerName, ClanID) " + "VALUES ('" + playerName.getUniqueId() + "', '" + playerName.getName() + "', " + getClanID + ");");
 
             ResultSet rsClanName = stmt.executeQuery("SELECT ClanName FROM CLANS WHERE ClanID IS " + getClanID + ";");
             String invitationmsg = UnitedClans.getInstance().getConfig().getString("messages.invitation");
@@ -84,8 +82,7 @@ public class InviteClanCommand implements CommandExecutor {
                 public void run() {
                     try {
                         Statement stmt = con.createStatement();
-                        String tableINVITATIONS2 = "DELETE FROM INVITATIONS WHERE UUID IS '" + playerName.getUniqueId() + "'";
-                        stmt.executeUpdate(tableINVITATIONS2);
+                        stmt.executeUpdate("DELETE FROM INVITATIONS WHERE UUID IS '" + playerName.getUniqueId() + "'");
                         stmt.close();
                     } catch (Exception e) {
                         System.err.println(e.getClass().getName() + ": " + e.getMessage());

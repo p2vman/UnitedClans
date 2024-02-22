@@ -49,11 +49,8 @@ public class CreateClanCommand implements CommandExecutor {
                 return true;
             }
 
-            String tableCLANS = "INSERT INTO CLANS (ClanID, ClanName) " +
-                    "VALUES ('" + NumberClans + "', '" + clanNameInput + "');";
-            stmt.executeUpdate(tableCLANS);
-            String tablePLAYERS = "UPDATE PLAYERS SET ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "' WHERE UUID IS '" + uuid + "';";
-            stmt.executeUpdate(tablePLAYERS);
+            stmt.executeUpdate("INSERT INTO CLANS (ClanID, ClanName) " + "VALUES ('" + NumberClans + "', '" + clanNameInput + "');");
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "' WHERE UUID IS '" + uuid + "';");
             stmt.close();
             String createclanmsg = UnitedClans.getInstance().getConfig().getString("messages.successcreateclan");
             sender.sendMessage(createclanmsg.replace("%clan%", clanNameInput));
