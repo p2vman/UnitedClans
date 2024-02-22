@@ -28,6 +28,7 @@ public class CreateClanCommand implements CommandExecutor {
         }
         if (clanNameInput == null) {
             sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.wrongclanname"));
+            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return true;
         }
         try {

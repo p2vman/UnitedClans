@@ -35,3 +35,8 @@ commands:
     usage: /<command>
     aliases:
       - lclan
+  setroleclan:
+    description: This command allows you to set the role of the player
+    usage: /<command> <player> <role>
+    aliases:
+      - srclan

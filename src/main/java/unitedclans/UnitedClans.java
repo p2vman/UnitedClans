@@ -44,6 +44,8 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getPluginCommand("kickclan").setTabCompleter(new KickClanTabCompleter(con));
         getServer().getPluginCommand("leaveclan").setExecutor(new LeaveClanCommand(this, con));
         getServer().getPluginCommand("leaveclan").setTabCompleter(new LeaveClanTabCompleter());
+        getServer().getPluginCommand("setroleclan").setExecutor(new SetRoleClanCommand(this, con));
+        getServer().getPluginCommand("setroleclan").setTabCompleter(new SetRoleClanTabCompleter(con));
     }
 
     @Override
