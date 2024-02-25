@@ -1,16 +1,20 @@
 package unitedclans.handler;
 
-import java.util.UUID;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
+import java.util.*;
 
 public class PlayerJoinEventHandler implements Listener {
+    private final JavaPlugin plugin;
     private Connection con;
-    public PlayerJoinEventHandler(Connection con) {
+    public PlayerJoinEventHandler(JavaPlugin plugin, Connection con) {
+        this.plugin = plugin;
         this.con = con;
     }
 
@@ -19,13 +23,14 @@ public class PlayerJoinEventHandler implements Listener {
         UUID uuid = playerJoin.getPlayer().getUniqueId();
         try {
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT UUID FROM PLAYERS WHERE UUID IS '" + uuid + "';" );
-            if (!rs.next()) {
+            ResultSet rsPlayers = stmt.executeQuery("SELECT UUID FROM PLAYERS WHERE UUID IS '" + uuid + "';" );
+            if (!rsPlayers.next()) {
                 String tablePLAYERS = "INSERT INTO PLAYERS (UUID, PlayerName, ClanID, ClanRole) " +
                         "VALUES ('" + uuid + "', '" + playerJoin.getPlayer().getName() + "', " + 0 + ", '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "');";
                 stmt.executeUpdate(tablePLAYERS);
-                stmt.close();
             }
+            stmt.close();
+            ShowClanUtils.showClan(plugin, con);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

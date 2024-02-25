@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
 import java.util.*;
@@ -59,6 +60,8 @@ public class LeaveClanCommand implements CommandExecutor {
             playerSender.sendMessage(successfullyleftmsg.replace("%clan%",LeavingPlayerClanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             stmt.close();
+
+            ShowClanUtils.showClan(plugin, con);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

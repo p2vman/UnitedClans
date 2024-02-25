@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
 import java.util.*;
@@ -46,13 +47,16 @@ public class AcceptClanCommand implements CommandExecutor {
                 playerClan.sendMessage(playerjoinedmsg.replace("%player%",playerSender.getName()));
             }
             ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + ClanID + ";");
+            String clanName = rsClanName.getString("ClanName");
             String joinedclanmsg = UnitedClans.getInstance().getConfig().getString("messages.successfullyjoinedclan");
-            sender.sendMessage(joinedclanmsg.replace("%clan%",rsClanName.getString("ClanName")));
+            sender.sendMessage(joinedclanmsg.replace("%clan%",clanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
             stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "' WHERE UUID IS '" + uuid + "';");
             stmt.executeUpdate("DELETE FROM INVITATIONS WHERE UUID IS '" + uuid + "'");
             stmt.close();
+
+            ShowClanUtils.showClan(plugin, con);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

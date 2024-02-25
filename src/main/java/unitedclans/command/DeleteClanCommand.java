@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
 import java.util.*;
@@ -71,9 +72,12 @@ public class DeleteClanCommand implements CommandExecutor {
                 playerClan.playSound(playerClan.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE ClanID IS '" + getClanID + "';");
-            stmt.executeUpdate("DELETE FROM CLANS WHERE ClanID IS '" + getClanID + "';");
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE ClanID IS " + getClanID + ";");
+            stmt.executeUpdate("DELETE FROM CLANS WHERE ClanID IS " + getClanID + ";");
             stmt.close();
+
+            ShowClanUtils.showClan(plugin, con);
+
             String deleteclanmsg = UnitedClans.getInstance().getConfig().getString("messages.successdeleteclan");
             sender.sendMessage(deleteclanmsg.replace("%clan%", getClanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);

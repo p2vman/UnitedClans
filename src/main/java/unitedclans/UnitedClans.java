@@ -21,7 +21,7 @@ public final class UnitedClans extends JavaPlugin implements Listener {
             Statement stmt = con.createStatement();
             String tablePLAYERS = "CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT)";
             stmt.executeUpdate(tablePLAYERS);
-            String tableCLANS = "CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT)";
+            String tableCLANS = "CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT, ClanColor TEXT)";
             stmt.executeUpdate(tableCLANS);
             String tableINVITATIONS = "CREATE TABLE IF NOT EXISTS INVITATIONS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER)";
             stmt.executeUpdate(tableINVITATIONS);
@@ -31,8 +31,8 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         }
 
         getServer().getLogger().info("[UnitedClans] UnitedClans is enabled");
-        getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(con), this);
-        getServer().getPluginCommand("createclan").setExecutor(new CreateClanCommand(con));
+        getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this,con), this);
+        getServer().getPluginCommand("createclan").setExecutor(new CreateClanCommand(this, con));
         getServer().getPluginCommand("createclan").setTabCompleter(new CreateClanTabCompleter());
         getServer().getPluginCommand("deleteclan").setExecutor(new DeleteClanCommand(this, con));
         getServer().getPluginCommand("deleteclan").setTabCompleter(new DeleteClanTabCompleter());

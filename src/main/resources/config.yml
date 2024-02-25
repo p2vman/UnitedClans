@@ -3,6 +3,7 @@
 messages:
   invalidcommand: '§cThe command was entered incorrectly'
   wrongclanname: '§cWrong clan name'
+  wrongcolorname: '§cWrong color name'
   wrongplayername: '§cWrong player name'
   wrongrolename: '§cWrong role name'
   clannametaken: '§eThis clan name is already taken'
