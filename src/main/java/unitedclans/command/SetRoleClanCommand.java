@@ -21,6 +21,7 @@ public class SetRoleClanCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
+        if(!(sender instanceof Player)) return true;
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         String playerNameInput = args[0];
@@ -40,8 +41,8 @@ public class SetRoleClanCommand implements CommandExecutor {
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return true;
         }
-        if (Objects.equals(playerRoleInput, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.notsetleader"));
+        if (Objects.equals(playerSender.getName(), playerNameInput)) {
+            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.setroleyourself"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return true;
         }
@@ -70,12 +71,13 @@ public class SetRoleClanCommand implements CommandExecutor {
 
             stmt.executeUpdate("UPDATE PLAYERS SET ClanRole = '" + playerRoleInput + "' WHERE PlayerName IS '" + playerNameInput + "';");
 
-            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.successfullychangedrole"));
+            String successfullychangedrolemsg = UnitedClans.getInstance().getConfig().getString("messages.successfullychangedrole");
+            playerSender.sendMessage(successfullychangedrolemsg.replace("%role%", playerRoleInput));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             Player argPlayerName = plugin.getServer().getPlayer(playerNameInput);
             if (argPlayerName != null) {
                 String youbeenassignedmsg = UnitedClans.getInstance().getConfig().getString("messages.youbeenassigned");
-                argPlayerName.sendMessage(youbeenassignedmsg.replace("%role%",playerRoleInput));
+                argPlayerName.sendMessage(youbeenassignedmsg.replace("%role%", playerRoleInput));
                 argPlayerName.playSound(argPlayerName.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
             stmt.close();

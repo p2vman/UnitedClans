@@ -40,3 +40,8 @@ commands:
     usage: /<command> <player> <role>
     aliases:
       - srclan
+  menuclan:
+    description: This command allows you to open the clan menu
+    usage: /<command>
+    aliases:
+      - mclan

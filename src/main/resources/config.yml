@@ -36,9 +36,9 @@ messages:
   youleader: '§eYou cannot leave the clan because you are leader'
   playerleave: '§bPlayer§r §e§l%player%§r §bleft the clan'
   successfullyleft: '§bYou have successfully left the§r §e§l%clan%§r §bclan'
-  notsetleader: '§eYou cannot set a player to be a leader'
+  setroleyourself: '§eYou cannot change your role'
   youbeenassigned: '§bYou have been assigned the role of§r §e§l%role%§r'
-  successfullychangedrole: '§bYou have successfully changed the role of a player'
+  successfullychangedrole: '§bYou have successfully changed the player role to§r §e§l%role%§r'
 
 roles:
   leader: 'Leader'

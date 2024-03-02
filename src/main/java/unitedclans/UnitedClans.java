@@ -3,6 +3,7 @@ package unitedclans;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.command.*;
+import unitedclans.handler.ClanMenuInventoryHandler;
 import unitedclans.handler.PlayerJoinEventHandler;
 
 import java.sql.*;
@@ -31,7 +32,8 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         }
 
         getServer().getLogger().info("[UnitedClans] UnitedClans is enabled");
-        getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this,con), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this, con), this);
+        getServer().getPluginManager().registerEvents(new ClanMenuInventoryHandler(this, con), this);
         getServer().getPluginCommand("createclan").setExecutor(new CreateClanCommand(this, con));
         getServer().getPluginCommand("createclan").setTabCompleter(new CreateClanTabCompleter());
         getServer().getPluginCommand("deleteclan").setExecutor(new DeleteClanCommand(this, con));
@@ -46,6 +48,8 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getPluginCommand("leaveclan").setTabCompleter(new LeaveClanTabCompleter());
         getServer().getPluginCommand("setroleclan").setExecutor(new SetRoleClanCommand(this, con));
         getServer().getPluginCommand("setroleclan").setTabCompleter(new SetRoleClanTabCompleter(con));
+        getServer().getPluginCommand("menuclan").setExecutor(new MenuClanCommand(con));
+        getServer().getPluginCommand("menuclan").setTabCompleter(new MenuClanTabCompleter());
     }
 
     @Override
