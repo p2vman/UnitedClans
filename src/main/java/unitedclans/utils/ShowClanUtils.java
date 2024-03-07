@@ -4,9 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
 
 import java.sql.*;
 
@@ -14,14 +12,14 @@ public class ShowClanUtils {
     public static void showClan (JavaPlugin plugin, Connection con) {
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsPlayerClan = stmt.executeQuery( "SELECT * FROM PLAYERS;" );
+            ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS");
             ScoreboardManager manager = Bukkit.getScoreboardManager();
             Scoreboard board = manager.getNewScoreboard();
             Statement stmtClan = con.createStatement();
             while (rsPlayerClan.next()) {
                 Integer getClanID = rsPlayerClan.getInt("ClanID");
                 String getPlayerName = rsPlayerClan.getString("PlayerName");
-                ResultSet rsClan = stmtClan.executeQuery( "SELECT * FROM CLANS WHERE ClanID IS " + getClanID + ";" );
+                ResultSet rsClan = stmtClan.executeQuery( "SELECT * FROM CLANS WHERE ClanID IS " + getClanID);
                 String clanName = rsClan.getString("ClanName");
                 String clanColor = rsClan.getString("ClanColor");
                 Player getPlayer = plugin.getServer().getPlayer(getPlayerName);

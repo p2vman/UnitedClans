@@ -3,8 +3,8 @@ package unitedclans;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.command.*;
-import unitedclans.handler.ClanMenuInventoryHandler;
-import unitedclans.handler.PlayerJoinEventHandler;
+import unitedclans.handler.*;
+import unitedclans.utils.LocalizationUtils;
 
 import java.sql.*;
 
@@ -16,16 +16,14 @@ public final class UnitedClans extends JavaPlugin implements Listener {
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+        LocalizationUtils.loadLang(this);
 
         try {
             con = DriverManager.getConnection("jdbc:sqlite:plugins/UnitedClans/ucdatabase.db");
             Statement stmt = con.createStatement();
-            String tablePLAYERS = "CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT)";
-            stmt.executeUpdate(tablePLAYERS);
-            String tableCLANS = "CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT, ClanColor TEXT)";
-            stmt.executeUpdate(tableCLANS);
-            String tableINVITATIONS = "CREATE TABLE IF NOT EXISTS INVITATIONS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER)";
-            stmt.executeUpdate(tableINVITATIONS);
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT)");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT, ClanColor TEXT, CountMembers INTEGER)");
+            stmt.executeUpdate("CREATE TABLE IF NOT EXISTS INVITATIONS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER)");
             stmt.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());

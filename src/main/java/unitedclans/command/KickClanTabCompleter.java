@@ -21,12 +21,12 @@ public class KickClanTabCompleter implements TabCompleter {
                 Player playerSender = (Player) sender;
                 UUID uuid = playerSender.getUniqueId();
                 String inputPlayer = args[0].toLowerCase();
-                ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
+                ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
                 Integer ClanID = rsSender.getInt("ClanID");
                 if (ClanID == 0) {
                     return new ArrayList<>();
                 }
-                ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + ClanID + ";");
+                ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + ClanID);
                 ArrayList<String> onlinePlayers = new ArrayList<>();
                 while (rsPlayerClan.next()) {
                     String playerName = rsPlayerClan.getString("PlayerName");

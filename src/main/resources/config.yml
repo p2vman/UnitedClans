@@ -3,6 +3,7 @@
 messages:
   invalidcommand: '§cThe command was entered incorrectly'
   wrongclanname: '§cWrong clan name'
+  lengthclanname: '§cThe clan name can only be in the range from 3 to 12 characters'
   wrongcolorname: '§cWrong color name'
   wrongplayername: '§cWrong player name'
   wrongrolename: '§cWrong role name'
@@ -25,6 +26,8 @@ messages:
   clickinvite: 'Click to accept the invitation'
   accept: '§bAccept§r §e§l[✔]§r'
   younotinvited: '§eYou have no active invitations'
+  thisclanmax: '§eThis clan already has the maximum number of players'
+  yourclanmax: '§eYour clan already has the maximum number of players'
   sendinvitationyourself: '§eYou cannot send an invitation to yourself'
   successfullyjoinedclan: '§bYou have successfully joined the clan§r §e§l%clan%§r'
   playerjoined: '§bPlayer§r §e§l%player%§r §bjoined the clan'

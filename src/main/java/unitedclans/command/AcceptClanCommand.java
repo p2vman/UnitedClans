@@ -32,28 +32,35 @@ public class AcceptClanCommand implements CommandExecutor {
         }
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsInvitation = stmt.executeQuery("SELECT * FROM INVITATIONS WHERE UUID IS '" + uuid + "';");
+            ResultSet rsInvitation = stmt.executeQuery("SELECT * FROM INVITATIONS WHERE UUID IS '" + uuid + "'");
             Integer ClanID = rsInvitation.getInt("ClanID");
             if (!rsInvitation.next()) {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.younotinvited"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
+            ResultSet rsClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + ClanID);
+            Integer countMembers = rsClan.getInt("CountMembers");
+            String clanName = rsClan.getString("ClanName");
+            if (countMembers >= 25) {
+                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.thisclanmax"));
+                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
+                return true;
+            }
 
-            ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + ClanID + ";");
+            ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + ClanID);
             String playerjoinedmsg = UnitedClans.getInstance().getConfig().getString("messages.playerjoined");
             while (rsClanPlayers.next()) {
                 String playerName = rsClanPlayers.getString("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerName);
-                playerClan.sendMessage(playerjoinedmsg.replace("%player%",playerSender.getName()));
+                playerClan.sendMessage(playerjoinedmsg.replace("%player%", playerSender.getName()));
             }
-            ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + ClanID + ";");
-            String clanName = rsClanName.getString("ClanName");
             String joinedclanmsg = UnitedClans.getInstance().getConfig().getString("messages.successfullyjoinedclan");
-            sender.sendMessage(joinedclanmsg.replace("%clan%",clanName));
+            sender.sendMessage(joinedclanmsg.replace("%clan%", clanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "' WHERE UUID IS '" + uuid + "';");
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "' WHERE UUID IS '" + uuid + "'");
+            stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers + 1 WHERE ClanID IS " + ClanID);
             stmt.executeUpdate("DELETE FROM INVITATIONS WHERE UUID IS '" + uuid + "'");
             stmt.close();
 

@@ -48,7 +48,7 @@ public class SetRoleClanCommand implements CommandExecutor {
         }
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
+            ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             String senderRole = rsSender.getString("ClanRole");
             Integer senderClanID = rsSender.getInt("ClanID");
             if (!Objects.equals(senderRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
@@ -56,7 +56,7 @@ public class SetRoleClanCommand implements CommandExecutor {
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
-            ResultSet rsPlayerName = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + playerNameInput + "';");
+            ResultSet rsPlayerName = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + playerNameInput + "'");
             Integer playerClanID = rsPlayerName.getInt("ClanID");
             if (playerClanID == 0) {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.playernotmemberclan"));
@@ -69,7 +69,7 @@ public class SetRoleClanCommand implements CommandExecutor {
                 return true;
             }
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanRole = '" + playerRoleInput + "' WHERE PlayerName IS '" + playerNameInput + "';");
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanRole = '" + playerRoleInput + "' WHERE PlayerName IS '" + playerNameInput + "'");
 
             String successfullychangedrolemsg = UnitedClans.getInstance().getConfig().getString("messages.successfullychangedrole");
             playerSender.sendMessage(successfullychangedrolemsg.replace("%role%", playerRoleInput));

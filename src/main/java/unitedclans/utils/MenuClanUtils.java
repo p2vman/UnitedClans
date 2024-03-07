@@ -47,9 +47,9 @@ public class MenuClanUtils {
     public static void openMembersMenu(Player player, Connection con) {
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "';");
+            ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "'");
             Integer PlayerClanID = rsPlayerClan.getInt("ClanID");
-            ResultSet rsPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + PlayerClanID + ";");
+            ResultSet rsPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + PlayerClanID);
             ArrayList<String> PlayerList = new ArrayList<>();
             ArrayList<String> RoleList = new ArrayList<>();
             while (rsPlayers.next()) {
@@ -99,7 +99,7 @@ public class MenuClanUtils {
         ArrayList<String> playerSelected_lore = new ArrayList<>();
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsplayerSelectedRole = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + selectedPlayerName + "';");
+            ResultSet rsplayerSelectedRole = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + selectedPlayerName + "'");
             String playerSelectedRole = rsplayerSelectedRole.getString("ClanRole");
             playerSelected_lore.add(ChatColor.ITALIC + (ChatColor.DARK_PURPLE + playerSelectedRole));
             stmt.close();

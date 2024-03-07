@@ -37,6 +37,11 @@ public class CreateClanCommand implements CommandExecutor {
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return true;
         }
+        if (clanNameInput.length() < 3 || clanNameInput.length() > 12) {
+            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.lengthclanname"));
+            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
+            return true;
+        }
         boolean valExist = false;
         String[] colorCollection = new String[] {"AQUA", "BLACK", "BLUE", "DARK_AQUA", "DARK_BLUE", "DARK_GRAY", "DARK_GREEN", "DARK_PURPLE" ,"DARK_RED", "GOLD", "GRAY", "GREEN", "LIGHT_PURPLE", "RED", "WHITE", "YELLOW"};
         for (Object valColor:colorCollection) {
@@ -51,25 +56,25 @@ public class CreateClanCommand implements CommandExecutor {
         }
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsNumberClans = stmt.executeQuery("SELECT ClanID FROM CLANS WHERE ClanID IS (SELECT MAX(ClanID) FROM CLANS);");
+            ResultSet rsNumberClans = stmt.executeQuery("SELECT ClanID FROM CLANS WHERE ClanID IS (SELECT MAX(ClanID) FROM CLANS)");
             Integer NumberClans = rsNumberClans.getInt("ClanID") + 1;
 
-            ResultSet rsChekerPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
+            ResultSet rsChekerPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             if (rsChekerPlayer.getInt("ClanID") != 0) {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.youmemberclan"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
 
-            ResultSet rsChekerClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "';");
+            ResultSet rsChekerClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "'");
             if (rsChekerClanName.next()) {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.clannametaken"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
 
-            stmt.executeUpdate("INSERT INTO CLANS (ClanID, ClanName, ClanColor) " + "VALUES (" + NumberClans + ", '" + clanNameInput + "', '" + clanColorInput + "');");
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "' WHERE UUID IS '" + uuid + "';");
+            stmt.executeUpdate("INSERT INTO CLANS (ClanID, ClanName, ClanColor, CountMembers) " + "VALUES (" + NumberClans + ", '" + clanNameInput + "', '" + clanColorInput + "', " + 1 + ")");
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "' WHERE UUID IS '" + uuid + "'");
             stmt.close();
 
             ShowClanUtils.showClan(plugin, con);

@@ -29,7 +29,7 @@ public class MenuClanCommand implements CommandExecutor {
         }
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
+            ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             Integer PlayerClanID = rsPlayerClan.getInt("ClanID");
             if (PlayerClanID == 0) {
                 sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.younotmemberclan"));

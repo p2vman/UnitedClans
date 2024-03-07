@@ -32,7 +32,7 @@ public class LeaveClanCommand implements CommandExecutor {
         }
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsLeavingPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
+            ResultSet rsLeavingPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             String LeavingPlayerRole = rsLeavingPlayer.getString("ClanRole");
             Integer LeavingPlayerClanID = rsLeavingPlayer.getInt("ClanID");
             if (LeavingPlayerClanID == 0) {
@@ -46,19 +46,20 @@ public class LeaveClanCommand implements CommandExecutor {
                 return true;
             }
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE UUID IS '" + uuid + "';");
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE UUID IS '" + uuid + "'");
+            stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers - 1 WHERE ClanID IS " + LeavingPlayerClanID);
 
-            ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + LeavingPlayerClanID + ";");
+            ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + LeavingPlayerClanID);
             String playerleavemsg = UnitedClans.getInstance().getConfig().getString("messages.playerleave");
             while (rsClanPlayers.next()) {
                 String playerNameClan = rsClanPlayers.getString("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerNameClan);
-                playerClan.sendMessage(playerleavemsg.replace("%player%",playerSender.getName()));
+                playerClan.sendMessage(playerleavemsg.replace("%player%", playerSender.getName()));
             }
-            ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + LeavingPlayerClanID + ";");
+            ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + LeavingPlayerClanID);
             String LeavingPlayerClanName = rsClanName.getString("ClanName");
             String successfullyleftmsg = UnitedClans.getInstance().getConfig().getString("messages.successfullyleft");
-            playerSender.sendMessage(successfullyleftmsg.replace("%clan%",LeavingPlayerClanName));
+            playerSender.sendMessage(successfullyleftmsg.replace("%clan%", LeavingPlayerClanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             stmt.close();
 

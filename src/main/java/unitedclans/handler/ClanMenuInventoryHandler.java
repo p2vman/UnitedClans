@@ -60,14 +60,14 @@ public class ClanMenuInventoryHandler implements Listener {
                 tryCatch:
                 try {
                     Statement stmt = con.createStatement();
-                    ResultSet rsSetRolePlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + selectedPlayerName + "';");
+                    ResultSet rsSetRolePlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + selectedPlayerName + "'");
                     String SetRolePlayerRole = rsSetRolePlayer.getString("ClanRole");
                     if (Objects.equals(player.getName(), selectedPlayerName)) {
                         player.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.setroleyourself"));
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                         break tryCatch;
                     }
-                    ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "';");
+                    ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "'");
                     String getRoleUUID = rsSender.getString("ClanRole");
                     if (!Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
                         player.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.norightssetrole"));
@@ -81,7 +81,7 @@ public class ClanMenuInventoryHandler implements Listener {
                     } else if (Objects.equals(SetRolePlayerRole, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
                         setRole = UnitedClans.getInstance().getConfig().getString("roles.member");
                     }
-                    stmt.executeUpdate("UPDATE PLAYERS SET ClanRole = '" + setRole + "' WHERE PlayerName IS '" + selectedPlayerName + "';");
+                    stmt.executeUpdate("UPDATE PLAYERS SET ClanRole = '" + setRole + "' WHERE PlayerName IS '" + selectedPlayerName + "'");
 
                     String successfullychangedrolemsg = UnitedClans.getInstance().getConfig().getString("messages.successfullychangedrole");
                     player.sendMessage(successfullychangedrolemsg.replace("%role%", setRole));
@@ -102,7 +102,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 tryCatch:
                 try {
                     Statement stmt = con.createStatement();
-                    ResultSet rsKickedPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + selectedPlayerName + "';");
+                    ResultSet rsKickedPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + selectedPlayerName + "'");
                     String KickedPlayerRole = rsKickedPlayer.getString("ClanRole");
                     Integer KickedPlayerClanID = rsKickedPlayer.getInt("ClanID");
                     if (Objects.equals(player.getName(), selectedPlayerName)) {
@@ -110,7 +110,7 @@ public class ClanMenuInventoryHandler implements Listener {
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                         break tryCatch;
                     }
-                    ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "';");
+                    ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "'");
                     String getRoleUUID = rsSender.getString("ClanRole");
                     Integer getClanID = rsSender.getInt("ClanID");
                     if (!Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.leader")) && !Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
@@ -124,22 +124,23 @@ public class ClanMenuInventoryHandler implements Listener {
                         break tryCatch;
                     }
 
-                    stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE PlayerName IS '" + selectedPlayerName + "';");
+                    stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE PlayerName IS '" + selectedPlayerName + "'");
+                    stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers - 1 WHERE ClanID IS " + getClanID);
 
-                    ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanID + ";");
+                    ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanID);
                     String playerkickedmsg = UnitedClans.getInstance().getConfig().getString("messages.playerwaskicked");
                     while (rsClanPlayers.next()) {
                         String playerNameClan = rsClanPlayers.getString("PlayerName");
                         Player playerClan = plugin.getServer().getPlayer(playerNameClan);
-                        playerClan.sendMessage(playerkickedmsg.replace("%player%",selectedPlayerName));
+                        playerClan.sendMessage(playerkickedmsg.replace("%player%", selectedPlayerName));
                     }
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                     Player argPlayerName = plugin.getServer().getPlayer(selectedPlayerName);
                     if (argPlayerName != null) {
-                        ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + KickedPlayerClanID + ";");
+                        ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + KickedPlayerClanID);
                         String KickedPlayerClanName = rsClanName.getString("ClanName");
                         String youwaskickedmsg = UnitedClans.getInstance().getConfig().getString("messages.youwaskicked");
-                        argPlayerName.sendMessage(youwaskickedmsg.replace("%clan%",KickedPlayerClanName));
+                        argPlayerName.sendMessage(youwaskickedmsg.replace("%clan%", KickedPlayerClanName));
                         argPlayerName.playSound(argPlayerName.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                     }
                     stmt.close();

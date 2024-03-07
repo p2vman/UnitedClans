@@ -33,11 +33,11 @@ public class DeleteClanCommand implements CommandExecutor {
         }
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsgetClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "';");
+            ResultSet rsgetClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "'");
             String getClanName = rsgetClan.getString("ClanName");
             Integer getClanID = rsgetClan.getInt("ClanID");
 
-            ResultSet rsgetClanPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "';");
+            ResultSet rsgetClanPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             Integer getClanIDPlayer = rsgetClanPlayer.getInt("ClanID");
             String getLeaderUUID = rsgetClanPlayer.getString("ClanRole");
 
@@ -62,7 +62,7 @@ public class DeleteClanCommand implements CommandExecutor {
                 return true;
             }
 
-            ResultSet rsUUID = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanIDPlayer + ";");
+            ResultSet rsUUID = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanIDPlayer);
             while (rsUUID.next()) {
                 String playerName = rsUUID.getString("PlayerName");
                 if (Objects.equals(playerName, playerSender.getName())) {
@@ -73,8 +73,8 @@ public class DeleteClanCommand implements CommandExecutor {
                 playerClan.playSound(playerClan.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE ClanID IS " + getClanID + ";");
-            stmt.executeUpdate("DELETE FROM CLANS WHERE ClanID IS " + getClanID + ";");
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE ClanID IS " + getClanID);
+            stmt.executeUpdate("DELETE FROM CLANS WHERE ClanID IS " + getClanID);
             stmt.close();
 
             ShowClanUtils.showClan(plugin, con);
