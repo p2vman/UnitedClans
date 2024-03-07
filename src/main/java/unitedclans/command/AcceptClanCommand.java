@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
@@ -23,10 +24,11 @@ public class AcceptClanCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         if (args.length >= 1) {
-            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.invalidcommand"));
+            sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return false;
         }
@@ -35,7 +37,7 @@ public class AcceptClanCommand implements CommandExecutor {
             ResultSet rsInvitation = stmt.executeQuery("SELECT * FROM INVITATIONS WHERE UUID IS '" + uuid + "'");
             Integer ClanID = rsInvitation.getInt("ClanID");
             if (!rsInvitation.next()) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.younotinvited"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_INVITED"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
@@ -43,19 +45,19 @@ public class AcceptClanCommand implements CommandExecutor {
             Integer countMembers = rsClan.getInt("CountMembers");
             String clanName = rsClan.getString("ClanName");
             if (countMembers >= 25) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.thisclanmax"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "THIS_CLAN_MAX"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
 
             ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + ClanID);
-            String playerjoinedmsg = UnitedClans.getInstance().getConfig().getString("messages.playerjoined");
+            String playerjoinedmsg = LocalizationUtils.langCheck(language, "PLAYER_JOINED");
             while (rsClanPlayers.next()) {
                 String playerName = rsClanPlayers.getString("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerName);
                 playerClan.sendMessage(playerjoinedmsg.replace("%player%", playerSender.getName()));
             }
-            String joinedclanmsg = UnitedClans.getInstance().getConfig().getString("messages.successfullyjoinedclan");
+            String joinedclanmsg = LocalizationUtils.langCheck(language, "SUCCESSFULLY_JOINED_CLAN");
             sender.sendMessage(joinedclanmsg.replace("%clan%", clanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 

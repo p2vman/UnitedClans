@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
@@ -23,11 +24,12 @@ public class DeleteClanCommand implements CommandExecutor {
     @Override
     public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         String clanNameInput = args[0];
         if (args.length <= 0 || args.length >= 2) {
-            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.invalidcommand"));
+            sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return false;
         }
@@ -42,22 +44,22 @@ public class DeleteClanCommand implements CommandExecutor {
             String getLeaderUUID = rsgetClanPlayer.getString("ClanRole");
 
             if (getClanName == null) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.wrongclanname"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_CLAN_NAME"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
             if (getClanIDPlayer == 0) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.younotmemberclan"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_CLAN"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
             if (getClanID != getClanIDPlayer) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.younotmemberthisclan"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_THIS_CLAN"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
             if (!Objects.equals(getLeaderUUID, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.notleader"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "NOT_LEADER"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
@@ -69,7 +71,7 @@ public class DeleteClanCommand implements CommandExecutor {
                     continue;
                 }
                 Player playerClan = plugin.getServer().getPlayer(playerName);
-                playerClan.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.leaderdeleteclan"));
+                playerClan.sendMessage(LocalizationUtils.langCheck(language, "LEADER_DELETE_CLAN"));
                 playerClan.playSound(playerClan.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
@@ -79,7 +81,7 @@ public class DeleteClanCommand implements CommandExecutor {
 
             ShowClanUtils.showClan(plugin, con);
 
-            String deleteclanmsg = UnitedClans.getInstance().getConfig().getString("messages.successdeleteclan");
+            String deleteclanmsg = LocalizationUtils.langCheck(language, "SUCCESS_DELETE_CLAN");
             sender.sendMessage(deleteclanmsg.replace("%clan%", getClanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         } catch (Exception e) {

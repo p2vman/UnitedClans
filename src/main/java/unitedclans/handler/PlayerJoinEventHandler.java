@@ -5,8 +5,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
-import unitedclans.langs.Langs.LangEN;
-import unitedclans.langs.Langs.LangRU;
 import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
@@ -23,8 +21,6 @@ public class PlayerJoinEventHandler implements Listener {
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent playerJoin) {
         UUID uuid = playerJoin.getPlayer().getUniqueId();
-        String msg = LangEN.TITLE.toString() + LangEN.MSG.toString();
-        playerJoin.getPlayer().sendMessage(msg);
         try {
             Statement stmt = con.createStatement();
             ResultSet rsPlayers = stmt.executeQuery("SELECT UUID FROM PLAYERS WHERE UUID IS '" + uuid + "'" );

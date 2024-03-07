@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
@@ -23,10 +24,11 @@ public class LeaveClanCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         if (args.length >= 1) {
-            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.invalidcommand"));
+            sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return false;
         }
@@ -36,12 +38,12 @@ public class LeaveClanCommand implements CommandExecutor {
             String LeavingPlayerRole = rsLeavingPlayer.getString("ClanRole");
             Integer LeavingPlayerClanID = rsLeavingPlayer.getInt("ClanID");
             if (LeavingPlayerClanID == 0) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.younotmemberclan"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_CLAN"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
             if (Objects.equals(LeavingPlayerRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.youleader"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_LEADER"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
@@ -50,7 +52,7 @@ public class LeaveClanCommand implements CommandExecutor {
             stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers - 1 WHERE ClanID IS " + LeavingPlayerClanID);
 
             ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + LeavingPlayerClanID);
-            String playerleavemsg = UnitedClans.getInstance().getConfig().getString("messages.playerleave");
+            String playerleavemsg = LocalizationUtils.langCheck(language, "PLAYER_LEAVE");
             while (rsClanPlayers.next()) {
                 String playerNameClan = rsClanPlayers.getString("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerNameClan);
@@ -58,7 +60,7 @@ public class LeaveClanCommand implements CommandExecutor {
             }
             ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + LeavingPlayerClanID);
             String LeavingPlayerClanName = rsClanName.getString("ClanName");
-            String successfullyleftmsg = UnitedClans.getInstance().getConfig().getString("messages.successfullyleft");
+            String successfullyleftmsg = LocalizationUtils.langCheck(language, "SUCCESSFULLY_LEFT");
             playerSender.sendMessage(successfullyleftmsg.replace("%clan%", LeavingPlayerClanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             stmt.close();

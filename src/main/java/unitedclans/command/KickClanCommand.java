@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
 
 import java.sql.*;
@@ -23,16 +24,17 @@ public class KickClanCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         if (args.length <= 0 || args.length >= 2) {
-            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.invalidcommand"));
+            sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return false;
         }
         String playerName = args[0];
         if (playerName == null) {
-            sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.wrongplayername"));
+            sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_PLAYER_NAME"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return true;
         }
@@ -42,12 +44,12 @@ public class KickClanCommand implements CommandExecutor {
             String KickedPlayerRole = rsKickedPlayer.getString("ClanRole");
             Integer KickedPlayerClanID = rsKickedPlayer.getInt("ClanID");
             if (!rsKickedPlayer.next()) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.wrongplayername"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_PLAYER_NAME"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
             if (Objects.equals(playerSender.getName(), playerName)) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.kickyourself"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "KICK_YOURSELF"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
@@ -55,22 +57,22 @@ public class KickClanCommand implements CommandExecutor {
             String getRoleUUID = rsSender.getString("ClanRole");
             Integer getClanID = rsSender.getInt("ClanID");
             if (getClanID == 0) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.younotmemberclan"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_CLAN"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
             if (KickedPlayerClanID != getClanID) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.playernotyourclan"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "PLAYER_NOT_YOUR_CLAN"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
             if (!Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.leader")) && !Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.norightskick"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "NO_RIGHTS_KICK"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
             if (Objects.equals(KickedPlayerRole, getRoleUUID) || Objects.equals(KickedPlayerRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                sender.sendMessage(UnitedClans.getInstance().getConfig().getString("messages.roleishigher"));
+                sender.sendMessage(LocalizationUtils.langCheck(language, "ROLE_IS_HIGHER"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
@@ -79,7 +81,7 @@ public class KickClanCommand implements CommandExecutor {
             stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers - 1 WHERE ClanID IS " + getClanID);
 
             ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanID);
-            String playerkickedmsg = UnitedClans.getInstance().getConfig().getString("messages.playerwaskicked");
+            String playerkickedmsg = LocalizationUtils.langCheck(language, "PLAYER_WAS_KICKED");
             while (rsClanPlayers.next()) {
                 String playerNameClan = rsClanPlayers.getString("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerNameClan);
@@ -90,7 +92,7 @@ public class KickClanCommand implements CommandExecutor {
             if (argPlayerName != null) {
                 ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + KickedPlayerClanID);
                 String KickedPlayerClanName = rsClanName.getString("ClanName");
-                String youwaskickedmsg = UnitedClans.getInstance().getConfig().getString("messages.youwaskicked");
+                String youwaskickedmsg = LocalizationUtils.langCheck(language, "YOU_WAS_KICKED");
                 argPlayerName.sendMessage(youwaskickedmsg.replace("%clan%", KickedPlayerClanName));
                 argPlayerName.playSound(argPlayerName.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
