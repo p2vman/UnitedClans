@@ -6,11 +6,11 @@ import org.bukkit.command.TabCompleter;
 
 import java.util.*;
 
-public class DeleteClanTabCompleter implements TabCompleter {
+public class ChatClanTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("<clan name>");
+            return Arrays.asList("<message>");
         }
         return new ArrayList<>();
     }

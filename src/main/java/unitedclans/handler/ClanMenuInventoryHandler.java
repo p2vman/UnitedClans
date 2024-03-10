@@ -30,7 +30,7 @@ public class ClanMenuInventoryHandler implements Listener {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player player = (Player) event.getWhoClicked();
 
-        if(event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + "Clan menu")) {
+        if(event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + LocalizationUtils.langCheck(language, "CLAN_MENU"))) {
             if (event.getCurrentItem() == null) {
 
             } else if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
@@ -41,7 +41,7 @@ public class ClanMenuInventoryHandler implements Listener {
             } else if (event.getCurrentItem().getType() == Material.BEACON) {
 
             }
-        } else if (event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + "Members menu")) {
+        } else if (event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBERS_MENU"))) {
             if (event.getCurrentItem() == null) {
 
             } else if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
@@ -53,7 +53,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             }
         }
-        else if (event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + "Member")) {
+        else if (event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBER_MENU"))) {
             if (event.getCurrentItem() == null) {
 
             } else if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
@@ -78,20 +78,23 @@ public class ClanMenuInventoryHandler implements Listener {
                     }
 
                     String setRole = null;
+                    String setPlayerRole = null;
                     if (Objects.equals(SetRolePlayerRole, UnitedClans.getInstance().getConfig().getString("roles.member"))) {
                         setRole = UnitedClans.getInstance().getConfig().getString("roles.elder");
+                        setPlayerRole = LocalizationUtils.langCheck(language, "ELDER");
                     } else if (Objects.equals(SetRolePlayerRole, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
                         setRole = UnitedClans.getInstance().getConfig().getString("roles.member");
+                        setPlayerRole = LocalizationUtils.langCheck(language, "MEMBER");
                     }
                     stmt.executeUpdate("UPDATE PLAYERS SET ClanRole = '" + setRole + "' WHERE PlayerName IS '" + selectedPlayerName + "'");
 
                     String successfullychangedrolemsg = LocalizationUtils.langCheck(language, "SUCCESSFULLY_CHANGED_ROLE");
-                    player.sendMessage(successfullychangedrolemsg.replace("%role%", setRole));
+                    player.sendMessage(successfullychangedrolemsg.replace("%role%", setPlayerRole));
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                     Player argPlayerName = plugin.getServer().getPlayer(selectedPlayerName);
                     if (argPlayerName != null) {
                         String youbeenassignedmsg = LocalizationUtils.langCheck(language, "YOU_BEEN_ASSIGNED");
-                        argPlayerName.sendMessage(youbeenassignedmsg.replace("%role%", setRole));
+                        argPlayerName.sendMessage(youbeenassignedmsg.replace("%role%", setPlayerRole));
                         argPlayerName.playSound(argPlayerName.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
                     }
                     stmt.close();
@@ -126,7 +129,7 @@ public class ClanMenuInventoryHandler implements Listener {
                         break tryCatch;
                     }
 
-                    stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE PlayerName IS '" + selectedPlayerName + "'");
+                    stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "' WHERE PlayerName IS '" + selectedPlayerName + "'");
                     stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers - 1 WHERE ClanID IS " + getClanID);
 
                     ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanID);

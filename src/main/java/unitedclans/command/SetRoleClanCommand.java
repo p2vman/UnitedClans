@@ -74,12 +74,18 @@ public class SetRoleClanCommand implements CommandExecutor {
             stmt.executeUpdate("UPDATE PLAYERS SET ClanRole = '" + playerRoleInput + "' WHERE PlayerName IS '" + playerNameInput + "'");
 
             String successfullychangedrolemsg = LocalizationUtils.langCheck(language, "SUCCESSFULLY_CHANGED_ROLE");
-            playerSender.sendMessage(successfullychangedrolemsg.replace("%role%", playerRoleInput));
+            String setPlayerRole = null;
+            if (Objects.equals(playerRoleInput, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                setPlayerRole = LocalizationUtils.langCheck(language, "ELDER");
+            } else if (Objects.equals(playerRoleInput, UnitedClans.getInstance().getConfig().getString("roles.member"))) {
+                setPlayerRole = LocalizationUtils.langCheck(language, "MEMBER");
+            }
+            playerSender.sendMessage(successfullychangedrolemsg.replace("%role%", setPlayerRole));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             Player argPlayerName = plugin.getServer().getPlayer(playerNameInput);
             if (argPlayerName != null) {
                 String youbeenassignedmsg = LocalizationUtils.langCheck(language, "YOU_BEEN_ASSIGNED");
-                argPlayerName.sendMessage(youbeenassignedmsg.replace("%role%", playerRoleInput));
+                argPlayerName.sendMessage(youbeenassignedmsg.replace("%role%", setPlayerRole));
                 argPlayerName.playSound(argPlayerName.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
             stmt.close();

@@ -3,8 +3,10 @@
 
 lang: 'en_en'
 
+clan-msg-pattern: '%clan% [%sender%]:%message%'
+
 roles:
   leader: 'Leader'
   elder: 'Elder'
   member: 'Member'
-  noclan: 'null'
+  no-clan: 'null'

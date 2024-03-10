@@ -45,3 +45,10 @@ commands:
     usage: /<command>
     aliases:
       - mclan
+  chatclan:
+    description: This command allows you to send messages to the clan chat
+    usage: /<command> <message>
+    aliases:
+      - msgclan
+      - msgc
+      - cc

@@ -48,7 +48,7 @@ public class LeaveClanCommand implements CommandExecutor {
                 return true;
             }
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.noclan") + "' WHERE UUID IS '" + uuid + "'");
+            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "' WHERE UUID IS '" + uuid + "'");
             stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers - 1 WHERE ClanID IS " + LeavingPlayerClanID);
 
             ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + LeavingPlayerClanID);

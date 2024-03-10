@@ -19,7 +19,7 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         LocalizationUtils.loadLang(this);
 
         try {
-            con = DriverManager.getConnection("jdbc:sqlite:plugins/UnitedClans/ucdatabase.db");
+            con = DriverManager.getConnection("jdbc:sqlite:" + getDataFolder() + "/ucdatabase.db");
             Statement stmt = con.createStatement();
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT)");
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT, ClanColor TEXT, CountMembers INTEGER)");
@@ -48,6 +48,8 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getPluginCommand("setroleclan").setTabCompleter(new SetRoleClanTabCompleter(con));
         getServer().getPluginCommand("menuclan").setExecutor(new MenuClanCommand(con));
         getServer().getPluginCommand("menuclan").setTabCompleter(new MenuClanTabCompleter());
+        getServer().getPluginCommand("chatclan").setExecutor(new ChatClanCommand(this, con));
+        getServer().getPluginCommand("chatclan").setTabCompleter(new ChatClanTabCompleter());
     }
 
     @Override

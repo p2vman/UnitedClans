@@ -4,39 +4,42 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.*;
+import unitedclans.UnitedClans;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MenuClanUtils {
     public static void openClanMenu(Player player) {
-        Inventory clanMenuGUI = Bukkit.createInventory(player, 27, ChatColor.BOLD + "Clan menu");
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        Inventory clanMenuGUI = Bukkit.createInventory(player, 27, ChatColor.BOLD + LocalizationUtils.langCheck(language, "CLAN_MENU"));
 
         ItemStack clanBank = new ItemStack(Material.GOLD_BLOCK, 1);
         ItemMeta clanBank_meta = clanBank.getItemMeta();
-        clanBank_meta.setDisplayName(ChatColor.RESET + (ChatColor.YELLOW + "Clan bank"));
+        clanBank_meta.setDisplayName(ChatColor.RESET + (ChatColor.YELLOW + LocalizationUtils.langCheck(language, "CLAN_BANK")));
         ArrayList<String> clanBank_lore = new ArrayList<>();
-        clanBank_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + "Opens the clan bank menu"));
+        clanBank_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "CLAN_BANK_DESCRIPTION")));
         clanBank_meta.setLore(clanBank_lore);
         clanBank.setItemMeta(clanBank_meta);
         clanMenuGUI.setItem(10, clanBank);
 
         ItemStack players = new ItemStack(Material.PLAYER_HEAD, 1);
         ItemMeta players_meta = players.getItemMeta();
-        players_meta.setDisplayName(ChatColor.RESET + (ChatColor.GREEN + "Clan members"));
+        players_meta.setDisplayName(ChatColor.RESET + (ChatColor.GREEN + LocalizationUtils.langCheck(language, "CLAN_MEMBERS")));
         ArrayList<String> players_lore = new ArrayList<>();
-        players_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + "Opens list of clan members"));
+        players_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "CLAN_MEMBERS_DESCRIPTION")));
         players_meta.setLore(players_lore);
         players.setItemMeta(players_meta);
         clanMenuGUI.setItem(13, players);
 
         ItemStack topClans = new ItemStack(Material.BEACON, 1);
         ItemMeta topClans_meta = topClans.getItemMeta();
-        topClans_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + "Top clans"));
+        topClans_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "TOP_CLANS")));
         ArrayList<String> topClans_lore = new ArrayList<>();
-        topClans_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + "Opens list of the best clans"));
+        topClans_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "TOP_CLANS_DESCRIPTION")));
         topClans_meta.setLore(topClans_lore);
         topClans.setItemMeta(topClans_meta);
         clanMenuGUI.setItem(16, topClans);
@@ -46,6 +49,7 @@ public class MenuClanUtils {
 
     public static void openMembersMenu(Player player, Connection con) {
         try {
+            String language = UnitedClans.getInstance().getConfig().getString("lang");
             Statement stmt = con.createStatement();
             ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "'");
             Integer PlayerClanID = rsPlayerClan.getInt("ClanID");
@@ -56,10 +60,18 @@ public class MenuClanUtils {
                 String getPlayersName = rsPlayers.getString("PlayerName");
                 PlayerList.add(getPlayersName);
                 String getPlayersRole = rsPlayers.getString("ClanRole");
-                RoleList.add(getPlayersRole);
+                String setRole = null;
+                if (Objects.equals(getPlayersRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                    setRole = LocalizationUtils.langCheck(language, "LEADER");
+                } else if (Objects.equals(getPlayersRole, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                    setRole = LocalizationUtils.langCheck(language, "ELDER");
+                } else if (Objects.equals(getPlayersRole, UnitedClans.getInstance().getConfig().getString("roles.member"))) {
+                    setRole = LocalizationUtils.langCheck(language, "MEMBER");
+                }
+                RoleList.add(setRole);
             }
 
-            Inventory membersMenuGUI = Bukkit.createInventory(player, 36, ChatColor.BOLD + "Members menu");
+            Inventory membersMenuGUI = Bukkit.createInventory(player, 36, ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBERS_MENU"));
             for (int i = 0; i < PlayerList.size(); i++) {
                 ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD, 1);
                 SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
@@ -74,9 +86,9 @@ public class MenuClanUtils {
 
             ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
             ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
-            BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + "Back to menu"));
+            BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "MEMBERS_BACK_TO_MENU")));
             ArrayList<String> BackToMenu_lore = new ArrayList<>();
-            BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + "Opens main clan menu"));
+            BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "MEMBERS_BACK_TO_MENU_DESCRIPTION")));
             BackToMenu_meta.setLore(BackToMenu_lore);
             BackToMenu.setItemMeta(BackToMenu_meta);
             for (int n = 27; n <= 35; n++) {
@@ -91,7 +103,8 @@ public class MenuClanUtils {
     }
 
     public static void openMemberMenu(Player player, Connection con, String selectedPlayerName) {
-        Inventory memberMenuGUI = Bukkit.createInventory(player, 9, ChatColor.BOLD + "Member");
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        Inventory memberMenuGUI = Bukkit.createInventory(player, 9, ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBER_MENU"));
 
         ItemStack playerSelected = new ItemStack(Material.PLAYER_HEAD, 1);
         SkullMeta playerSelected_meta = (SkullMeta) playerSelected.getItemMeta();
@@ -101,7 +114,15 @@ public class MenuClanUtils {
             Statement stmt = con.createStatement();
             ResultSet rsplayerSelectedRole = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + selectedPlayerName + "'");
             String playerSelectedRole = rsplayerSelectedRole.getString("ClanRole");
-            playerSelected_lore.add(ChatColor.ITALIC + (ChatColor.DARK_PURPLE + playerSelectedRole));
+            String setPlayerRole = null;
+            if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                setPlayerRole = LocalizationUtils.langCheck(language, "LEADER");
+            } else if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                setPlayerRole = LocalizationUtils.langCheck(language, "ELDER");
+            } else if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.member"))) {
+                setPlayerRole = LocalizationUtils.langCheck(language, "MEMBER");
+            }
+            playerSelected_lore.add(ChatColor.ITALIC + (ChatColor.DARK_PURPLE + setPlayerRole));
             stmt.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -113,27 +134,27 @@ public class MenuClanUtils {
 
         ItemStack changeRole = new ItemStack(Material.NAME_TAG, 1);
         ItemMeta changeRole_meta = changeRole.getItemMeta();
-        changeRole_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "Change role"));
+        changeRole_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + LocalizationUtils.langCheck(language, "CHANGE_ROLE")));
         ArrayList<String> changeRole_lore = new ArrayList<>();
-        changeRole_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + "Changes role"));
+        changeRole_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "CHANGE_ROLE_DESCRIPTION")));
         changeRole_meta.setLore(changeRole_lore);
         changeRole.setItemMeta(changeRole_meta);
         memberMenuGUI.setItem(3, changeRole);
 
         ItemStack kickPlayer = new ItemStack(Material.BARRIER, 1);
         ItemMeta kickPlayer_meta = kickPlayer.getItemMeta();
-        kickPlayer_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + "Kick member"));
+        kickPlayer_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "KICK_MEMBER")));
         ArrayList<String> kickPlayer_lore = new ArrayList<>();
-        kickPlayer_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + "Kicks member out of the clan"));
+        kickPlayer_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "KICK_MEMBER_DESCRIPTION")));
         kickPlayer_meta.setLore(kickPlayer_lore);
         kickPlayer.setItemMeta(kickPlayer_meta);
         memberMenuGUI.setItem(5, kickPlayer);
 
         ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
         ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
-        BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + "Back to menu"));
+        BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "MEMBER_BACK_TO_MENU")));
         ArrayList<String> BackToMenu_lore = new ArrayList<>();
-        BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + "Opens main clan menu"));
+        BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "MEMBER_BACK_TO_MENU_DESCRIPTION")));
         BackToMenu_meta.setLore(BackToMenu_lore);
         BackToMenu.setItemMeta(BackToMenu_meta);
         memberMenuGUI.setItem(7, BackToMenu);

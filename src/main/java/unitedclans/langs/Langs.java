@@ -44,7 +44,32 @@ public class Langs {
         SUCCESSFULLY_LEFT("messages.successfully-left", "§bYou have successfully left the§r §e§l%clan%§r §bclan "),
         SET_ROLE_YOURSELF("messages.set-role-yourself", "§eYou cannot change your role "),
         YOU_BEEN_ASSIGNED("messages.you-been-assigned", "§bYou have been assigned the role of§r §e§l%role% "),
-        SUCCESSFULLY_CHANGED_ROLE("messages.successfully-changed-role", "§bYou have successfully changed the player role to§r §e§l%role% ");
+        SUCCESSFULLY_CHANGED_ROLE("messages.successfully-changed-role", "§bYou have successfully changed the player role to§r §e§l%role% "),
+
+        CLAN_MENU("menu-gui.clan-menu.inventory-name", "Clan menu "),
+        CLAN_BANK("menu-gui.clan-menu.clan-bank", "Clan bank "),
+        CLAN_BANK_DESCRIPTION("menu-gui.clan-menu.clan-bank-description", "Opens the clan bank menu "),
+        CLAN_MEMBERS("menu-gui.clan-menu.clan-members", "Clan members "),
+        CLAN_MEMBERS_DESCRIPTION("menu-gui.clan-menu.clan-members-description", "Opens list of clan members "),
+        TOP_CLANS("menu-gui.clan-menu.top-clans", "Top clans "),
+        TOP_CLANS_DESCRIPTION("menu-gui.clan-menu.top-clans-description", "Opens list of the best clans "),
+
+        MEMBERS_MENU("menu-gui.members-menu.inventory-name", "Members menu "),
+        MEMBERS_BACK_TO_MENU("menu-gui.members-menu.members-back-to-menu", "Go back "),
+        MEMBERS_BACK_TO_MENU_DESCRIPTION("menu-gui.members-menu.members-back-to-menu-description", "Opens main clan menu "),
+
+        MEMBER_MENU("menu-gui.member-menu.inventory-name", "Member menu "),
+        CHANGE_ROLE("menu-gui.member-menu.change-role", "Change role "),
+        CHANGE_ROLE_DESCRIPTION("menu-gui.member-menu.change-role-description", "Changes role "),
+        KICK_MEMBER("menu-gui.member-menu.kick-member", "Kick member "),
+        KICK_MEMBER_DESCRIPTION("menu-gui.member-menu.kick-member-description", "Kicks member out of the clan "),
+        MEMBER_BACK_TO_MENU("menu-gui.member-menu.member-back-to-menu", "Go back "),
+        MEMBER_BACK_TO_MENU_DESCRIPTION("menu-gui.member-menu.member-back-to-menu-description", "Opens members menu "),
+
+        LEADER("roles.leader", "Leader "),
+        ELDER("roles.elder", "Elder "),
+        MEMBER("roles.member", "Member "),
+        NO_CLAN("roles.no-clan", "null ");
         private String path;
         private String msg;
         private static YamlConfiguration LANG;
@@ -112,7 +137,32 @@ public class Langs {
         SUCCESSFULLY_LEFT("messages.successfully-left", "§bВы успешно покинули клан§r §e§l%clan% "),
         SET_ROLE_YOURSELF("messages.set-role-yourself", "§eВы не можете изменить свою роль "),
         YOU_BEEN_ASSIGNED("messages.you-been-assigned", "§bВам была присвоена роль§r §e§l%role% "),
-        SUCCESSFULLY_CHANGED_ROLE("messages.successfully-changed-role", "§bВы успешно изменили роль игрока на§r §e§l%role% ");
+        SUCCESSFULLY_CHANGED_ROLE("messages.successfully-changed-role", "§bВы успешно изменили роль игрока на§r §e§l%role% "),
+
+        CLAN_MENU("menu-gui.clan-menu.inventory-name", "Меню клана "),
+        CLAN_BANK("menu-gui.clan-menu.clan-bank", "Банк клана "),
+        CLAN_BANK_DESCRIPTION("menu-gui.clan-menu.clan-bank-description", "Открывает меню банка клана "),
+        CLAN_MEMBERS("menu-gui.clan-menu.clan-members", "Меню участников "),
+        CLAN_MEMBERS_DESCRIPTION("menu-gui.clan-menu.clan-members-description", "Открывает список участников "),
+        TOP_CLANS("menu-gui.clan-menu.top-clans", "Топ кланов "),
+        TOP_CLANS_DESCRIPTION("menu-gui.clan-menu.top-clans-description", "Открывает список лучших кланов "),
+
+        MEMBERS_MENU("menu-gui.members-menu.inventory-name", "Меню участников "),
+        MEMBERS_BACK_TO_MENU("menu-gui.members-menu.members-back-to-menu", "Вернуться назад "),
+        MEMBERS_BACK_TO_MENU_DESCRIPTION("menu-gui.members-menu.members-back-to-menu-description", "Открывает основное меню клана "),
+
+        MEMBER_MENU("menu-gui.member-menu.inventory-name", "Меню участника "),
+        CHANGE_ROLE("menu-gui.member-menu.change-role", "Сменить роль "),
+        CHANGE_ROLE_DESCRIPTION("menu-gui.member-menu.change-role-description", "Меняет роль "),
+        KICK_MEMBER("menu-gui.member-menu.kick-member", "Выгнать участника "),
+        KICK_MEMBER_DESCRIPTION("menu-gui.member-menu.kick-member-description", "Выгоняет участника из клана "),
+        MEMBER_BACK_TO_MENU("menu-gui.member-menu.member-back-to-menu", "Вернуться назад "),
+        MEMBER_BACK_TO_MENU_DESCRIPTION("menu-gui.member-menu.member-back-to-menu-description", "Открывает меню участников "),
+
+        LEADER("roles.leader", "Глава "),
+        ELDER("roles.elder", "Старейшина "),
+        MEMBER("roles.member", "Участник "),
+        NO_CLAN("roles.no-clan", "null ");
         private String path;
         private String msg;
         private static YamlConfiguration LANG;
