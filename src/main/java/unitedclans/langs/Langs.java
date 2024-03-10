@@ -69,7 +69,7 @@ public class Langs {
         LEADER("roles.leader", "Leader "),
         ELDER("roles.elder", "Elder "),
         MEMBER("roles.member", "Member "),
-        NO_CLAN("roles.no-clan", "null ");
+        NO_CLAN("roles.no-clan", "NoClan ");
         private String path;
         private String msg;
         private static YamlConfiguration LANG;
@@ -162,7 +162,7 @@ public class Langs {
         LEADER("roles.leader", "Глава "),
         ELDER("roles.elder", "Старейшина "),
         MEMBER("roles.member", "Участник "),
-        NO_CLAN("roles.no-clan", "null ");
+        NO_CLAN("roles.no-clan", "NoClan ");
         private String path;
         private String msg;
         private static YamlConfiguration LANG;

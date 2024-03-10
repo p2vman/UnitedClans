@@ -14,6 +14,8 @@ public class LocalizationUtils {
             msg = LangEN.valueOf(msgTitle).toString();
         } else if (cfgLang.equals("ru_ru")) {
             msg = LangRU.valueOf(msgTitle).toString();
+        } else {
+            msg = LangEN.valueOf(msgTitle).toString();
         }
         return msg;
     }

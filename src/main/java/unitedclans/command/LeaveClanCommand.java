@@ -27,7 +27,8 @@ public class LeaveClanCommand implements CommandExecutor {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
-        if (args.length >= 1) {
+        String clanNameInput = args[0];
+        if (args.length <= 0 || args.length >= 2) {
             sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return false;
@@ -37,8 +38,23 @@ public class LeaveClanCommand implements CommandExecutor {
             ResultSet rsLeavingPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             String LeavingPlayerRole = rsLeavingPlayer.getString("ClanRole");
             Integer LeavingPlayerClanID = rsLeavingPlayer.getInt("ClanID");
+
+            ResultSet rsgetClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "'");
+            String getClanName = rsgetClan.getString("ClanName");
+            Integer getClanID = rsgetClan.getInt("ClanID");
+
             if (LeavingPlayerClanID == 0) {
                 sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_CLAN"));
+                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
+                return true;
+            }
+            if (getClanName == null) {
+                sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_CLAN_NAME"));
+                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
+                return true;
+            }
+            if (getClanID != LeavingPlayerClanID) {
+                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_THIS_CLAN"));
                 playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
                 return true;
             }
@@ -56,6 +72,9 @@ public class LeaveClanCommand implements CommandExecutor {
             while (rsClanPlayers.next()) {
                 String playerNameClan = rsClanPlayers.getString("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerNameClan);
+                if (playerClan == null || playerClan == playerSender) {
+                    continue;
+                }
                 playerClan.sendMessage(playerleavemsg.replace("%player%", playerSender.getName()));
             }
             ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + LeavingPlayerClanID);

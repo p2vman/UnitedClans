@@ -4,6 +4,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.command.*;
 import unitedclans.handler.*;
+import unitedclans.langs.DefaultConfig;
 import unitedclans.utils.LocalizationUtils;
 
 import java.sql.*;
@@ -15,7 +16,7 @@ public final class UnitedClans extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         instance = this;
-        saveDefaultConfig();
+        DefaultConfig.createDefaultConfigFile(this);
         LocalizationUtils.loadLang(this);
 
         try {

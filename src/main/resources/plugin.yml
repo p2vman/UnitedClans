@@ -32,7 +32,7 @@ commands:
       - kclan
   leaveclan:
     description: This command allows the player to leave the clan
-    usage: /<command>
+    usage: /<command> <clan name>
     aliases:
       - lclan
   setroleclan:

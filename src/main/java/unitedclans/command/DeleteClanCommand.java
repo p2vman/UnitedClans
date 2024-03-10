@@ -67,10 +67,10 @@ public class DeleteClanCommand implements CommandExecutor {
             ResultSet rsUUID = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanIDPlayer);
             while (rsUUID.next()) {
                 String playerName = rsUUID.getString("PlayerName");
-                if (Objects.equals(playerName, playerSender.getName())) {
+                Player playerClan = plugin.getServer().getPlayer(playerName);
+                if (playerClan == null || playerClan == playerSender) {
                     continue;
                 }
-                Player playerClan = plugin.getServer().getPlayer(playerName);
                 playerClan.sendMessage(LocalizationUtils.langCheck(language, "LEADER_DELETE_CLAN"));
                 playerClan.playSound(playerClan.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }

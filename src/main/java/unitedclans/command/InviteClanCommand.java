@@ -87,6 +87,7 @@ public class InviteClanCommand implements CommandExecutor {
             playerName.sendMessage(invitationmsg.replace("%clan%", clanName).replace("%player%", sender.getName()));
             playerName.sendMessage(acceptmsg);
             sender.sendMessage(LocalizationUtils.langCheck(language, "INVITATION_SENT"));
+            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             stmt.close();
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                 @Override
