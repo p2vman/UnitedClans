@@ -52,3 +52,8 @@ commands:
       - msgclan
       - msgc
       - cc
+  changeleaderclan:
+    description: This command allows you to change the clan leader
+    usage: /<command> <clan name> <player>
+    aliases:
+      - clclan

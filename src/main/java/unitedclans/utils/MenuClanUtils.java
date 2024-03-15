@@ -161,4 +161,38 @@ public class MenuClanUtils {
 
         player.openInventory(memberMenuGUI);
     }
+
+    public static void openChangeRoleMenu(Player player) {
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        Inventory changeRoleMenuGUI = Bukkit.createInventory(player, 9, ChatColor.BOLD + LocalizationUtils.langCheck(language, "CHANGE_ROLE_MENU"));
+
+        ItemStack member = new ItemStack(Material.STICK, 1);
+        ItemMeta member_meta = member.getItemMeta();
+        member_meta.setDisplayName(ChatColor.RESET + (ChatColor.GREEN + LocalizationUtils.langCheck(language, "SET_MEMBER")));
+        ArrayList<String> member_lore = new ArrayList<>();
+        member_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "SET_MEMBER_DESCRIPTION")));
+        member_meta.setLore(member_lore);
+        member.setItemMeta(member_meta);
+        changeRoleMenuGUI.setItem(1, member);
+
+        ItemStack elder = new ItemStack(Material.BLAZE_ROD, 1);
+        ItemMeta elder_meta = elder.getItemMeta();
+        elder_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + LocalizationUtils.langCheck(language, "SET_ELDER")));
+        ArrayList<String> elder_lore = new ArrayList<>();
+        elder_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "SET_ELDER_DESCRIPTION")));
+        elder_meta.setLore(elder_lore);
+        elder.setItemMeta(elder_meta);
+        changeRoleMenuGUI.setItem(4, elder);
+
+        ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
+        ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
+        BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "CHANGE_ROLE_BACK_TO_MENU")));
+        ArrayList<String> BackToMenu_lore = new ArrayList<>();
+        BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "CHANGE_ROLE_BACK_TO_MENU_DESCRIPTION")));
+        BackToMenu_meta.setLore(BackToMenu_lore);
+        BackToMenu.setItemMeta(BackToMenu_meta);
+        changeRoleMenuGUI.setItem(7, BackToMenu);
+
+        player.openInventory(changeRoleMenuGUI);
+    }
 }

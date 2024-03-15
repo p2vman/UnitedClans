@@ -27,12 +27,12 @@ public class KickClanCommand implements CommandExecutor {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
+        String playerName = args[0];
         if (args.length <= 0 || args.length >= 2) {
             sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
             return false;
         }
-        String playerName = args[0];
         if (playerName == null) {
             sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_PLAYER_NAME"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);

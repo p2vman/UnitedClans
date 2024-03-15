@@ -54,7 +54,7 @@ public class CreateClanCommand implements CommandExecutor {
         if (!valExist) {
             sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_COLOR_NAME"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-            return valExist;
+            return true;
         }
         try {
             Statement stmt = con.createStatement();
