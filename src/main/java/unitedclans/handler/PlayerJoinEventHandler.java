@@ -23,7 +23,7 @@ public class PlayerJoinEventHandler implements Listener {
         UUID uuid = playerJoin.getPlayer().getUniqueId();
         try {
             Statement stmt = con.createStatement();
-            ResultSet rsPlayers = stmt.executeQuery("SELECT UUID FROM PLAYERS WHERE UUID IS '" + uuid + "'" );
+            ResultSet rsPlayers = stmt.executeQuery("SELECT UUID FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             if (!rsPlayers.next()) {
                 stmt.executeUpdate("INSERT INTO PLAYERS (UUID, PlayerName, ClanID, ClanRole) VALUES ('" + uuid + "', '" + playerJoin.getPlayer().getName() + "', " + 0 + ", '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "')");
             }

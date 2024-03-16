@@ -1,12 +1,11 @@
 package unitedclans.command;
 
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import unitedclans.UnitedClans;
-import unitedclans.utils.LocalizationUtils;
+import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.MenuClanUtils;
 
 import java.sql.*;
@@ -24,19 +23,15 @@ public class MenuClanCommand implements CommandExecutor {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
-        if (args.length >= 1) {
-            sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
-            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-            return false;
-        }
         try {
             Statement stmt = con.createStatement();
+            if (args.length != 0) {
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+            }
             ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             Integer PlayerClanID = rsPlayerClan.getInt("ClanID");
             if (PlayerClanID == 0) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_CLAN"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
             }
 
             MenuClanUtils.openClanMenu(playerSender);

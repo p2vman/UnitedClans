@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
 
@@ -27,14 +28,13 @@ public class DeleteClanCommand implements CommandExecutor {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
-        String clanNameInput = args[0];
-        if (args.length <= 0 || args.length >= 2) {
-            sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
-            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-            return false;
-        }
         try {
             Statement stmt = con.createStatement();
+            if (args.length != 1) {
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+            }
+            String clanNameInput = args[0];
+
             ResultSet rsgetClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "'");
             String getClanName = rsgetClan.getString("ClanName");
             Integer getClanID = rsgetClan.getInt("ClanID");
@@ -44,24 +44,16 @@ public class DeleteClanCommand implements CommandExecutor {
             String getLeaderUUID = rsgetClanPlayer.getString("ClanRole");
 
             if (getClanName == null) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_CLAN_NAME"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "WRONG_CLAN_NAME", true);
             }
             if (getClanIDPlayer == 0) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_CLAN"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
             }
             if (getClanID != getClanIDPlayer) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_THIS_CLAN"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_THIS_CLAN", true);
             }
             if (!Objects.equals(getLeaderUUID, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "NOT_LEADER"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "NOT_LEADER", true);
             }
 
             ResultSet rsUUID = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanIDPlayer);

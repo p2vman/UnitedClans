@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 
 import java.sql.*;
@@ -26,49 +27,36 @@ public class SetRoleClanCommand implements CommandExecutor {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
-        if (args.length != 2) {
-            sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
-            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-            return false;
-        }
-        String playerNameInput = args[0];
-        String playerRoleInput = args[1];
-        if (playerNameInput == null) {
-            sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_PLAYER_NAME"));
-            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-            return true;
-        }
-        if ((playerRoleInput == null) || (!Objects.equals(playerRoleInput, UnitedClans.getInstance().getConfig().getString("roles.elder"))) && (!Objects.equals(playerRoleInput, UnitedClans.getInstance().getConfig().getString("roles.member")))) {
-            sender.sendMessage(LocalizationUtils.langCheck(language, "WRONG_ROLE_NAME"));
-            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-            return true;
-        }
-        if (Objects.equals(playerSender.getName(), playerNameInput)) {
-            sender.sendMessage(LocalizationUtils.langCheck(language, "SET_ROLE_YOURSELF"));
-            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-            return true;
-        }
         try {
             Statement stmt = con.createStatement();
+            if (args.length != 2) {
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+            }
+            String playerNameInput = args[0];
+            String playerRoleInput = args[1];
+
+            if (playerNameInput == null) {
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "WRONG_PLAYER_NAME", true);
+            }
+            if ((playerRoleInput == null) || (!Objects.equals(playerRoleInput, UnitedClans.getInstance().getConfig().getString("roles.elder"))) && (!Objects.equals(playerRoleInput, UnitedClans.getInstance().getConfig().getString("roles.member")))) {
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "WRONG_ROLE_NAME", true);
+            }
+            if (Objects.equals(playerSender.getName(), playerNameInput)) {
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "SET_ROLE_YOURSELF", true);
+            }
             ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             String senderRole = rsSender.getString("ClanRole");
             Integer senderClanID = rsSender.getInt("ClanID");
             if (!Objects.equals(senderRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "NO_RIGHTS_SET_ROLE"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "NO_RIGHTS_SET_ROLE", true);
             }
             ResultSet rsPlayerName = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + playerNameInput + "'");
             Integer playerClanID = rsPlayerName.getInt("ClanID");
             if (playerClanID == 0) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "PLAYER_NOT_MEMBER_CLAN"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "PLAYER_NOT_MEMBER_CLAN", true);
             }
             if (senderClanID != playerClanID) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "PLAYER_NOT_YOUR_CLAN"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "PLAYER_NOT_YOUR_CLAN", true);
             }
 
             stmt.executeUpdate("UPDATE PLAYERS SET ClanRole = '" + playerRoleInput + "' WHERE PlayerName IS '" + playerNameInput + "'");

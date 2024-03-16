@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 
 import java.sql.*;
@@ -27,20 +28,15 @@ public class ChatClanCommand implements CommandExecutor {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
-        if (args.length < 1) {
-            sender.sendMessage(LocalizationUtils.langCheck(language, "INVALID_COMMAND"));
-            playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-            return false;
-        }
-
         try {
             Statement stmt = con.createStatement();
+            if (args.length < 1) {
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+            }
             ResultSet rsPlayerSender = stmt.executeQuery( "SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
             Integer senderClanID = rsPlayerSender.getInt("ClanID");
             if (senderClanID == 0) {
-                sender.sendMessage(LocalizationUtils.langCheck(language, "YOU_NOT_MEMBER_CLAN"));
-                playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_ATTACK_STRONG, 1.0f, 1.0f);
-                return true;
+                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
             }
 
             StringBuilder message = new StringBuilder();
@@ -55,6 +51,9 @@ public class ChatClanCommand implements CommandExecutor {
             while (rsClanPlayers.next()) {
                 String playerNameClan = rsClanPlayers.getString("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerNameClan);
+                if (playerClan == null) {
+                    continue;
+                }
                 playerClan.sendMessage(messagepattern.replace("%clan%", ChatColor.valueOf(clanColor) + (ChatColor.BOLD + clanName + ChatColor.RESET)).replace("%sender%", playerSender.getName()).replace("%message%", message));
             }
             stmt.close();

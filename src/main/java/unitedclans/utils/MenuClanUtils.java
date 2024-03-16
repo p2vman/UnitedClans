@@ -166,7 +166,7 @@ public class MenuClanUtils {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Inventory changeRoleMenuGUI = Bukkit.createInventory(player, 9, ChatColor.BOLD + LocalizationUtils.langCheck(language, "CHANGE_ROLE_MENU"));
 
-        ItemStack member = new ItemStack(Material.STICK, 1);
+        ItemStack member = new ItemStack(Material.BAMBOO, 1);
         ItemMeta member_meta = member.getItemMeta();
         member_meta.setDisplayName(ChatColor.RESET + (ChatColor.GREEN + LocalizationUtils.langCheck(language, "SET_MEMBER")));
         ArrayList<String> member_lore = new ArrayList<>();
@@ -175,14 +175,23 @@ public class MenuClanUtils {
         member.setItemMeta(member_meta);
         changeRoleMenuGUI.setItem(1, member);
 
-        ItemStack elder = new ItemStack(Material.BLAZE_ROD, 1);
+        ItemStack elder = new ItemStack(Material.STICK, 1);
         ItemMeta elder_meta = elder.getItemMeta();
         elder_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + LocalizationUtils.langCheck(language, "SET_ELDER")));
         ArrayList<String> elder_lore = new ArrayList<>();
         elder_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "SET_ELDER_DESCRIPTION")));
         elder_meta.setLore(elder_lore);
         elder.setItemMeta(elder_meta);
-        changeRoleMenuGUI.setItem(4, elder);
+        changeRoleMenuGUI.setItem(3, elder);
+
+        ItemStack leader = new ItemStack(Material.BLAZE_ROD, 1);
+        ItemMeta leader_meta = leader.getItemMeta();
+        leader_meta.setDisplayName(ChatColor.RESET + (ChatColor.DARK_PURPLE + LocalizationUtils.langCheck(language, "SET_LEADER")));
+        ArrayList<String> leader_lore = new ArrayList<>();
+        leader_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "SET_LEADER_DESCRIPTION")));
+        leader_meta.setLore(leader_lore);
+        leader.setItemMeta(leader_meta);
+        changeRoleMenuGUI.setItem(5, leader);
 
         ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
         ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
@@ -194,5 +203,43 @@ public class MenuClanUtils {
         changeRoleMenuGUI.setItem(7, BackToMenu);
 
         player.openInventory(changeRoleMenuGUI);
+    }
+
+    public static void openConfirmRoleMenu(Player player) {
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        Inventory confirmRoleMenuGUI = Bukkit.createInventory(player, 9, ChatColor.BOLD + LocalizationUtils.langCheck(language, "CONFIRM_ROLE_MENU"));
+
+        ItemStack confirm = new ItemStack(Material.GREEN_STAINED_GLASS_PANE, 1);
+        ItemMeta confirm_meta = confirm.getItemMeta();
+        confirm_meta.setDisplayName(ChatColor.RESET + (ChatColor.GREEN + LocalizationUtils.langCheck(language, "CONFIRM")));
+        ArrayList<String> confirm_lore = new ArrayList<>();
+        confirm_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "CONFIRM_DESCRIPTION")));
+        confirm_meta.setLore(confirm_lore);
+        confirm.setItemMeta(confirm_meta);
+        for (int i = 0; i < 4; i++) {
+            confirmRoleMenuGUI.setItem(i, confirm);
+        }
+
+        ItemStack not_confirm = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
+        ItemMeta not_confirm_meta = not_confirm.getItemMeta();
+        not_confirm_meta.setDisplayName(ChatColor.RESET + (ChatColor.RED + LocalizationUtils.langCheck(language, "NOT_CONFIRM")));
+        ArrayList<String> not_confirm_lore = new ArrayList<>();
+        not_confirm_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "NOT_CONFIRM_DESCRIPTION")));
+        not_confirm_meta.setLore(not_confirm_lore);
+        not_confirm.setItemMeta(not_confirm_meta);
+        for (int i = 5; i < 9; i++) {
+            confirmRoleMenuGUI.setItem(i, not_confirm);
+        }
+
+        ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
+        ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
+        BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "CONFIRM_ROLE_BACK_TO_MENU")));
+        ArrayList<String> BackToMenu_lore = new ArrayList<>();
+        BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "CONFIRM_ROLE_BACK_TO_MENU_DESCRIPTION")));
+        BackToMenu_meta.setLore(BackToMenu_lore);
+        BackToMenu.setItemMeta(BackToMenu_meta);
+        confirmRoleMenuGUI.setItem(4, BackToMenu);
+
+        player.openInventory(confirmRoleMenuGUI);
     }
 }
