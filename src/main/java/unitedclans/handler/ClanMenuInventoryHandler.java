@@ -83,15 +83,15 @@ public class ClanMenuInventoryHandler implements Listener {
                     ResultSet rsPlayerRole = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "'");
                     String PlayerRole = rsPlayerRole.getString("ClanRole");
                     stmt.close();
-                    if (Objects.equals(PlayerRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                        MenuClanUtils.openConfirmRoleMenu(player);
-                        player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
-                    } else if (Objects.equals(player.getName(), selectedPlayerName)) {
+                    if (Objects.equals(player.getName(), selectedPlayerName)) {
                         player.closeInventory();
                         GeneralUtils.checkUtil(stmt, player, language, "SET_ROLE_YOURSELF", true);
-                    } else {
+                    } else if (!Objects.equals(PlayerRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
                         player.closeInventory();
                         GeneralUtils.checkUtil(stmt, player, language, "NO_RIGHTS_SET_ROLE", true);
+                    } else {
+                        MenuClanUtils.openConfirmRoleMenu(player);
+                        player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
                     }
                 } catch (Exception e) {
                     System.err.println(e.getClass().getName() + ": " + e.getMessage());

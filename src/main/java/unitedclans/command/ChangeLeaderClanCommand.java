@@ -76,10 +76,10 @@ public class ChangeLeaderClanCommand implements CommandExecutor {
             String changeleadermsg = LocalizationUtils.langCheck(language, "CHANGE_LEADER");
             while (rsClanPlayers.next()) {
                 String playerNameClan = rsClanPlayers.getString("PlayerName");
-                if (Objects.equals(playerNameClan, playerSender.getName()) || Objects.equals(playerNameClan, playerName)) {
+                Player playerClan = plugin.getServer().getPlayer(playerNameClan);
+                if (playerClan == null || Objects.equals(playerNameClan, playerSender.getName()) || Objects.equals(playerNameClan, playerName)) {
                     continue;
                 }
-                Player playerClan = plugin.getServer().getPlayer(playerNameClan);
                 playerClan.sendMessage(changeleadermsg.replace("%old-leader%", playerSender.getName()).replace("%new-leader%", playerName));
                 playerClan.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
