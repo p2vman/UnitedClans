@@ -13,16 +13,17 @@ import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.hover.content.*;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
+import unitedclans.utils.SqliteDriver;
 
-import java.sql.*;
 import java.util.*;
+
 
 public class InviteClanCommand implements CommandExecutor {
     private final JavaPlugin plugin;
-    private Connection con;
-    public InviteClanCommand(JavaPlugin plugin, Connection con) {
+    private SqliteDriver sql;
+    public InviteClanCommand(JavaPlugin plugin, SqliteDriver sql) {
         this.plugin = plugin;
-        this.con = con;
+        this.sql = sql;
     }
 
     @Override
@@ -32,41 +33,57 @@ public class InviteClanCommand implements CommandExecutor {
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         try {
-            Statement stmt = con.createStatement();
             if (args.length != 1) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+                return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
             }
+
             String playerNameInput = args[0];
             Player playerName = plugin.getServer().getPlayer(playerNameInput);
 
             if (playerName == null) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "WRONG_PLAYER_NAME", true);
-            }
-            if (uuid == playerName.getUniqueId()) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "SEND_INVITATION_YOURSELF", true);
-            }
-            ResultSet rsInvitedPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + playerName.getUniqueId() + "'");
-            if (rsInvitedPlayer.getInt("ClanID") != 0) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "PLAYER_MEMBER_CLAN", true);
-            }
-            ResultSet rsSender = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
-            String getRoleUUID = rsSender.getString("ClanRole");
-            Integer getClanID = rsSender.getInt("ClanID");
-            if (!Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.leader")) && !Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "NO_RIGHTS_INVITE", true);
-            }
-            ResultSet rsInviteCheker = stmt.executeQuery("SELECT * FROM INVITATIONS WHERE UUID IS '" + playerName.getUniqueId() + "'");
-            if (rsInviteCheker.next()) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "ALREADY_SENT_INVITATION", true);
-            }
-            ResultSet rsClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + getClanID);
-            Integer countMembers = rsClan.getInt("CountMembers");
-            String clanName = rsClan.getString("ClanName");
-            if (countMembers >= 25) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOUR_CLAN_MAX", true);
+                return GeneralUtils.checkUtil(playerSender, language, "WRONG_PLAYER_NAME", true);
             }
 
-            stmt.executeUpdate("INSERT INTO INVITATIONS (UUID, PlayerName, ClanID) " + "VALUES ('" + playerName.getUniqueId() + "', '" + playerName.getName() + "', " + getClanID + ")");
+            if (uuid == playerName.getUniqueId()) {
+                return GeneralUtils.checkUtil(playerSender, language, "SEND_INVITATION_YOURSELF", true);
+            }
+
+            List<Map<String, Object>> rsSender = sql.sqlSelectData("ClanRole, ClanID", "PLAYERS", "UUID = '" + uuid + "'");
+            String getRoleUUID = (String) rsSender.get(0).get("ClanRole");
+            Integer getClanID = (Integer) rsSender.get(0).get("ClanID");
+
+            if (getClanID == 0) {
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
+            }
+
+            List<Map<String, Object>> rsInvitedPlayer = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + playerName.getUniqueId() + "'");
+            Integer ClanID = (Integer) rsInvitedPlayer.get(0).get("ClanID");
+
+            if (ClanID != 0) {
+                return GeneralUtils.checkUtil(playerSender, language, "PLAYER_MEMBER_CLAN", true);
+            }
+
+            if (!Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.leader")) && !Objects.equals(getRoleUUID, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                return GeneralUtils.checkUtil(playerSender, language, "NO_RIGHTS_INVITE", true);
+            }
+
+            List<Map<String, Object>> rsInviteChecker = sql.sqlSelectData("UUID", "INVITATIONS", "UUID = '" + playerName.getUniqueId() + "'");
+            if (!rsInviteChecker.isEmpty()) {
+                return GeneralUtils.checkUtil(playerSender, language, "ALREADY_SENT_INVITATION", true);
+            }
+
+            List<Map<String, Object>> rsClan = sql.sqlSelectData("ClanName, CountMembers", "CLANS", "ClanID = " + getClanID);
+            String clanName = (String) rsClan.get(0).get("ClanName");
+            Integer countMembers = (Integer) rsClan.get(0).get("CountMembers");
+            if (countMembers >= 25) {
+                return GeneralUtils.checkUtil(playerSender, language, "YOUR_CLAN_MAX", true);
+            }
+
+            Map<String, Object> insertMap = new HashMap<>();
+            insertMap.put("UUID", playerName.getUniqueId());
+            insertMap.put("PlayerName", playerName.getName());
+            insertMap.put("ClanID", getClanID);
+            sql.sqlInsertData("INVITATIONS", insertMap);
 
             String invitationmsg = LocalizationUtils.langCheck(language, "INVITATION");
             TextComponent acceptmsg = new TextComponent(LocalizationUtils.langCheck(language, "ACCEPT"));
@@ -76,14 +93,12 @@ public class InviteClanCommand implements CommandExecutor {
             playerName.sendMessage(acceptmsg);
             sender.sendMessage(LocalizationUtils.langCheck(language, "INVITATION_SENT"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-            stmt.close();
+
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Statement stmt = con.createStatement();
-                        stmt.executeUpdate("DELETE FROM INVITATIONS WHERE UUID IS '" + playerName.getUniqueId() + "'");
-                        stmt.close();
+                        sql.sqlDeleteData("INVITATIONS", "UUID = '" + playerName.getUniqueId() + "'");
                     } catch (Exception e) {
                         System.err.println(e.getClass().getName() + ": " + e.getMessage());
                     }

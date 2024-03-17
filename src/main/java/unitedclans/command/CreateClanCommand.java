@@ -10,16 +10,17 @@ import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
+import unitedclans.utils.SqliteDriver;
 
-import java.sql.*;
 import java.util.*;
+
 
 public class CreateClanCommand implements CommandExecutor {
     private final JavaPlugin plugin;
-    private Connection con;
-    public CreateClanCommand(JavaPlugin plugin, Connection con) {
+    private SqliteDriver sql;
+    public CreateClanCommand(JavaPlugin plugin, SqliteDriver sql) {
         this.plugin = plugin;
-        this.con = con;
+        this.sql = sql;
     }
 
     @Override
@@ -29,18 +30,19 @@ public class CreateClanCommand implements CommandExecutor {
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         try {
-            Statement stmt = con.createStatement();
             if (args.length != 2) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+                return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
             }
+
             String clanNameInput = args[0];
             String clanColorInput = args[1];
 
             if (clanNameInput == null) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "WRONG_CLAN_NAME", true);
+                return GeneralUtils.checkUtil(playerSender, language, "WRONG_CLAN_NAME", true);
             }
+
             if (clanNameInput.length() < 3 || clanNameInput.length() > 12) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "LENGTH_CLAN_NAME", true);
+                return GeneralUtils.checkUtil(playerSender, language, "LENGTH_CLAN_NAME", true);
             }
 
             boolean valExist = false;
@@ -51,31 +53,39 @@ public class CreateClanCommand implements CommandExecutor {
                 }
             }
             if (!valExist) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "WRONG_COLOR_NAME", true);
+                return GeneralUtils.checkUtil(playerSender, language, "WRONG_COLOR_NAME", true);
             }
 
-            ResultSet rsNumberClans = stmt.executeQuery("SELECT ClanID FROM CLANS WHERE ClanID IS (SELECT MAX(ClanID) FROM CLANS)");
-            Integer NumberClans = rsNumberClans.getInt("ClanID") + 1;
-
-            ResultSet rsChekerPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
-            if (rsChekerPlayer.getInt("ClanID") != 0) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_MEMBER_CLAN", true);
+            Integer NumberClans = 1;
+            List<Map<String, Object>> rsNumberClans = sql.sqlSelectData("ClanID", "CLANS", "ClanID = (SELECT MAX(ClanID) FROM CLANS)");
+            if (!rsNumberClans.isEmpty()) {
+                NumberClans = (Integer) rsNumberClans.get(0).get("ClanID") + 1;
             }
 
-            ResultSet rsChekerClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "'");
-            if (rsChekerClanName.next()) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "CLAN_NAME_TAKEN", true);
+            List<Map<String, Object>> rsCheckerPlayer = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + uuid + "'");
+            Integer ClanID = (Integer) rsCheckerPlayer.get(0).get("ClanID");
+            if (ClanID != 0) {
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_MEMBER_CLAN", true);
             }
 
-            stmt.executeUpdate("INSERT INTO CLANS (ClanID, ClanName, ClanColor, CountMembers) " + "VALUES (" + NumberClans + ", '" + clanNameInput + "', '" + clanColorInput + "', " + 1 + ")");
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "' WHERE UUID IS '" + uuid + "'");
-            stmt.close();
+            List<Map<String, Object>> rsCheckerClanName = sql.sqlSelectData("ClanName", "CLANS", "ClanName = '" + clanNameInput + "'");
+            if (!rsCheckerClanName.isEmpty()) {
+                return GeneralUtils.checkUtil(playerSender, language, "CLAN_NAME_TAKEN", true);
+            }
 
-            ShowClanUtils.showClan(plugin, con);
+            Map<String, Object> insertMap = new HashMap<>();
+            insertMap.put("ClanID", NumberClans);
+            insertMap.put("ClanName", clanNameInput);
+            insertMap.put("ClanColor", clanColorInput);
+            insertMap.put("CountMembers", 1);
+            sql.sqlInsertData("CLANS", insertMap);
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "'", "UUID = '" + uuid + "'");
 
             String createclanmsg = LocalizationUtils.langCheck(language, "SUCCESS_CREATE_CLAN");
             sender.sendMessage(createclanmsg.replace("%clan%", clanNameInput));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+
+            ShowClanUtils.showClan(plugin, sql);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

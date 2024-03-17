@@ -7,14 +7,15 @@ import org.bukkit.entity.Player;
 import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.MenuClanUtils;
+import unitedclans.utils.SqliteDriver;
 
-import java.sql.*;
 import java.util.*;
 
+
 public class MenuClanCommand implements CommandExecutor {
-    private Connection con;
-    public MenuClanCommand(Connection con) {
-        this.con = con;
+    private SqliteDriver sql;
+    public MenuClanCommand(SqliteDriver sql) {
+        this.sql = sql;
     }
 
     @Override
@@ -24,19 +25,17 @@ public class MenuClanCommand implements CommandExecutor {
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         try {
-            Statement stmt = con.createStatement();
             if (args.length != 0) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+                return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
             }
-            ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
-            Integer PlayerClanID = rsPlayerClan.getInt("ClanID");
+
+            List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + uuid + "'");
+            Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
             if (PlayerClanID == 0) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
             }
 
             MenuClanUtils.openClanMenu(playerSender);
-
-            stmt.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

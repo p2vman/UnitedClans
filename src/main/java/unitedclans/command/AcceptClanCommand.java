@@ -10,16 +10,17 @@ import unitedclans.UnitedClans;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
 import unitedclans.utils.GeneralUtils;
+import unitedclans.utils.SqliteDriver;
 
-import java.sql.*;
 import java.util.*;
+
 
 public class AcceptClanCommand implements CommandExecutor {
     private final JavaPlugin plugin;
-    private Connection con;
-    public AcceptClanCommand(JavaPlugin plugin, Connection con) {
+    private SqliteDriver sql;
+    public AcceptClanCommand(JavaPlugin plugin, SqliteDriver sql) {
         this.plugin = plugin;
-        this.con = con;
+        this.sql = sql;
     }
 
     @Override
@@ -29,42 +30,43 @@ public class AcceptClanCommand implements CommandExecutor {
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         try {
-            Statement stmt = con.createStatement();
             if (args.length != 0) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
-            }
-            ResultSet rsInvitation = stmt.executeQuery("SELECT * FROM INVITATIONS WHERE UUID IS '" + uuid + "'");
-            Integer ClanID = rsInvitation.getInt("ClanID");
-            if (!rsInvitation.next()) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_INVITED", true);
-            }
-            ResultSet rsClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + ClanID);
-            Integer countMembers = rsClan.getInt("CountMembers");
-            String clanName = rsClan.getString("ClanName");
-            if (countMembers >= 25) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "THIS_CLAN_MAX", true);
+                return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
             }
 
-            ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + ClanID);
+            List<Map<String, Object>> rsInvitation = sql.sqlSelectData("ClanID", "INVITATIONS", "UUID = '" + uuid + "'");
+            if (rsInvitation.isEmpty()) {
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_INVITED", true);
+            }
+            Integer ClanID = (Integer) rsInvitation.get(0).get("ClanID");
+
+            List<Map<String, Object>> rsClan = sql.sqlSelectData("CountMembers, ClanName", "CLANS", "ClanID = " + ClanID);
+            Integer countMembers = (Integer) rsClan.get(0).get("CountMembers");
+            if (countMembers >= 25) {
+                return GeneralUtils.checkUtil(playerSender, language, "THIS_CLAN_MAX", true);
+            }
+            String clanName = (String) rsClan.get(0).get("ClanName");
+
+            List<Map<String, Object>> rsClanPlayers = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + ClanID);
             String playerjoinedmsg = LocalizationUtils.langCheck(language, "PLAYER_JOINED");
-            while (rsClanPlayers.next()) {
-                String playerName = rsClanPlayers.getString("PlayerName");
+            for (Map<String, Object> i : rsClanPlayers) {
+                String playerName = (String) i.get("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerName);
                 if (playerClan == null) {
                     continue;
                 }
                 playerClan.sendMessage(playerjoinedmsg.replace("%player%", playerSender.getName()));
             }
+
             String joinedclanmsg = LocalizationUtils.langCheck(language, "SUCCESSFULLY_JOINED_CLAN");
             sender.sendMessage(joinedclanmsg.replace("%clan%", clanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "' WHERE UUID IS '" + uuid + "'");
-            stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers + 1 WHERE ClanID IS " + ClanID);
-            stmt.executeUpdate("DELETE FROM INVITATIONS WHERE UUID IS '" + uuid + "'");
-            stmt.close();
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "'", "UUID = '" + uuid + "'");
+            sql.sqlUpdateData("CLANS", "CountMembers = CountMembers + 1", "ClanID = " + ClanID);
+            sql.sqlDeleteData("INVITATIONS", "UUID = '" + uuid + "'");
 
-            ShowClanUtils.showClan(plugin, con);
+            ShowClanUtils.showClan(plugin, sql);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

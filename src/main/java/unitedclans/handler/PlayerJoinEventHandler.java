@@ -6,29 +6,34 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
 import unitedclans.utils.ShowClanUtils;
+import unitedclans.utils.SqliteDriver;
 
-import java.sql.*;
 import java.util.*;
+
 
 public class PlayerJoinEventHandler implements Listener {
     private final JavaPlugin plugin;
-    private Connection con;
-    public PlayerJoinEventHandler(JavaPlugin plugin, Connection con) {
+    private SqliteDriver sql;
+    public PlayerJoinEventHandler(JavaPlugin plugin, SqliteDriver sql) {
         this.plugin = plugin;
-        this.con = con;
+        this.sql = sql;
     }
 
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent playerJoin) {
         UUID uuid = playerJoin.getPlayer().getUniqueId();
         try {
-            Statement stmt = con.createStatement();
-            ResultSet rsPlayers = stmt.executeQuery("SELECT UUID FROM PLAYERS WHERE UUID IS '" + uuid + "'");
-            if (!rsPlayers.next()) {
-                stmt.executeUpdate("INSERT INTO PLAYERS (UUID, PlayerName, ClanID, ClanRole) VALUES ('" + uuid + "', '" + playerJoin.getPlayer().getName() + "', " + 0 + ", '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "')");
+            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("UUID", "PLAYERS", "UUID = '" + uuid + "'");
+            if (rsPlayers.isEmpty()) {
+                Map<String, Object> insertMap = new HashMap<>();
+                insertMap.put("UUID", uuid);
+                insertMap.put("PlayerName", playerJoin.getPlayer().getName());
+                insertMap.put("ClanID", 0);
+                insertMap.put("ClanRole", UnitedClans.getInstance().getConfig().getString("roles.no-clan"));
+                sql.sqlInsertData("PLAYERS", insertMap);
             }
-            stmt.close();
-            ShowClanUtils.showClan(plugin, con);
+
+            ShowClanUtils.showClan(plugin, sql);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

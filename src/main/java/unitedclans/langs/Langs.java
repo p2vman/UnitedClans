@@ -2,6 +2,7 @@ package unitedclans.langs;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+
 public class Langs {
     public enum LangEN {
         INVALID_COMMAND("messages.invalid-command", "§cThe command was entered incorrectly "),

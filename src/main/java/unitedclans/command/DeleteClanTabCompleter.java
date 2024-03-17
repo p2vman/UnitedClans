@@ -6,6 +6,7 @@ import org.bukkit.command.TabCompleter;
 
 import java.util.*;
 
+
 public class DeleteClanTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {

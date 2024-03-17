@@ -10,17 +10,18 @@ import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.MenuClanUtils;
+import unitedclans.utils.SqliteDriver;
 
-import java.sql.*;
-import java.util.Objects;
+import java.util.*;
+
 
 public class ClanMenuInventoryHandler implements Listener {
     private final JavaPlugin plugin;
-    private Connection con;
+    private SqliteDriver sql;
     private String selectedPlayerName;
-    public ClanMenuInventoryHandler(JavaPlugin plugin, Connection con) {
+    public ClanMenuInventoryHandler(JavaPlugin plugin, SqliteDriver sql) {
         this.plugin = plugin;
-        this.con = con;
+        this.sql = sql;
     }
 
     @EventHandler
@@ -32,7 +33,7 @@ public class ClanMenuInventoryHandler implements Listener {
             if (event.getCurrentItem() == null) {
 
             } else if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
-                MenuClanUtils.openMembersMenu(player, con);
+                MenuClanUtils.openMembersMenu(player, sql);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             } else if (event.getCurrentItem().getType() == Material.GOLD_BLOCK) {
 
@@ -45,7 +46,7 @@ public class ClanMenuInventoryHandler implements Listener {
 
             } else if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 selectedPlayerName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
-                MenuClanUtils.openMemberMenu(player, con, selectedPlayerName);
+                MenuClanUtils.openMemberMenu(player, sql, selectedPlayerName);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
                 MenuClanUtils.openClanMenu(player);
@@ -64,7 +65,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 plugin.getServer().dispatchCommand(player, "kickclan " + selectedPlayerName);
                 player.closeInventory();
             } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
-                MenuClanUtils.openMembersMenu(player, con);
+                MenuClanUtils.openMembersMenu(player, sql);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             }
             event.setCancelled(true);
@@ -79,16 +80,15 @@ public class ClanMenuInventoryHandler implements Listener {
                 player.closeInventory();
             } else if (event.getCurrentItem().getType() == Material.BLAZE_ROD) {
                 try {
-                    Statement stmt = con.createStatement();
-                    ResultSet rsPlayerRole = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "'");
-                    String PlayerRole = rsPlayerRole.getString("ClanRole");
-                    stmt.close();
+                    List<Map<String, Object>> rsPlayerRole = sql.sqlSelectData("ClanRole", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
+                    String PlayerRole = (String) rsPlayerRole.get(0).get("ClanRole");
+
                     if (Objects.equals(player.getName(), selectedPlayerName)) {
                         player.closeInventory();
-                        GeneralUtils.checkUtil(stmt, player, language, "SET_ROLE_YOURSELF", true);
+                        GeneralUtils.checkUtil(player, language, "SET_ROLE_YOURSELF", true);
                     } else if (!Objects.equals(PlayerRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
                         player.closeInventory();
-                        GeneralUtils.checkUtil(stmt, player, language, "NO_RIGHTS_SET_ROLE", true);
+                        GeneralUtils.checkUtil(player, language, "NO_RIGHTS_SET_ROLE", true);
                     } else {
                         MenuClanUtils.openConfirmRoleMenu(player);
                         player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
@@ -97,7 +97,7 @@ public class ClanMenuInventoryHandler implements Listener {
                     System.err.println(e.getClass().getName() + ": " + e.getMessage());
                 }
             } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
-                MenuClanUtils.openMemberMenu(player, con, selectedPlayerName);
+                MenuClanUtils.openMemberMenu(player, sql, selectedPlayerName);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             }
             event.setCancelled(true);
@@ -106,12 +106,12 @@ public class ClanMenuInventoryHandler implements Listener {
 
             } else if (event.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS_PANE) {
                 try {
-                    Statement stmt = con.createStatement();
-                    ResultSet rsPlayerClanID = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "'");
-                    Integer ClanID = rsPlayerClanID.getInt("ClanID");
-                    ResultSet rsClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + ClanID);
-                    String ClanName = rsClan.getString("ClanName");
-                    stmt.close();
+                    List<Map<String, Object>> rsPlayerClanID = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
+                    Integer ClanID = (Integer) rsPlayerClanID.get(0).get("ClanID");
+
+                    List<Map<String, Object>> rsClan = sql.sqlSelectData("ClanName", "CLANS", "ClanID = " + ClanID);
+                    String ClanName = (String) rsClan.get(0).get("ClanName");
+
                     plugin.getServer().dispatchCommand(player, "changeleaderclan " + ClanName + " " + selectedPlayerName);
                     player.closeInventory();
                 } catch (Exception e) {

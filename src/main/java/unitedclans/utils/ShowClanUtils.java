@@ -6,30 +6,36 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.*;
 
-import java.sql.*;
+import java.util.*;
+
 
 public class ShowClanUtils {
-    public static void showClan (JavaPlugin plugin, Connection con) {
+    public static void showClan (JavaPlugin plugin, SqliteDriver sql) {
         try {
-            Statement stmt = con.createStatement();
-            ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS");
+            List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID, PlayerName", "PLAYERS");
             ScoreboardManager manager = Bukkit.getScoreboardManager();
             Scoreboard board = manager.getNewScoreboard();
-            Statement stmtClan = con.createStatement();
-            while (rsPlayerClan.next()) {
-                Integer getClanID = rsPlayerClan.getInt("ClanID");
-                String getPlayerName = rsPlayerClan.getString("PlayerName");
-                ResultSet rsClan = stmtClan.executeQuery( "SELECT * FROM CLANS WHERE ClanID IS " + getClanID);
-                String clanName = rsClan.getString("ClanName");
-                String clanColor = rsClan.getString("ClanColor");
+
+            for (Map<String, Object> i : rsPlayerClan) {
+                Integer getClanID = (Integer) i.get("ClanID");
+                String getPlayerName = (String) i.get("PlayerName");
+                List<Map<String, Object>> rsClan = sql.sqlSelectData("ClanName, ClanColor", "CLANS", "ClanID = " + getClanID);
+                if (rsClan.isEmpty()) {
+                    continue;
+                }
+                String clanName = (String) rsClan.get(0).get("ClanName");
+                String clanColor = (String) rsClan.get(0).get("ClanColor");
                 Player getPlayer = plugin.getServer().getPlayer(getPlayerName);
+
                 if (getPlayer == null) {
                     continue;
                 }
+
                 if (getClanID == 0) {
                     getPlayer.setDisplayName(getPlayer.getName());
                     continue;
                 }
+
                 Team clan = board.getTeam(clanName);
                 if (clan == null) {
                     clan = board.registerNewTeam(clanName);
@@ -41,8 +47,6 @@ public class ShowClanUtils {
             for(Player onlinePlayer : Bukkit.getOnlinePlayers()){
                 onlinePlayer.setScoreboard(board);
             }
-            stmt.close();
-            stmtClan.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

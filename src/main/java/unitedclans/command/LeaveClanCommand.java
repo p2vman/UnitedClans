@@ -10,16 +10,17 @@ import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
+import unitedclans.utils.SqliteDriver;
 
-import java.sql.*;
 import java.util.*;
+
 
 public class LeaveClanCommand implements CommandExecutor {
     private final JavaPlugin plugin;
-    private Connection con;
-    public LeaveClanCommand(JavaPlugin plugin, Connection con) {
+    private SqliteDriver sql;
+    public LeaveClanCommand(JavaPlugin plugin, SqliteDriver sql) {
         this.plugin = plugin;
-        this.con = con;
+        this.sql = sql;
     }
 
     @Override
@@ -29,54 +30,59 @@ public class LeaveClanCommand implements CommandExecutor {
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         try {
-            Statement stmt = con.createStatement();
             if (args.length != 1) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+                return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
             }
+
             String clanNameInput = args[0];
 
-            ResultSet rsLeavingPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
-            String LeavingPlayerRole = rsLeavingPlayer.getString("ClanRole");
-            Integer LeavingPlayerClanID = rsLeavingPlayer.getInt("ClanID");
+            if (clanNameInput == null) {
+                return GeneralUtils.checkUtil(playerSender, language, "WRONG_CLAN_NAME", true);
+            }
 
-            ResultSet rsgetClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "'");
-            String getClanName = rsgetClan.getString("ClanName");
-            Integer getClanID = rsgetClan.getInt("ClanID");
+            List<Map<String, Object>> rsLeavingPlayer = sql.sqlSelectData("ClanRole, ClanID", "PLAYERS", "UUID = '" + uuid + "'");
+            String LeavingPlayerRole = (String) rsLeavingPlayer.get(0).get("ClanRole");
+            Integer LeavingPlayerClanID = (Integer) rsLeavingPlayer.get(0).get("ClanID");
+
+            List<Map<String, Object>> rsgetClan = sql.sqlSelectData("ClanID", "CLANS", "ClanName = '" + clanNameInput + "'");
+            if (rsgetClan.isEmpty()) {
+                return GeneralUtils.checkUtil(playerSender, language, "WRONG_CLAN_NAME", true);
+            }
+            Integer getClanID = (Integer) rsgetClan.get(0).get("ClanID");
 
             if (LeavingPlayerClanID == 0) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
             }
-            if (getClanName == null) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "WRONG_CLAN_NAME", true);
+
+            if (!getClanID.equals(LeavingPlayerClanID)) {
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_THIS_CLAN", true);
             }
-            if (getClanID != LeavingPlayerClanID) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_THIS_CLAN", true);
-            }
+
             if (Objects.equals(LeavingPlayerRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_LEADER", true);
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_LEADER", true);
             }
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "' WHERE UUID IS '" + uuid + "'");
-            stmt.executeUpdate("UPDATE CLANS SET CountMembers = CountMembers - 1 WHERE ClanID IS " + LeavingPlayerClanID);
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "'", "UUID = '" + uuid + "'");
+            sql.sqlUpdateData("CLANS", "CountMembers = CountMembers - 1", "ClanID = " + LeavingPlayerClanID);
 
-            ResultSet rsClanPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + LeavingPlayerClanID);
+            List<Map<String, Object>> rsClanPlayers = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + LeavingPlayerClanID);
             String playerleavemsg = LocalizationUtils.langCheck(language, "PLAYER_LEAVE");
-            while (rsClanPlayers.next()) {
-                String playerNameClan = rsClanPlayers.getString("PlayerName");
+            for (Map<String, Object> i : rsClanPlayers) {
+                String playerNameClan = (String) i.get("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerNameClan);
                 if (playerClan == null || playerClan == playerSender) {
                     continue;
                 }
                 playerClan.sendMessage(playerleavemsg.replace("%player%", playerSender.getName()));
             }
-            ResultSet rsClanName = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanID IS " + LeavingPlayerClanID);
-            String LeavingPlayerClanName = rsClanName.getString("ClanName");
+
+            List<Map<String, Object>> rsClanName = sql.sqlSelectData("ClanName", "CLANS", "ClanID = " + LeavingPlayerClanID);
+            String LeavingPlayerClanName = (String) rsClanName.get(0).get("ClanName");
             String successfullyleftmsg = LocalizationUtils.langCheck(language, "SUCCESSFULLY_LEFT");
             playerSender.sendMessage(successfullyleftmsg.replace("%clan%", LeavingPlayerClanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-            stmt.close();
 
-            ShowClanUtils.showClan(plugin, con);
+            ShowClanUtils.showClan(plugin, sql);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

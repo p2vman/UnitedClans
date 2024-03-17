@@ -6,11 +6,8 @@ import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.*;
 import unitedclans.UnitedClans;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
+
 
 public class MenuClanUtils {
     public static void openClanMenu(Player player) {
@@ -47,19 +44,22 @@ public class MenuClanUtils {
         player.openInventory(clanMenuGUI);
     }
 
-    public static void openMembersMenu(Player player, Connection con) {
+    public static void openMembersMenu(Player player, SqliteDriver sql) {
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        Inventory membersMenuGUI = Bukkit.createInventory(player, 36, ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBERS_MENU"));
         try {
-            String language = UnitedClans.getInstance().getConfig().getString("lang");
-            Statement stmt = con.createStatement();
-            ResultSet rsPlayerClan = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + player.getUniqueId() + "'");
-            Integer PlayerClanID = rsPlayerClan.getInt("ClanID");
-            ResultSet rsPlayers = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + PlayerClanID);
+            List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
+            Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
+
+            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("PlayerName, ClanRole", "PLAYERS", "ClanID = " + PlayerClanID);
+
             ArrayList<String> PlayerList = new ArrayList<>();
             ArrayList<String> RoleList = new ArrayList<>();
-            while (rsPlayers.next()) {
-                String getPlayersName = rsPlayers.getString("PlayerName");
+            for (Map<String, Object> i : rsPlayers) {
+                String getPlayersName = (String) i.get("PlayerName");
                 PlayerList.add(getPlayersName);
-                String getPlayersRole = rsPlayers.getString("ClanRole");
+
+                String getPlayersRole = (String) i.get("ClanRole");
                 String setRole = null;
                 if (Objects.equals(getPlayersRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
                     setRole = LocalizationUtils.langCheck(language, "LEADER");
@@ -71,7 +71,6 @@ public class MenuClanUtils {
                 RoleList.add(setRole);
             }
 
-            Inventory membersMenuGUI = Bukkit.createInventory(player, 36, ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBERS_MENU"));
             for (int i = 0; i < PlayerList.size(); i++) {
                 ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD, 1);
                 SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
@@ -83,6 +82,9 @@ public class MenuClanUtils {
                 playerHead.setItemMeta(meta);
                 membersMenuGUI.addItem(playerHead);
             }
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
 
             ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
             ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
@@ -96,13 +98,9 @@ public class MenuClanUtils {
             }
 
             player.openInventory(membersMenuGUI);
-            stmt.close();
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
     }
 
-    public static void openMemberMenu(Player player, Connection con, String selectedPlayerName) {
+    public static void openMemberMenu(Player player, SqliteDriver sql, String selectedPlayerName) {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Inventory memberMenuGUI = Bukkit.createInventory(player, 9, ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBER_MENU"));
 
@@ -111,9 +109,9 @@ public class MenuClanUtils {
         playerSelected_meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + selectedPlayerName));
         ArrayList<String> playerSelected_lore = new ArrayList<>();
         try {
-            Statement stmt = con.createStatement();
-            ResultSet rsplayerSelectedRole = stmt.executeQuery("SELECT * FROM PLAYERS WHERE PlayerName IS '" + selectedPlayerName + "'");
-            String playerSelectedRole = rsplayerSelectedRole.getString("ClanRole");
+            List<Map<String, Object>> rsplayerSelectedRole = sql.sqlSelectData("ClanRole", "PLAYERS", "PlayerName = '" + selectedPlayerName + "'");
+            String playerSelectedRole = (String) rsplayerSelectedRole.get(0).get("ClanRole");
+
             String setPlayerRole = null;
             if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
                 setPlayerRole = LocalizationUtils.langCheck(language, "LEADER");
@@ -123,7 +121,6 @@ public class MenuClanUtils {
                 setPlayerRole = LocalizationUtils.langCheck(language, "MEMBER");
             }
             playerSelected_lore.add(ChatColor.ITALIC + (ChatColor.DARK_PURPLE + setPlayerRole));
-            stmt.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

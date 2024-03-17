@@ -10,16 +10,17 @@ import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
+import unitedclans.utils.SqliteDriver;
 
-import java.sql.*;
 import java.util.*;
+
 
 public class DeleteClanCommand implements CommandExecutor {
     private final JavaPlugin plugin;
-    private Connection con;
-    public DeleteClanCommand(JavaPlugin plugin, Connection con) {
+    private SqliteDriver sql;
+    public DeleteClanCommand(JavaPlugin plugin, SqliteDriver sql) {
         this.plugin = plugin;
-        this.con = con;
+        this.sql = sql;
     }
 
     @Override
@@ -29,53 +30,59 @@ public class DeleteClanCommand implements CommandExecutor {
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
         try {
-            Statement stmt = con.createStatement();
             if (args.length != 1) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "INVALID_COMMAND", false);
+                return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
             }
+
             String clanNameInput = args[0];
 
-            ResultSet rsgetClan = stmt.executeQuery("SELECT * FROM CLANS WHERE ClanName IS '" + clanNameInput + "'");
-            String getClanName = rsgetClan.getString("ClanName");
-            Integer getClanID = rsgetClan.getInt("ClanID");
-
-            ResultSet rsgetClanPlayer = stmt.executeQuery("SELECT * FROM PLAYERS WHERE UUID IS '" + uuid + "'");
-            Integer getClanIDPlayer = rsgetClanPlayer.getInt("ClanID");
-            String getLeaderUUID = rsgetClanPlayer.getString("ClanRole");
-
-            if (getClanName == null) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "WRONG_CLAN_NAME", true);
+            if (clanNameInput == null) {
+                return GeneralUtils.checkUtil(playerSender, language, "WRONG_CLAN_NAME", true);
             }
+
+            List<Map<String, Object>> rsgetClan = sql.sqlSelectData("ClanName, ClanID", "CLANS", "ClanName = '" + clanNameInput + "'");
+            if (rsgetClan.isEmpty()) {
+                return GeneralUtils.checkUtil(playerSender, language, "WRONG_CLAN_NAME", true);
+            }
+            String getClanName = (String) rsgetClan.get(0).get("ClanName");
+            Integer getClanID = (Integer) rsgetClan.get(0).get("ClanID");
+
+            List<Map<String, Object>> rsgetClanPlayer = sql.sqlSelectData("ClanRole, ClanID", "PLAYERS", "UUID = '" + uuid + "'");
+            String getLeaderUUID = (String) rsgetClanPlayer.get(0).get("ClanRole");
+            Integer getClanIDPlayer = (Integer) rsgetClanPlayer.get(0).get("ClanID");
+
             if (getClanIDPlayer == 0) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
-            }
-            if (getClanID != getClanIDPlayer) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "YOU_NOT_MEMBER_THIS_CLAN", true);
-            }
-            if (!Objects.equals(getLeaderUUID, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                return GeneralUtils.checkUtil(stmt, playerSender, language, "NOT_LEADER", true);
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
             }
 
-            ResultSet rsUUID = stmt.executeQuery("SELECT * FROM PLAYERS WHERE ClanID IS " + getClanIDPlayer);
-            while (rsUUID.next()) {
-                String playerName = rsUUID.getString("PlayerName");
+            if (!getClanID.equals(getClanIDPlayer)) {
+                return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_THIS_CLAN", true);
+            }
+
+            if (!Objects.equals(getLeaderUUID, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                return GeneralUtils.checkUtil(playerSender, language, "NOT_LEADER", true);
+            }
+
+            List<Map<String, Object>> rsUUID = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + getClanIDPlayer);
+            for (Map<String, Object> i : rsUUID) {
+                String playerName = (String) i.get("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerName);
                 if (playerClan == null || playerClan == playerSender) {
                     continue;
                 }
+
                 playerClan.sendMessage(LocalizationUtils.langCheck(language, "LEADER_DELETE_CLAN"));
                 playerClan.playSound(playerClan.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
-            stmt.executeUpdate("UPDATE PLAYERS SET ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "' WHERE ClanID IS " + getClanID);
-            stmt.executeUpdate("DELETE FROM CLANS WHERE ClanID IS " + getClanID);
-            stmt.close();
-
-            ShowClanUtils.showClan(plugin, con);
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "'", "ClanID = " + getClanID);
+            sql.sqlDeleteData("CLANS", "ClanID = " + getClanID);
 
             String deleteclanmsg = LocalizationUtils.langCheck(language, "SUCCESS_DELETE_CLAN");
             sender.sendMessage(deleteclanmsg.replace("%clan%", getClanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+
+            ShowClanUtils.showClan(plugin, sql);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
