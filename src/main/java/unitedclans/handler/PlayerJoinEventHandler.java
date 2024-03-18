@@ -30,6 +30,7 @@ public class PlayerJoinEventHandler implements Listener {
                 insertMap.put("PlayerName", playerJoin.getPlayer().getName());
                 insertMap.put("ClanID", 0);
                 insertMap.put("ClanRole", UnitedClans.getInstance().getConfig().getString("roles.no-clan"));
+                insertMap.put("Donations", 0);
                 sql.sqlInsertData("PLAYERS", insertMap);
             }
 

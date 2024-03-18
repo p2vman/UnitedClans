@@ -57,3 +57,15 @@ commands:
     usage: /<command> <clan name> <player>
     aliases:
       - clclan
+  bankdepositclan:
+    description: This command allows you to deposit currency into the clan's bank account
+    usage: /<command> <number>
+    aliases:
+      - bankdclan
+      - bdclan
+  bankwithdrawclan:
+    description: This command allows you to withdraw currency from a clan bank account
+    usage: /<command> <number>
+    aliases:
+      - bankwclan
+      - bwclan

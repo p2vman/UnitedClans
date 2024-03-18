@@ -32,11 +32,12 @@ public class ClanMenuInventoryHandler implements Listener {
         if(event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + LocalizationUtils.langCheck(language, "CLAN_MENU"))) {
             if (event.getCurrentItem() == null) {
 
+            } else if (event.getCurrentItem().getType() == Material.GOLD_BLOCK) {
+                MenuClanUtils.openBankMenu(player, sql);
+                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             } else if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 MenuClanUtils.openMembersMenu(player, sql);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
-            } else if (event.getCurrentItem().getType() == Material.GOLD_BLOCK) {
-
             } else if (event.getCurrentItem().getType() == Material.BEACON) {
 
             }
@@ -122,6 +123,68 @@ public class ClanMenuInventoryHandler implements Listener {
                 player.closeInventory();
             } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
                 MenuClanUtils.openChangeRoleMenu(player);
+                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+            }
+            event.setCancelled(true);
+        } else if (event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + LocalizationUtils.langCheck(language, "BANK_CLAN_MENU"))) {
+            if (event.getCurrentItem() == null) {
+
+            } else if (event.getCurrentItem().getType() == Material.BOWL) {
+                MenuClanUtils.openDepositMenu(player);
+                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+            } else if (event.getCurrentItem().getType() == Material.GOLD_NUGGET) {
+
+            } else if (event.getCurrentItem().getType() == Material.NAME_TAG) {
+                MenuClanUtils.openWithdrawMenu(player);
+                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+            } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
+                MenuClanUtils.openClanMenu(player);
+                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+            }
+            event.setCancelled(true);
+        } else if (event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + LocalizationUtils.langCheck(language, "DEPOSIT_MENU"))) {
+            if (event.getCurrentItem() == null) {
+
+            } else if (event.getCurrentItem().getType() == Material.IRON_INGOT) {
+                plugin.getServer().dispatchCommand(player, "bankdepositclan 8");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.GOLD_INGOT) {
+                plugin.getServer().dispatchCommand(player, "bankdepositclan 16");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.EMERALD) {
+                plugin.getServer().dispatchCommand(player, "bankdepositclan 32");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.DIAMOND) {
+                plugin.getServer().dispatchCommand(player, "bankdepositclan 48");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.NETHERITE_INGOT) {
+                plugin.getServer().dispatchCommand(player, "bankdepositclan 64");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
+                MenuClanUtils.openBankMenu(player, sql);
+                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+            }
+            event.setCancelled(true);
+        } else if (event.getView().getTitle().equalsIgnoreCase(ChatColor.BOLD + LocalizationUtils.langCheck(language, "WITHDRAW_MENU"))) {
+            if (event.getCurrentItem() == null) {
+
+            } else if (event.getCurrentItem().getType() == Material.IRON_INGOT) {
+                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 8");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.GOLD_INGOT) {
+                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 16");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.EMERALD) {
+                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 32");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.DIAMOND) {
+                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 48");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.NETHERITE_INGOT) {
+                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 64");
+                player.closeInventory();
+            } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
+                MenuClanUtils.openBankMenu(player, sql);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             }
             event.setCancelled(true);

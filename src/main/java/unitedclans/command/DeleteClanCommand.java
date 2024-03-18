@@ -75,7 +75,7 @@ public class DeleteClanCommand implements CommandExecutor {
                 playerClan.playSound(playerClan.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
-            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "'", "ClanID = " + getClanID);
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0, "ClanID = " + getClanID);
             sql.sqlDeleteData("CLANS", "ClanID = " + getClanID);
 
             String deleteclanmsg = LocalizationUtils.langCheck(language, "SUCCESS_DELETE_CLAN");

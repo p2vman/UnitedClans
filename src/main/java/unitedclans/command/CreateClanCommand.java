@@ -78,6 +78,7 @@ public class CreateClanCommand implements CommandExecutor {
             insertMap.put("ClanName", clanNameInput);
             insertMap.put("ClanColor", clanColorInput);
             insertMap.put("CountMembers", 1);
+            insertMap.put("Bank", 0);
             sql.sqlInsertData("CLANS", insertMap);
             sql.sqlUpdateData("PLAYERS", "ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "'", "UUID = '" + uuid + "'");
 

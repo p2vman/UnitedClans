@@ -51,10 +51,11 @@ public class MenuClanUtils {
             List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
             Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
 
-            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("PlayerName, ClanRole", "PLAYERS", "ClanID = " + PlayerClanID);
+            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("PlayerName, ClanRole, Donations", "PLAYERS", "ClanID = " + PlayerClanID);
 
             ArrayList<String> PlayerList = new ArrayList<>();
             ArrayList<String> RoleList = new ArrayList<>();
+            ArrayList<String> DonationsList = new ArrayList<>();
             for (Map<String, Object> i : rsPlayers) {
                 String getPlayersName = (String) i.get("PlayerName");
                 PlayerList.add(getPlayersName);
@@ -69,6 +70,9 @@ public class MenuClanUtils {
                     setRole = LocalizationUtils.langCheck(language, "MEMBER");
                 }
                 RoleList.add(setRole);
+
+                Integer getPlayersDonations = (Integer) i.get("Donations");
+                DonationsList.add(getPlayersDonations.toString());
             }
 
             for (int i = 0; i < PlayerList.size(); i++) {
@@ -77,6 +81,7 @@ public class MenuClanUtils {
                 meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + PlayerList.get(i)));
                 ArrayList<String> lore = new ArrayList<>();
                 lore.add(ChatColor.ITALIC + (ChatColor.DARK_PURPLE + RoleList.get(i)));
+                lore.add(ChatColor.ITALIC + (ChatColor.DARK_PURPLE + DonationsList.get(i) + "$"));
                 meta.setLore(lore);
                 meta.setOwner(PlayerList.get(i));
                 playerHead.setItemMeta(meta);
@@ -109,8 +114,9 @@ public class MenuClanUtils {
         playerSelected_meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + selectedPlayerName));
         ArrayList<String> playerSelected_lore = new ArrayList<>();
         try {
-            List<Map<String, Object>> rsplayerSelectedRole = sql.sqlSelectData("ClanRole", "PLAYERS", "PlayerName = '" + selectedPlayerName + "'");
+            List<Map<String, Object>> rsplayerSelectedRole = sql.sqlSelectData("ClanRole, Donations", "PLAYERS", "PlayerName = '" + selectedPlayerName + "'");
             String playerSelectedRole = (String) rsplayerSelectedRole.get(0).get("ClanRole");
+            Integer playerSelectedDonations = (Integer) rsplayerSelectedRole.get(0).get("Donations");
 
             String setPlayerRole = null;
             if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
@@ -121,6 +127,7 @@ public class MenuClanUtils {
                 setPlayerRole = LocalizationUtils.langCheck(language, "MEMBER");
             }
             playerSelected_lore.add(ChatColor.ITALIC + (ChatColor.DARK_PURPLE + setPlayerRole));
+            playerSelected_lore.add(ChatColor.ITALIC + (ChatColor.DARK_PURPLE + playerSelectedDonations.toString() + "$"));
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
@@ -238,5 +245,157 @@ public class MenuClanUtils {
         confirmRoleMenuGUI.setItem(4, BackToMenu);
 
         player.openInventory(confirmRoleMenuGUI);
+    }
+
+    public static void openBankMenu(Player player, SqliteDriver sql) {
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        Inventory clanBankGUI = Bukkit.createInventory(player, 36, ChatColor.BOLD + LocalizationUtils.langCheck(language, "BANK_CLAN_MENU"));
+
+        ItemStack deposit = new ItemStack(Material.BOWL, 1);
+        ItemMeta deposit_meta = deposit.getItemMeta();
+        deposit_meta.setDisplayName(ChatColor.RESET + (ChatColor.GREEN + LocalizationUtils.langCheck(language, "DEPOSIT")));
+        ArrayList<String> deposit_lore = new ArrayList<>();
+        deposit_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "DEPOSIT_DESCRIPTION")));
+        deposit_meta.setLore(deposit_lore);
+        deposit.setItemMeta(deposit_meta);
+        clanBankGUI.setItem(10, deposit);
+
+        ItemStack accountBank = new ItemStack(Material.GOLD_NUGGET, 1);
+        ItemMeta accountBank_meta = accountBank.getItemMeta();
+        accountBank_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + LocalizationUtils.langCheck(language, "BANK_ACCOUNT")));
+        ArrayList<String> accountBank_lore = new ArrayList<>();
+        try {
+            List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
+            Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
+
+            List<Map<String, Object>> rsBank = sql.sqlSelectData("Bank", "CLANS", "ClanID = " + PlayerClanID);
+            Integer bankAmount = (Integer) rsBank.get(0).get("Bank");
+
+            String msgAmount = LocalizationUtils.langCheck(language, "BANK_ACCOUNT_DESCRIPTION");
+            accountBank_lore.add(ChatColor.ITALIC + (ChatColor.GOLD + msgAmount.replace("%value%", bankAmount.toString())));
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+        accountBank_meta.setLore(accountBank_lore);
+        accountBank.setItemMeta(accountBank_meta);
+        clanBankGUI.setItem(13, accountBank);
+
+        ItemStack withdraw = new ItemStack(Material.NAME_TAG, 1);
+        ItemMeta withdraw_meta = withdraw.getItemMeta();
+        withdraw_meta.setDisplayName(ChatColor.RESET + (ChatColor.GREEN + LocalizationUtils.langCheck(language, "WITHDRAW")));
+        ArrayList<String> withdraw_lore = new ArrayList<>();
+        withdraw_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "WITHDRAW_DESCRIPTION")));
+        withdraw_meta.setLore(withdraw_lore);
+        withdraw.setItemMeta(withdraw_meta);
+        clanBankGUI.setItem(16, withdraw);
+
+        ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
+        ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
+        BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "BANK_CLAN_BACK_TO_MENU")));
+        ArrayList<String> BackToMenu_lore = new ArrayList<>();
+        BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "BANK_CLAN_BACK_TO_MENU_DESCRIPTION")));
+        BackToMenu_meta.setLore(BackToMenu_lore);
+        BackToMenu.setItemMeta(BackToMenu_meta);
+        for (int n = 27; n <= 35; n++) {
+            clanBankGUI.setItem(n, BackToMenu);
+        }
+
+        player.openInventory(clanBankGUI);
+    }
+
+    public static void openDepositMenu(Player player) {
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        Inventory clanBankGUI = Bukkit.createInventory(player, 45, ChatColor.BOLD + LocalizationUtils.langCheck(language, "DEPOSIT_MENU"));
+
+        ItemStack deposit8 = new ItemStack(Material.IRON_INGOT, 1);
+        ItemMeta deposit8_meta = deposit8.getItemMeta();
+        deposit8_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "8$"));
+        deposit8.setItemMeta(deposit8_meta);
+        clanBankGUI.setItem(10, deposit8);
+
+        ItemStack deposit16 = new ItemStack(Material.GOLD_INGOT, 1);
+        ItemMeta deposit16_meta = deposit16.getItemMeta();
+        deposit16_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "16$"));
+        deposit16.setItemMeta(deposit16_meta);
+        clanBankGUI.setItem(13, deposit16);
+
+        ItemStack deposit32 = new ItemStack(Material.EMERALD, 1);
+        ItemMeta deposit32_meta = deposit32.getItemMeta();
+        deposit32_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "32$"));
+        deposit32.setItemMeta(deposit32_meta);
+        clanBankGUI.setItem(16, deposit32);
+
+        ItemStack deposit48 = new ItemStack(Material.DIAMOND, 1);
+        ItemMeta deposit48_meta = deposit48.getItemMeta();
+        deposit48_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "48$"));
+        deposit48.setItemMeta(deposit48_meta);
+        clanBankGUI.setItem(20, deposit48);
+
+        ItemStack deposit64 = new ItemStack(Material.NETHERITE_INGOT, 1);
+        ItemMeta deposit64_meta = deposit64.getItemMeta();
+        deposit64_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "64$"));
+        deposit64.setItemMeta(deposit64_meta);
+        clanBankGUI.setItem(24, deposit64);
+
+        ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
+        ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
+        BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "DEPOSIT_BACK_TO_MENU")));
+        ArrayList<String> BackToMenu_lore = new ArrayList<>();
+        BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "DEPOSIT_BACK_TO_MENU_DESCRIPTION")));
+        BackToMenu_meta.setLore(BackToMenu_lore);
+        BackToMenu.setItemMeta(BackToMenu_meta);
+        for (int n = 36; n <= 44; n++) {
+            clanBankGUI.setItem(n, BackToMenu);
+        }
+
+        player.openInventory(clanBankGUI);
+    }
+
+    public static void openWithdrawMenu(Player player) {
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        Inventory clanBankGUI = Bukkit.createInventory(player, 45, ChatColor.BOLD + LocalizationUtils.langCheck(language, "WITHDRAW_MENU"));
+
+        ItemStack deposit8 = new ItemStack(Material.IRON_INGOT, 1);
+        ItemMeta deposit8_meta = deposit8.getItemMeta();
+        deposit8_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "8$"));
+        deposit8.setItemMeta(deposit8_meta);
+        clanBankGUI.setItem(10, deposit8);
+
+        ItemStack deposit16 = new ItemStack(Material.GOLD_INGOT, 1);
+        ItemMeta deposit16_meta = deposit16.getItemMeta();
+        deposit16_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "16$"));
+        deposit16.setItemMeta(deposit16_meta);
+        clanBankGUI.setItem(13, deposit16);
+
+        ItemStack deposit32 = new ItemStack(Material.EMERALD, 1);
+        ItemMeta deposit32_meta = deposit32.getItemMeta();
+        deposit32_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "32$"));
+        deposit32.setItemMeta(deposit32_meta);
+        clanBankGUI.setItem(16, deposit32);
+
+        ItemStack deposit48 = new ItemStack(Material.DIAMOND, 1);
+        ItemMeta deposit48_meta = deposit48.getItemMeta();
+        deposit48_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "48$"));
+        deposit48.setItemMeta(deposit48_meta);
+        clanBankGUI.setItem(20, deposit48);
+
+        ItemStack deposit64 = new ItemStack(Material.NETHERITE_INGOT, 1);
+        ItemMeta deposit64_meta = deposit64.getItemMeta();
+        deposit64_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + "64$"));
+        deposit64.setItemMeta(deposit64_meta);
+        clanBankGUI.setItem(24, deposit64);
+
+        ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
+        ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
+        BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "WITHDRAW_BACK_TO_MENU")));
+        ArrayList<String> BackToMenu_lore = new ArrayList<>();
+        BackToMenu_lore.add(ChatColor.ITALIC + (ChatColor.GRAY + LocalizationUtils.langCheck(language, "WITHDRAW_BACK_TO_MENU_DESCRIPTION")));
+        BackToMenu_meta.setLore(BackToMenu_lore);
+        BackToMenu.setItemMeta(BackToMenu_meta);
+        for (int n = 36; n <= 44; n++) {
+            clanBankGUI.setItem(n, BackToMenu);
+        }
+
+        player.openInventory(clanBankGUI);
     }
 }

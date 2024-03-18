@@ -47,6 +47,10 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getPluginCommand("chatclan").setTabCompleter(new ChatClanTabCompleter());
         getServer().getPluginCommand("changeleaderclan").setExecutor(new ChangeLeaderClanCommand(this, sql));
         getServer().getPluginCommand("changeleaderclan").setTabCompleter(new ChangeLeaderClanTabCompleter(sql));
+        getServer().getPluginCommand("bankdepositclan").setExecutor(new BankDepositClanCommand(sql));
+        getServer().getPluginCommand("bankdepositclan").setTabCompleter(new BankDepositClanTabCompleter());
+        getServer().getPluginCommand("bankwithdrawclan").setExecutor(new BankWithdrawClanCommand(sql));
+        getServer().getPluginCommand("bankwithdrawclan").setTabCompleter(new BankWithdrawClanTabCompleter());
     }
 
     @Override

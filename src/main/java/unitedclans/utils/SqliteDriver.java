@@ -61,8 +61,8 @@ public class SqliteDriver {
 
     public void createDatabase() throws SQLException {
         Statement cursor = connection.createStatement();
-        cursor.execute("CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT);");
-        cursor.execute("CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT, ClanColor TEXT, CountMembers INTEGER);");
+        cursor.execute("CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT, Donations INTEGER);");
+        cursor.execute("CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT, ClanColor TEXT, CountMembers INTEGER, Bank INTEGER);");
         cursor.execute("CREATE TABLE IF NOT EXISTS INVITATIONS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER);");
         cursor.close();
     }

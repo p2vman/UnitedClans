@@ -71,7 +71,7 @@ public class KickClanCommand implements CommandExecutor {
                 return GeneralUtils.checkUtil(playerSender, language, "ROLE_IS_HIGHER", true);
             }
 
-            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "'", "PlayerName = '" + playerName + "'");
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0, "PlayerName = '" + playerName + "'");
             sql.sqlUpdateData("CLANS", "CountMembers = CountMembers - 1", "ClanID = " + getClanID);
 
             List<Map<String, Object>> rsClanPlayers = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + getClanID);
