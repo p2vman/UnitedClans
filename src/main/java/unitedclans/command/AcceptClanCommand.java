@@ -62,11 +62,13 @@ public class AcceptClanCommand implements CommandExecutor {
             sender.sendMessage(joinedclanmsg.replace("%clan%", clanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
-            sql.sqlUpdateData("PLAYERS", "ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "'", "UUID = '" + uuid + "'");
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + ClanID + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.member") + "', LetterRead = " + 0, "UUID = '" + uuid + "'");
             sql.sqlUpdateData("CLANS", "CountMembers = CountMembers + 1", "ClanID = " + ClanID);
             sql.sqlDeleteData("INVITATIONS", "UUID = '" + uuid + "'");
 
             ShowClanUtils.showClan(plugin, sql);
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " joined the " + clanName + " clan");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

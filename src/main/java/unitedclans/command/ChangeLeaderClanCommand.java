@@ -104,6 +104,8 @@ public class ChangeLeaderClanCommand implements CommandExecutor {
             }
 
             ShowClanUtils.showClan(plugin, sql);
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " passed on the role of " + UnitedClans.getInstance().getConfig().getString("roles.leader") + " of the " + ClanName + " clan to " + playerName);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

@@ -61,9 +61,10 @@ public class SqliteDriver {
 
     public void createDatabase() throws SQLException {
         Statement cursor = connection.createStatement();
-        cursor.execute("CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT, Donations INTEGER);");
-        cursor.execute("CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT, ClanColor TEXT, CountMembers INTEGER, Bank INTEGER);");
+        cursor.execute("CREATE TABLE IF NOT EXISTS PLAYERS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER, ClanRole TEXT, Donations INTEGER, LetterRead INTEGER);");
+        cursor.execute("CREATE TABLE IF NOT EXISTS CLANS (ClanID INTEGER NOT NULL PRIMARY KEY, ClanName TEXT, ClanColor TEXT, CountMembers INTEGER, Bank INTEGER, Kills INTEGER);");
         cursor.execute("CREATE TABLE IF NOT EXISTS INVITATIONS (UUID TEXT NOT NULL PRIMARY KEY, PlayerName TEXT, ClanID INTEGER);");
+        cursor.execute("CREATE TABLE IF NOT EXISTS LETTERS (ClanID TEXT NOT NULL PRIMARY KEY, Letter TEXT);");
         cursor.close();
     }
 
@@ -79,6 +80,15 @@ public class SqliteDriver {
     public List<Map<String, Object>> sqlSelectData(String fields, String table) throws SQLException {
         Statement cursor = connection.createStatement();
         ResultSet resultSet = cursor.executeQuery(String.format("SELECT %s FROM '%s';", fields, table));
+        List<Map<String, Object>> resultList = parseResultSet(resultSet);
+        resultSet.close();
+        cursor.close();
+        return resultList;
+    }
+
+    public List<Map<String, Object>> sqlSelectData(String fields, String table, String field, Integer limit) throws SQLException {
+        Statement cursor = connection.createStatement();
+        ResultSet resultSet = cursor.executeQuery(String.format("SELECT %s FROM '%s' ORDER BY %s DESC LIMIT %s;", fields, table, field, limit));
         List<Map<String, Object>> resultList = parseResultSet(resultSet);
         resultSet.close();
         cursor.close();

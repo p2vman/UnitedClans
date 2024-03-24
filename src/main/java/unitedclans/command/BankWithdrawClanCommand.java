@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
@@ -16,8 +17,10 @@ import java.util.*;
 
 
 public class BankWithdrawClanCommand implements CommandExecutor {
+    private final JavaPlugin plugin;
     private SqliteDriver sql;
-    public BankWithdrawClanCommand(SqliteDriver sql) {
+    public BankWithdrawClanCommand(JavaPlugin plugin, SqliteDriver sql) {
+        this.plugin = plugin;
         this.sql = sql;
     }
 
@@ -54,7 +57,8 @@ public class BankWithdrawClanCommand implements CommandExecutor {
                 return GeneralUtils.checkUtil(playerSender, language, "INVALID_BANK", true);
             }
 
-            List<Map<String, Object>> rsBank = sql.sqlSelectData("Bank", "CLANS", "ClanID = " + senderClanID);
+            List<Map<String, Object>> rsBank = sql.sqlSelectData("ClanName, Bank", "CLANS", "ClanID = " + senderClanID);
+            String senderClanName = (String) rsBank.get(0).get("ClanName");
             Integer bankAccount = (Integer) rsBank.get(0).get("Bank");
             if (bankAccount - withdraw < 0) {
                 String emptybankmsg = LocalizationUtils.langCheck(language, "EMPTY_BANK");
@@ -83,6 +87,8 @@ public class BankWithdrawClanCommand implements CommandExecutor {
             String successfullywithdrawbankmsg = LocalizationUtils.langCheck(language, "SUCCESSFULLY_WITHDRAW_BANK");
             sender.sendMessage(successfullywithdrawbankmsg.replace("%value%", withdraw.toString()));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " withdrew " + withdraw + "$ from the " + senderClanName + " clan bank");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

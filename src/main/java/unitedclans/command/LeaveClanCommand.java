@@ -44,10 +44,11 @@ public class LeaveClanCommand implements CommandExecutor {
             String LeavingPlayerRole = (String) rsLeavingPlayer.get(0).get("ClanRole");
             Integer LeavingPlayerClanID = (Integer) rsLeavingPlayer.get(0).get("ClanID");
 
-            List<Map<String, Object>> rsgetClan = sql.sqlSelectData("ClanID", "CLANS", "ClanName = '" + clanNameInput + "'");
+            List<Map<String, Object>> rsgetClan = sql.sqlSelectData("ClanName, ClanID", "CLANS", "ClanName = '" + clanNameInput + "'");
             if (rsgetClan.isEmpty()) {
                 return GeneralUtils.checkUtil(playerSender, language, "WRONG_CLAN_NAME", true);
             }
+            String getClanName = (String) rsgetClan.get(0).get("ClanName");
             Integer getClanID = (Integer) rsgetClan.get(0).get("ClanID");
 
             if (LeavingPlayerClanID == 0) {
@@ -62,7 +63,7 @@ public class LeaveClanCommand implements CommandExecutor {
                 return GeneralUtils.checkUtil(playerSender, language, "YOU_LEADER", true);
             }
 
-            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0, "UUID = '" + uuid + "'");
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0 + ", LetterRead = " + 0, "UUID = '" + uuid + "'");
             sql.sqlUpdateData("CLANS", "CountMembers = CountMembers - 1", "ClanID = " + LeavingPlayerClanID);
 
             List<Map<String, Object>> rsClanPlayers = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + LeavingPlayerClanID);
@@ -83,6 +84,8 @@ public class LeaveClanCommand implements CommandExecutor {
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
             ShowClanUtils.showClan(plugin, sql);
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " left the " + getClanName + " clan");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

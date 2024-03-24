@@ -1,7 +1,10 @@
 package unitedclans.utils;
 
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import unitedclans.UnitedClans;
 
 
 public class GeneralUtils {
@@ -19,5 +22,27 @@ public class GeneralUtils {
             }
         }
         return digits;
+    }
+
+    public static void removeItems (Player player, Integer value) {
+        int itemsRemoved = 0;
+        for (ItemStack itemStack : player.getInventory()) {
+            if (itemStack == null) {
+                continue;
+            }
+
+            if (itemStack.getType() != Material.valueOf(UnitedClans.getInstance().getConfig().getString("server-currency"))) {
+                continue;
+            }
+
+            int amount = itemStack.getAmount();
+            int itemsToRemove = Math.min(value - itemsRemoved, amount);
+            itemStack.setAmount(amount - itemsToRemove);
+            itemsRemoved += itemsToRemove;
+
+            if (itemsRemoved >= value) {
+                break;
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package unitedclans.command;
 
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -73,20 +74,42 @@ public class CreateClanCommand implements CommandExecutor {
                 return GeneralUtils.checkUtil(playerSender, language, "CLAN_NAME_TAKEN", true);
             }
 
-            Map<String, Object> insertMap = new HashMap<>();
-            insertMap.put("ClanID", NumberClans);
-            insertMap.put("ClanName", clanNameInput);
-            insertMap.put("ClanColor", clanColorInput);
-            insertMap.put("CountMembers", 1);
-            insertMap.put("Bank", 0);
-            sql.sqlInsertData("CLANS", insertMap);
+            Integer price = 32;
+            String createPriceConfig = UnitedClans.getInstance().getConfig().getString("clan-creation-price");
+            if (GeneralUtils.checkDigits(createPriceConfig)) {
+                Integer createPrice = new Integer(createPriceConfig);
+                if (createPrice < 0 || createPrice > 64) {
+                    price = createPrice;
+                }
+            }
+
+            if (!playerSender.getInventory().contains(Material.valueOf(UnitedClans.getInstance().getConfig().getString("server-currency")), price)) {
+                return GeneralUtils.checkUtil(playerSender, language, "NOT_CURRENCY_CREATE_CLAN", true);
+            }
+
+            Map<String, Object> insertMapCLANS = new HashMap<>();
+            insertMapCLANS.put("ClanID", NumberClans);
+            insertMapCLANS.put("ClanName", clanNameInput);
+            insertMapCLANS.put("ClanColor", clanColorInput);
+            insertMapCLANS.put("CountMembers", 1);
+            insertMapCLANS.put("Bank", 0);
+            insertMapCLANS.put("Kills", 0);
+            sql.sqlInsertData("CLANS", insertMapCLANS);
+            Map<String, Object> insertMapLETTERS = new HashMap<>();
+            insertMapLETTERS.put("ClanID", NumberClans);
+            insertMapLETTERS.put("Letter", "null");
+            sql.sqlInsertData("LETTERS", insertMapLETTERS);
             sql.sqlUpdateData("PLAYERS", "ClanID = " + NumberClans + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.leader") + "'", "UUID = '" + uuid + "'");
+
+            GeneralUtils.removeItems(playerSender, price);
 
             String createclanmsg = LocalizationUtils.langCheck(language, "SUCCESS_CREATE_CLAN");
             sender.sendMessage(createclanmsg.replace("%clan%", clanNameInput));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
             ShowClanUtils.showClan(plugin, sql);
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " created the " + clanNameInput + " clan");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

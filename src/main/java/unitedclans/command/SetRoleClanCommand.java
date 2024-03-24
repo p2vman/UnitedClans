@@ -90,6 +90,8 @@ public class SetRoleClanCommand implements CommandExecutor {
                 argPlayerName.sendMessage(youbeenassignedmsg.replace("%role%", setPlayerRole));
                 argPlayerName.playSound(argPlayerName.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " gave " + playerNameInput + " the role of " + setPlayerRole);
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

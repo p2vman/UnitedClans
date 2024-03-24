@@ -69,3 +69,14 @@ commands:
     aliases:
       - bankwclan
       - bwclan
+  topclans:
+    description: This command allows you to open the top clans
+    usage: /<command> <top name>
+    aliases:
+      - tclans
+      - tc
+  letterclan:
+    description: This command allows you to create and view a letter to the clan
+    usage: /<command> <letter (not necessary)>
+    aliases:
+      - letclan

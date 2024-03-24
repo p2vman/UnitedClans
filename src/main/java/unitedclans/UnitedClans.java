@@ -25,8 +25,9 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         }
 
         getServer().getLogger().info("[UnitedClans] UnitedClans is enabled");
-        getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this, sql), this);
         getServer().getPluginManager().registerEvents(new ClanMenuInventoryHandler(this, sql), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this, sql), this);
+        getServer().getPluginManager().registerEvents(new PlayerKillEventHandler(sql), this);
         getServer().getPluginCommand("createclan").setExecutor(new CreateClanCommand(this, sql));
         getServer().getPluginCommand("createclan").setTabCompleter(new CreateClanTabCompleter());
         getServer().getPluginCommand("deleteclan").setExecutor(new DeleteClanCommand(this, sql));
@@ -47,10 +48,14 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getPluginCommand("chatclan").setTabCompleter(new ChatClanTabCompleter());
         getServer().getPluginCommand("changeleaderclan").setExecutor(new ChangeLeaderClanCommand(this, sql));
         getServer().getPluginCommand("changeleaderclan").setTabCompleter(new ChangeLeaderClanTabCompleter(sql));
-        getServer().getPluginCommand("bankdepositclan").setExecutor(new BankDepositClanCommand(sql));
+        getServer().getPluginCommand("bankdepositclan").setExecutor(new BankDepositClanCommand(this, sql));
         getServer().getPluginCommand("bankdepositclan").setTabCompleter(new BankDepositClanTabCompleter());
-        getServer().getPluginCommand("bankwithdrawclan").setExecutor(new BankWithdrawClanCommand(sql));
+        getServer().getPluginCommand("bankwithdrawclan").setExecutor(new BankWithdrawClanCommand(this, sql));
         getServer().getPluginCommand("bankwithdrawclan").setTabCompleter(new BankWithdrawClanTabCompleter());
+        getServer().getPluginCommand("topclans").setExecutor(new TopClansCommand(sql));
+        getServer().getPluginCommand("topclans").setTabCompleter(new TopClansTabCompleter());
+        getServer().getPluginCommand("letterclan").setExecutor(new LetterClanCommand(this, sql));
+        getServer().getPluginCommand("letterclan").setTabCompleter(new LetterClanTabCompleter());
     }
 
     @Override

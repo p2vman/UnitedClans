@@ -63,8 +63,8 @@ public class DeleteClanCommand implements CommandExecutor {
                 return GeneralUtils.checkUtil(playerSender, language, "NOT_LEADER", true);
             }
 
-            List<Map<String, Object>> rsUUID = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + getClanIDPlayer);
-            for (Map<String, Object> i : rsUUID) {
+            List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + getClanIDPlayer);
+            for (Map<String, Object> i : rsPlayerClan) {
                 String playerName = (String) i.get("PlayerName");
                 Player playerClan = plugin.getServer().getPlayer(playerName);
                 if (playerClan == null || playerClan == playerSender) {
@@ -75,14 +75,17 @@ public class DeleteClanCommand implements CommandExecutor {
                 playerClan.playSound(playerClan.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
-            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0, "ClanID = " + getClanID);
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0 + ", LetterRead = " + 0, "ClanID = " + getClanID);
             sql.sqlDeleteData("CLANS", "ClanID = " + getClanID);
+            sql.sqlDeleteData("LETTERS", "ClanID = " + getClanID);
 
             String deleteclanmsg = LocalizationUtils.langCheck(language, "SUCCESS_DELETE_CLAN");
             sender.sendMessage(deleteclanmsg.replace("%clan%", getClanName));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
             ShowClanUtils.showClan(plugin, sql);
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " deleted the " + clanNameInput + " clan");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

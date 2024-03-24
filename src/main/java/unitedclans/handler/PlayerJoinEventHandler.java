@@ -1,10 +1,12 @@
 package unitedclans.handler;
 
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
 import unitedclans.utils.SqliteDriver;
 
@@ -20,18 +22,26 @@ public class PlayerJoinEventHandler implements Listener {
     }
 
     @EventHandler
-    public void PlayerJoinEvent(PlayerJoinEvent playerJoin) {
-        UUID uuid = playerJoin.getPlayer().getUniqueId();
+    public void PlayerJoinEvent(PlayerJoinEvent event) {
+        String language = UnitedClans.getInstance().getConfig().getString("lang");
+        UUID uuid = event.getPlayer().getUniqueId();
         try {
-            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("UUID", "PLAYERS", "UUID = '" + uuid + "'");
+            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("UUID, LetterRead", "PLAYERS", "UUID = '" + uuid + "'");
             if (rsPlayers.isEmpty()) {
                 Map<String, Object> insertMap = new HashMap<>();
                 insertMap.put("UUID", uuid);
-                insertMap.put("PlayerName", playerJoin.getPlayer().getName());
+                insertMap.put("PlayerName", event.getPlayer().getName());
                 insertMap.put("ClanID", 0);
                 insertMap.put("ClanRole", UnitedClans.getInstance().getConfig().getString("roles.no-clan"));
                 insertMap.put("Donations", 0);
+                insertMap.put("LetterRead", 0);
                 sql.sqlInsertData("PLAYERS", insertMap);
+            }
+
+            Integer valueLetterRead = (Integer) rsPlayers.get(0).get("LetterRead");
+            if (valueLetterRead == 1) {
+                event.getPlayer().sendMessage(LocalizationUtils.langCheck(language, "UNREAD_LETTER_MESSAGE"));
+                event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
             ShowClanUtils.showClan(plugin, sql);

@@ -6,8 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
@@ -17,8 +16,10 @@ import java.util.*;
 
 
 public class BankDepositClanCommand implements CommandExecutor {
+    private final JavaPlugin plugin;
     private SqliteDriver sql;
-    public BankDepositClanCommand(SqliteDriver sql) {
+    public BankDepositClanCommand(JavaPlugin plugin, SqliteDriver sql) {
+        this.plugin = plugin;
         this.sql = sql;
     }
 
@@ -57,29 +58,16 @@ public class BankDepositClanCommand implements CommandExecutor {
             sql.sqlUpdateData("PLAYERS", "Donations = Donations + " + deposit, "UUID = '" + uuid + "'");
             sql.sqlUpdateData("CLANS", "Bank = Bank + " + deposit, "ClanID = " + senderClanID);
 
-            int itemsRemoved = 0;
-            for (ItemStack itemStack : playerSender.getInventory()) {
-                if (itemStack == null) {
-                    continue;
-                }
-
-                if (itemStack.getType() != Material.valueOf(UnitedClans.getInstance().getConfig().getString("server-currency"))) {
-                    continue;
-                }
-
-                int amount = itemStack.getAmount();
-                int itemsToRemove = Math.min(deposit - itemsRemoved, amount);
-                itemStack.setAmount(amount - itemsToRemove);
-                itemsRemoved += itemsToRemove;
-
-                if (itemsRemoved >= deposit) {
-                    break;
-                }
-            }
+            GeneralUtils.removeItems(playerSender, deposit);
 
             String successfullydepositbankmsg = LocalizationUtils.langCheck(language, "SUCCESSFULLY_DEPOSIT_BANK");
             sender.sendMessage(successfullydepositbankmsg.replace("%value%", deposit.toString()));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+
+            List<Map<String, Object>> rsClan = sql.sqlSelectData("ClanName", "CLANS", "ClanID = " + senderClanID);
+            String senderClanName = (String) rsClan.get(0).get("ClanName");
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " deposited " + deposit + "$ into of the " + senderClanName + " clan bank");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

@@ -41,13 +41,12 @@ public class KickClanCommand implements CommandExecutor {
             }
 
             List<Map<String, Object>> rsKickedPlayer = sql.sqlSelectData("ClanRole, ClanID", "PLAYERS", "PlayerName = '" + playerName + "'");
-
             if (rsKickedPlayer.isEmpty()) {
                 return GeneralUtils.checkUtil(playerSender, language, "WRONG_PLAYER_NAME", true);
             }
-
             String KickedPlayerRole = (String) rsKickedPlayer.get(0).get("ClanRole");
             Integer KickedPlayerClanID = (Integer) rsKickedPlayer.get(0).get("ClanID");
+
             if (Objects.equals(playerSender.getName(), playerName)) {
                 return GeneralUtils.checkUtil(playerSender, language, "KICK_YOURSELF", true);
             }
@@ -71,7 +70,7 @@ public class KickClanCommand implements CommandExecutor {
                 return GeneralUtils.checkUtil(playerSender, language, "ROLE_IS_HIGHER", true);
             }
 
-            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0, "PlayerName = '" + playerName + "'");
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0 + ", LetterRead = " + 0, "PlayerName = '" + playerName + "'");
             sql.sqlUpdateData("CLANS", "CountMembers = CountMembers - 1", "ClanID = " + getClanID);
 
             List<Map<String, Object>> rsClanPlayers = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + getClanID);
@@ -87,15 +86,17 @@ public class KickClanCommand implements CommandExecutor {
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             Player argPlayerName = plugin.getServer().getPlayer(playerName);
 
+            List<Map<String, Object>> rsClanName = sql.sqlSelectData("ClanName", "CLANS", "ClanID = " + KickedPlayerClanID);
+            String KickedPlayerClanName = (String) rsClanName.get(0).get("ClanName");
             if (argPlayerName != null) {
-                List<Map<String, Object>> rsClanName = sql.sqlSelectData("ClanName", "CLANS", "ClanID = " + KickedPlayerClanID);
-                String KickedPlayerClanName = (String) rsClanName.get(0).get("ClanName");
                 String youwaskickedmsg = LocalizationUtils.langCheck(language, "YOU_WAS_KICKED");
                 argPlayerName.sendMessage(youwaskickedmsg.replace("%clan%", KickedPlayerClanName));
                 argPlayerName.playSound(argPlayerName.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             }
 
             ShowClanUtils.showClan(plugin, sql);
+
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " kicked " + playerName + " from the " + KickedPlayerClanName + " clan");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

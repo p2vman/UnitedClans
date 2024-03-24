@@ -94,6 +94,8 @@ public class InviteClanCommand implements CommandExecutor {
             sender.sendMessage(LocalizationUtils.langCheck(language, "INVITATION_SENT"));
             playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
+            plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " invited " + playerName.getName() + " to the " + clanName + " clan");
+
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
                 @Override
                 public void run() {
