@@ -67,6 +67,7 @@ public class Langs {
         TITLE_KILLS_TOP("messages.title-kills-top", "§5§l⏴-------TOP KILLS-------⏵§r "),
         TITLE_MONEY_TOP("messages.title-money-top", "§5§l⏴-------TOP MONEY-------⏵§r "),
         TITLE_END("messages.title-end", "§5§l⏴---------------------⏵§r "),
+        TITLE_EMPTY_TOP("messages.title-empty-top", "Top empty "),
 
         CLAN_MENU("menu-gui.clan-menu.inventory-name", "Clan menu "),
         CLAN_BANK("menu-gui.clan-menu.clan-bank", "Clan bank "),
@@ -253,6 +254,7 @@ public class Langs {
         TITLE_KILLS_TOP("messages.title-kills-top", "§5§l⏴-------ТОП ПО КИЛАМ-------⏵§r "),
         TITLE_MONEY_TOP("messages.title-money-top", "§5§l⏴-------ТОП ПО ВАЛЮТЕ-------⏵§r "),
         TITLE_END("messages.title-end", "§5§l⏴---------------------⏵§r "),
+        TITLE_EMPTY_TOP("messages.title-empty-top", "Топ пустой "),
 
         CLAN_MENU("menu-gui.clan-menu.inventory-name", "Меню клана "),
         CLAN_BANK("menu-gui.clan-menu.clan-bank", "Банк клана "),

@@ -25,14 +25,12 @@ public final class UnitedClans extends JavaPlugin implements Listener {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        String ANSI_BLUE = "\u001B[34m";
-        String ANSI_RESET = "\u001B[0m";
-        getServer().getLogger().info(ANSI_BLUE + "╔═╗╔═╗╔═══╗" + ANSI_RESET);
-        getServer().getLogger().info(ANSI_BLUE + "║ ║║ ║║ ╔═╝" + ANSI_RESET);
-        getServer().getLogger().info(ANSI_BLUE + "║ ║║ ║║ ║" + ANSI_RESET);
-        getServer().getLogger().info(ANSI_BLUE + "║ ║║ ║║ ║" + ANSI_RESET);
-        getServer().getLogger().info(ANSI_BLUE + "║ ╚╝ ║║ ╚═╗" + ANSI_RESET);
-        getServer().getLogger().info(ANSI_BLUE + "╚════╝╚═══╝" + ANSI_RESET);
+        getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "╔═╗╔═╗╔═══╗" + "\u001B[0m");
+        getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "║ ║║ ║║ ╔═╝" + "\u001B[0m");
+        getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "║ ║║ ║║ ║" + "\u001B[0m");
+        getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "║ ║║ ║║ ║" + "\u001B[0m");
+        getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "║ ╚╝ ║║ ╚═╗" + "\u001B[0m");
+        getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "╚════╝╚═══╝" + "\u001B[0m");
         getServer().getLogger().info("[UnitedClans] UnitedClans is enabled");
 
         getServer().getPluginManager().registerEvents(new ClanMenuInventoryHandler(this, sql), this);

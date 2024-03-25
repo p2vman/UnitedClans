@@ -37,24 +37,32 @@ public class TopClansCommand implements CommandExecutor {
             }
 
             if (topNameInput.equals("kills")) {
-                List<Map<String, Object>> rsMoney = sql.sqlSelectData("ClanName, ClanColor, Kills", "CLANS", "Kills", 10);
+                List<Map<String, Object>> rsKills = sql.sqlSelectData("ClanName, ClanColor, Kills", "CLANS", "Kills", 10);
                 String msgTop = LocalizationUtils.langCheck(language, "TITLE_KILLS_TOP") + "\n";
-                for (int i = 0; i < rsMoney.size(); i++) {
-                    String clanName = (String) rsMoney.get(i).get("ClanName");
-                    String clanColor = (String) rsMoney.get(i).get("ClanColor");
-                    Integer kills = (Integer) rsMoney.get(i).get("Kills");
-                    msgTop = msgTop + ChatColor.valueOf(clanColor) + (ChatColor.BOLD + clanName + ChatColor.RESET) + " - " + kills + "\uD83D\uDDE1" + "\n";
+                if (rsKills.isEmpty()) {
+                    msgTop = msgTop + LocalizationUtils.langCheck(language, "TITLE_EMPTY_TOP") + "\n";
+                } else {
+                    for (int i = 0; i < rsKills.size(); i++) {
+                        String clanName = (String) rsKills.get(i).get("ClanName");
+                        String clanColor = (String) rsKills.get(i).get("ClanColor");
+                        Integer kills = (Integer) rsKills.get(i).get("Kills");
+                        msgTop = msgTop + ChatColor.valueOf(clanColor) + (ChatColor.BOLD + clanName + ChatColor.RESET) + " - " + kills + "\uD83D\uDDE1" + "\n";
+                    }
                 }
                 msgTop = msgTop + LocalizationUtils.langCheck(language, "TITLE_END");
                 sender.sendMessage(msgTop);
             } else if (topNameInput.equals("money")) {
                 List<Map<String, Object>> rsMoney = sql.sqlSelectData("ClanName, ClanColor, Bank", "CLANS", "Bank", 10);
                 String msgTop = LocalizationUtils.langCheck(language, "TITLE_MONEY_TOP") + "\n";
-                for (int i = 0; i < rsMoney.size(); i++) {
-                    String clanName = (String) rsMoney.get(i).get("ClanName");
-                    String clanColor = (String) rsMoney.get(i).get("ClanColor");
-                    Integer bank = (Integer) rsMoney.get(i).get("Bank");
-                    msgTop = msgTop + ChatColor.valueOf(clanColor) + (ChatColor.BOLD + clanName + ChatColor.RESET) + " - " + bank + "$" + "\n";
+                if (rsMoney.isEmpty()) {
+                    msgTop = msgTop + LocalizationUtils.langCheck(language, "TITLE_EMPTY_TOP") + "\n";
+                } else {
+                    for (int i = 0; i < rsMoney.size(); i++) {
+                        String clanName = (String) rsMoney.get(i).get("ClanName");
+                        String clanColor = (String) rsMoney.get(i).get("ClanColor");
+                        Integer bank = (Integer) rsMoney.get(i).get("Bank");
+                        msgTop = msgTop + ChatColor.valueOf(clanColor) + (ChatColor.BOLD + clanName + ChatColor.RESET) + " - " + bank + "$" + "\n";
+                    }
                 }
                 msgTop = msgTop + LocalizationUtils.langCheck(language, "TITLE_END");
                 sender.sendMessage(msgTop);
