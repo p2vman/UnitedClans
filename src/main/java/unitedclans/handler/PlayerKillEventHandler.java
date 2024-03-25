@@ -29,6 +29,7 @@ public class PlayerKillEventHandler implements Listener {
                 Integer victimClanID = (Integer) rsVictim.get(0).get("ClanID");
 
                 if (killerClanID != 0 && victimClanID != 0) {
+                    sql.sqlUpdateData("PLAYERS", "Kills = Kills + 1", "UUID = '" + killer.getUniqueId() + "'");
                     sql.sqlUpdateData("CLANS", "Kills = Kills + 1", "ClanId = " + killerClanID);
                 }
             }

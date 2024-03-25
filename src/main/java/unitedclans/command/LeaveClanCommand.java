@@ -63,7 +63,7 @@ public class LeaveClanCommand implements CommandExecutor {
                 return GeneralUtils.checkUtil(playerSender, language, "YOU_LEADER", true);
             }
 
-            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Donations = " + 0 + ", LetterRead = " + 0, "UUID = '" + uuid + "'");
+            sql.sqlUpdateData("PLAYERS", "ClanID = " + 0 + ", ClanRole = '" + UnitedClans.getInstance().getConfig().getString("roles.no-clan") + "', Kills = " + 0 + ", Donations = " + 0 + ", LetterRead = " + 0, "UUID = '" + uuid + "'");
             sql.sqlUpdateData("CLANS", "CountMembers = CountMembers - 1", "ClanID = " + LeavingPlayerClanID);
 
             List<Map<String, Object>> rsClanPlayers = sql.sqlSelectData("PlayerName", "PLAYERS", "ClanID = " + LeavingPlayerClanID);

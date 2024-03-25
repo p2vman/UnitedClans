@@ -4,6 +4,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.command.*;
 import unitedclans.handler.*;
+import unitedclans.hooks.PlaceholderAPIHook;
 import unitedclans.langs.DefaultConfig;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.SqliteDriver;
@@ -24,7 +25,16 @@ public final class UnitedClans extends JavaPlugin implements Listener {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
+        String ANSI_BLUE = "\u001B[34m";
+        String ANSI_RESET = "\u001B[0m";
+        getServer().getLogger().info(ANSI_BLUE + "╔═╗╔═╗╔═══╗" + ANSI_RESET);
+        getServer().getLogger().info(ANSI_BLUE + "║ ║║ ║║ ╔═╝" + ANSI_RESET);
+        getServer().getLogger().info(ANSI_BLUE + "║ ║║ ║║ ║" + ANSI_RESET);
+        getServer().getLogger().info(ANSI_BLUE + "║ ║║ ║║ ║" + ANSI_RESET);
+        getServer().getLogger().info(ANSI_BLUE + "║ ╚╝ ║║ ╚═╗" + ANSI_RESET);
+        getServer().getLogger().info(ANSI_BLUE + "╚════╝╚═══╝" + ANSI_RESET);
         getServer().getLogger().info("[UnitedClans] UnitedClans is enabled");
+
         getServer().getPluginManager().registerEvents(new ClanMenuInventoryHandler(this, sql), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this, sql), this);
         getServer().getPluginManager().registerEvents(new PlayerKillEventHandler(sql), this);
@@ -56,6 +66,10 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getPluginCommand("topclans").setTabCompleter(new TopClansTabCompleter());
         getServer().getPluginCommand("letterclan").setExecutor(new LetterClanCommand(this, sql));
         getServer().getPluginCommand("letterclan").setTabCompleter(new LetterClanTabCompleter());
+
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderAPIHook(this, sql).register();
+        }
     }
 
     @Override

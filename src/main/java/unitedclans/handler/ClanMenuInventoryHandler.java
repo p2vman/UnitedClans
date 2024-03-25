@@ -203,11 +203,35 @@ public class ClanMenuInventoryHandler implements Listener {
                 plugin.getServer().dispatchCommand(player, "letterclan");
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§c" + LocalizationUtils.langCheck(language, "LEAVE_CLAN"))) {
-                MenuClanUtils.openConfirmLeaveClanMenu(player);
-                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+                try {
+                    List<Map<String, Object>> rsPlayerRole = sql.sqlSelectData("ClanRole", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
+                    String PlayerRole = (String) rsPlayerRole.get(0).get("ClanRole");
+
+                    if (Objects.equals(PlayerRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                        player.closeInventory();
+                        GeneralUtils.checkUtil(player, language, "YOU_LEADER", true);
+                    } else {
+                        MenuClanUtils.openConfirmLeaveClanMenu(player);
+                        player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+                    }
+                } catch (Exception e) {
+                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                }
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§5" + LocalizationUtils.langCheck(language, "DELETE_CLAN"))) {
-                MenuClanUtils.openConfirmDeleteClanMenu(player);
-                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+                try {
+                    List<Map<String, Object>> rsPlayerRole = sql.sqlSelectData("ClanRole", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
+                    String PlayerRole = (String) rsPlayerRole.get(0).get("ClanRole");
+
+                    if (!Objects.equals(PlayerRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                        player.closeInventory();
+                        GeneralUtils.checkUtil(player, language, "NOT_LEADER", true);
+                    } else {
+                        MenuClanUtils.openConfirmDeleteClanMenu(player);
+                        player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);;
+                    }
+                } catch (Exception e) {
+                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                }
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§b" + LocalizationUtils.langCheck(language, "CLAN_SETTINGS_CLAN_BACK_TO_MENU"))) {
                 MenuClanUtils.openClanMenu(player);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);

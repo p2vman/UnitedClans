@@ -60,10 +60,11 @@ public class MenuClanUtils {
             List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
             Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
 
-            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("PlayerName, ClanRole, Donations", "PLAYERS", "ClanID = " + PlayerClanID);
+            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("PlayerName, ClanRole, Kills, Donations", "PLAYERS", "ClanID = " + PlayerClanID);
 
             ArrayList<String> PlayerList = new ArrayList<>();
             ArrayList<String> RoleList = new ArrayList<>();
+            ArrayList<String> KillsList = new ArrayList<>();
             ArrayList<String> DonationsList = new ArrayList<>();
             for (Map<String, Object> i : rsPlayers) {
                 String getPlayersName = (String) i.get("PlayerName");
@@ -80,6 +81,9 @@ public class MenuClanUtils {
                 }
                 RoleList.add(setRole);
 
+                Integer getPlayersKills = (Integer) i.get("Kills");
+                KillsList.add(getPlayersKills.toString());
+
                 Integer getPlayersDonations = (Integer) i.get("Donations");
                 DonationsList.add(getPlayersDonations.toString());
             }
@@ -90,6 +94,7 @@ public class MenuClanUtils {
                 meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + PlayerList.get(i)));
                 ArrayList<String> lore = new ArrayList<>();
                 lore.add(ChatColor.DARK_PURPLE + RoleList.get(i));
+                lore.add(ChatColor.DARK_PURPLE + KillsList.get(i) + "\uD83D\uDDE1");
                 lore.add(ChatColor.DARK_PURPLE + DonationsList.get(i) + "$");
                 meta.setLore(lore);
                 meta.setOwner(PlayerList.get(i));
@@ -123,9 +128,10 @@ public class MenuClanUtils {
         playerSelected_meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + selectedPlayerName));
         ArrayList<String> playerSelected_lore = new ArrayList<>();
         try {
-            List<Map<String, Object>> rsplayerSelectedRole = sql.sqlSelectData("ClanRole, Donations", "PLAYERS", "PlayerName = '" + selectedPlayerName + "'");
-            String playerSelectedRole = (String) rsplayerSelectedRole.get(0).get("ClanRole");
-            Integer playerSelectedDonations = (Integer) rsplayerSelectedRole.get(0).get("Donations");
+            List<Map<String, Object>> rsplayerSelectedPlayer = sql.sqlSelectData("ClanRole, Kills, Donations", "PLAYERS", "PlayerName = '" + selectedPlayerName + "'");
+            String playerSelectedRole = (String) rsplayerSelectedPlayer.get(0).get("ClanRole");
+            Integer playerSelectedKills = (Integer) rsplayerSelectedPlayer.get(0).get("Kills");
+            Integer playerSelectedDonations = (Integer) rsplayerSelectedPlayer.get(0).get("Donations");
 
             String setPlayerRole = null;
             if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
@@ -136,6 +142,7 @@ public class MenuClanUtils {
                 setPlayerRole = LocalizationUtils.langCheck(language, "MEMBER");
             }
             playerSelected_lore.add(ChatColor.DARK_PURPLE + setPlayerRole);
+            playerSelected_lore.add(ChatColor.DARK_PURPLE + playerSelectedKills.toString() + "\uD83D\uDDE1");
             playerSelected_lore.add(ChatColor.DARK_PURPLE + playerSelectedDonations.toString() + "$");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());

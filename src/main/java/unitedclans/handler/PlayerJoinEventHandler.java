@@ -26,19 +26,21 @@ public class PlayerJoinEventHandler implements Listener {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         UUID uuid = event.getPlayer().getUniqueId();
         try {
-            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("UUID, LetterRead", "PLAYERS", "UUID = '" + uuid + "'");
-            if (rsPlayers.isEmpty()) {
+            List<Map<String, Object>> rsPlayer = sql.sqlSelectData("UUID", "PLAYERS", "UUID = '" + uuid + "'");
+            if (rsPlayer.isEmpty()) {
                 Map<String, Object> insertMap = new HashMap<>();
                 insertMap.put("UUID", uuid);
                 insertMap.put("PlayerName", event.getPlayer().getName());
                 insertMap.put("ClanID", 0);
                 insertMap.put("ClanRole", UnitedClans.getInstance().getConfig().getString("roles.no-clan"));
+                insertMap.put("Kills", 0);
                 insertMap.put("Donations", 0);
                 insertMap.put("LetterRead", 0);
                 sql.sqlInsertData("PLAYERS", insertMap);
             }
 
-            Integer valueLetterRead = (Integer) rsPlayers.get(0).get("LetterRead");
+            List<Map<String, Object>> rsLetter = sql.sqlSelectData("LetterRead", "PLAYERS", "UUID = '" + uuid + "'");
+            Integer valueLetterRead = (Integer) rsLetter.get(0).get("LetterRead");
             if (valueLetterRead == 1) {
                 event.getPlayer().sendMessage(LocalizationUtils.langCheck(language, "UNREAD_LETTER_MESSAGE"));
                 event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);

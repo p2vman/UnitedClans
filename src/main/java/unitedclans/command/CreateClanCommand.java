@@ -78,7 +78,7 @@ public class CreateClanCommand implements CommandExecutor {
             String createPriceConfig = UnitedClans.getInstance().getConfig().getString("clan-creation-price");
             if (GeneralUtils.checkDigits(createPriceConfig)) {
                 Integer createPrice = new Integer(createPriceConfig);
-                if (createPrice < 0 || createPrice > 64) {
+                if (createPrice >= 0 && createPrice <= 64) {
                     price = createPrice;
                 }
             }

@@ -3,6 +3,7 @@ version: '${project.version}'
 main: unitedclans.UnitedClans
 api-version: '1.20'
 authors: [MouseJava]
+softdepend: [PlaceholderAPI]
 description: The plugin implements the clan system in Minecraft
 commands:
   createclan:
