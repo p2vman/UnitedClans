@@ -79,7 +79,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                             color = "DARK_PURPLE";
                             role = LocalizationUtils.langCheck(language, "LEADER");
                         }
-                        return ChatColor.valueOf(color) + role + ChatColor.RESET + " ";
+                        return ChatColor.valueOf(color) + role + ChatColor.RESET;
                     }
 
                     return "";
