@@ -75,7 +75,7 @@ public class CreateClanCommand implements CommandExecutor {
             }
 
             Integer price = 32;
-            price = GeneralUtils.setDefaultValue(price, "clan-creation-price");
+            price = GeneralUtils.setDefaultValue(price, "clan-creation-price", 0, 64);
 
             if (!playerSender.getInventory().contains(Material.valueOf(UnitedClans.getInstance().getConfig().getString("server-currency")), price)) {
                 return GeneralUtils.checkUtil(playerSender, language, "NOT_CURRENCY_CREATE_CLAN", true);

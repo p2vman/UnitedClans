@@ -149,7 +149,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                     List<Map<String, Object>> rsPlayerDonations = sql.sqlSelectData("Donations", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
                     Integer playerDonations = (Integer) rsPlayerDonations.get(0).get("Donations");
 
-                    return ChatColor.DARK_RED + playerDonations.toString() + "$" + " ";
+                    return ChatColor.DARK_GREEN + playerDonations.toString() + "$" + " ";
                 } catch (Exception e) {
                     System.err.println(e.getClass().getName() + ": " + e.getMessage());
                 }

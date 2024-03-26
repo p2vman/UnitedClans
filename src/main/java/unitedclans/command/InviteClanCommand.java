@@ -78,7 +78,7 @@ public class InviteClanCommand implements CommandExecutor {
             Integer countMembers = (Integer) rsClan.get(0).get("CountMembers");
 
             Integer max = 25;
-            max = GeneralUtils.setDefaultValue(max, "clan-max-player");
+            max = GeneralUtils.setDefaultValue(max, "clan-max-player", 1, 100);
 
             if (countMembers >= max) {
                 return GeneralUtils.checkUtil(playerSender, language, "YOUR_CLAN_MAX", true);

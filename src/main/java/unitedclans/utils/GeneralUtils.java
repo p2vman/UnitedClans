@@ -24,12 +24,12 @@ public class GeneralUtils {
         return digits;
     }
 
-    public static int setDefaultValue(Integer value, String pathConfig) {
+    public static int setDefaultValue(Integer value, String pathConfig, Integer minValue, Integer maxValue) {
         String valueDefaultConfig = UnitedClans.getInstance().getConfig().getString(pathConfig);
         if (GeneralUtils.checkDigits(valueDefaultConfig)) {
             Integer valueDefault = new Integer(valueDefaultConfig);
 
-            if (valueDefault >= 0 && valueDefault <= 64) {
+            if (valueDefault >= minValue && valueDefault <= maxValue) {
                 value = valueDefault;
             }
         }
