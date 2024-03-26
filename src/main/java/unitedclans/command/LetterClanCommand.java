@@ -74,6 +74,7 @@ public class LetterClanCommand implements CommandExecutor {
             }
 
             sql.sqlUpdateData("PLAYERS", "LetterRead = " + 1, "ClanID = " + senderClanID);
+            sql.sqlUpdateData("PLAYERS", "LetterRead = " + 0, "UUID = '" + uuid + "'");
             sql.sqlUpdateData("LETTERS", "Letter = '" + letter + "'", "ClanID = " + senderClanID);
 
             sender.sendMessage(LocalizationUtils.langCheck(language, "SUCCESSFULLY_LETTER_MESSAGE"));

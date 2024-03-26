@@ -10,6 +10,7 @@ import java.io.IOException;
 public enum DefaultConfig {
     LANG("lang", "en_en"),
     CLAN_MSG_PATTERN("clan-msg-pattern", "%clan% [%sender%]:%message%"),
+    CLAN_MAX_PLAYER("clan-max-player", "25"),
     SERVER_CURRENCY("server-currency", "DIAMOND"),
     CLAN_CREATION_PRICE("clan-creation-price", "32"),
     LEADER("roles.leader", "Leader"),

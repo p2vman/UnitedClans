@@ -19,6 +19,7 @@ public class ClanMenuInventoryHandler implements Listener {
     private final JavaPlugin plugin;
     private SqliteDriver sql;
     private String selectedPlayerName;
+    private Integer pageNumber;
     public ClanMenuInventoryHandler(JavaPlugin plugin, SqliteDriver sql) {
         this.plugin = plugin;
         this.sql = sql;
@@ -36,7 +37,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 MenuClanUtils.openBankMenu(player, sql);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§a" + LocalizationUtils.langCheck(language, "CLAN_MEMBERS"))) {
-                MenuClanUtils.openMembersMenu(player, sql);
+                pageNumber = MenuClanUtils.openMembersMenu(player, sql, 0);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§5" + LocalizationUtils.langCheck(language, "CLAN_SETTINGS"))) {
                 MenuClanUtils.openClanSettingsMenu(player);
@@ -52,6 +53,24 @@ public class ClanMenuInventoryHandler implements Listener {
             } else if (event.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 selectedPlayerName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
                 MenuClanUtils.openMemberMenu(player, sql, selectedPlayerName);
+                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+            } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§6" + LocalizationUtils.langCheck(language, "PREVIOUS_PAGE"))) {
+                pageNumber--;
+                if (pageNumber < 0) {
+                    pageNumber = 0;
+                } else if (pageNumber > 3) {
+                    pageNumber = 3;
+                }
+                MenuClanUtils.openMembersMenu(player, sql, pageNumber);
+                player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
+            } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§6" + LocalizationUtils.langCheck(language, "NEXT_PAGE"))) {
+                pageNumber++;
+                if (pageNumber < 0) {
+                    pageNumber = 0;
+                } else if (pageNumber > 3) {
+                    pageNumber = 3;
+                }
+                MenuClanUtils.openMembersMenu(player, sql, pageNumber);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§b" + LocalizationUtils.langCheck(language, "MEMBERS_BACK_TO_MENU"))) {
                 MenuClanUtils.openClanMenu(player);
@@ -70,7 +89,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 plugin.getServer().dispatchCommand(player, "kickclan " + selectedPlayerName);
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§b" + LocalizationUtils.langCheck(language, "MEMBER_BACK_TO_MENU"))) {
-                MenuClanUtils.openMembersMenu(player, sql);
+                pageNumber = MenuClanUtils.openMembersMenu(player, sql, 0);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             }
             event.setCancelled(true);

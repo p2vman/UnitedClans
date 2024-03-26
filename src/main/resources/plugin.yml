@@ -17,7 +17,7 @@ commands:
     aliases:
       - dclan
   inviteclan:
-    description: This command allows you to add a player to a clan
+    description: This command allows you to invite a player to a clan
     usage: /<command> <player>
     aliases:
       - iclan
@@ -54,7 +54,7 @@ commands:
       - msgc
       - cc
   changeleaderclan:
-    description: This command allows you to change the clan leader
+    description: This command allows you to change the clan Leader
     usage: /<command> <clan name> <player>
     aliases:
       - clclan
@@ -81,3 +81,8 @@ commands:
     usage: /<command> <letter (not necessary)>
     aliases:
       - letclan
+  helpclan:
+    description: This command allows you to display all possible plugin commands
+    usage: /<command>
+    aliases:
+      - hclan

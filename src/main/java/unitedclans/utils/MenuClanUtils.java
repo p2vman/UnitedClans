@@ -53,7 +53,7 @@ public class MenuClanUtils {
         player.openInventory(clanMenuGUI);
     }
 
-    public static void openMembersMenu(Player player, SqliteDriver sql) {
+    public static int openMembersMenu(Player player, SqliteDriver sql, Integer pageNumber) {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Inventory membersMenuGUI = Bukkit.createInventory(player, 36, ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBERS_MENU"));
         try {
@@ -61,62 +61,61 @@ public class MenuClanUtils {
             Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
 
             List<Map<String, Object>> rsPlayers = sql.sqlSelectData("PlayerName, ClanRole, Kills, Donations", "PLAYERS", "ClanID = " + PlayerClanID);
-
-            ArrayList<String> PlayerList = new ArrayList<>();
-            ArrayList<String> RoleList = new ArrayList<>();
-            ArrayList<String> KillsList = new ArrayList<>();
-            ArrayList<String> DonationsList = new ArrayList<>();
-            for (Map<String, Object> i : rsPlayers) {
-                String getPlayersName = (String) i.get("PlayerName");
-                PlayerList.add(getPlayersName);
-
-                String getPlayersRole = (String) i.get("ClanRole");
-                String setRole = null;
-                if (Objects.equals(getPlayersRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                    setRole = LocalizationUtils.langCheck(language, "LEADER");
-                } else if (Objects.equals(getPlayersRole, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
-                    setRole = LocalizationUtils.langCheck(language, "ELDER");
-                } else if (Objects.equals(getPlayersRole, UnitedClans.getInstance().getConfig().getString("roles.member"))) {
-                    setRole = LocalizationUtils.langCheck(language, "MEMBER");
-                }
-                RoleList.add(setRole);
-
-                Integer getPlayersKills = (Integer) i.get("Kills");
-                KillsList.add(getPlayersKills.toString());
-
-                Integer getPlayersDonations = (Integer) i.get("Donations");
-                DonationsList.add(getPlayersDonations.toString());
-            }
-
-            for (int i = 0; i < PlayerList.size(); i++) {
+            for (int i = pageNumber * 27; i < rsPlayers.size(); i++) {
                 ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD, 1);
-                SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
-                meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + PlayerList.get(i)));
-                ArrayList<String> lore = new ArrayList<>();
-                lore.add(ChatColor.DARK_PURPLE + RoleList.get(i));
-                lore.add(ChatColor.DARK_PURPLE + KillsList.get(i) + "\uD83D\uDDE1");
-                lore.add(ChatColor.DARK_PURPLE + DonationsList.get(i) + "$");
-                meta.setLore(lore);
-                meta.setOwner(PlayerList.get(i));
-                playerHead.setItemMeta(meta);
+                SkullMeta playerHead_meta = (SkullMeta) playerHead.getItemMeta();
+                playerHead_meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + (String) rsPlayers.get(i).get("PlayerName")));
+                ArrayList<String> playerHead_lore = new ArrayList<>();
+                String playerRole = null;
+                if (Objects.equals(rsPlayers.get(i).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                    playerRole = ChatColor.DARK_PURPLE + LocalizationUtils.langCheck(language, "LEADER");
+                } else if (Objects.equals(rsPlayers.get(i).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                    playerRole = ChatColor.GOLD + LocalizationUtils.langCheck(language, "ELDER");
+                } else if (Objects.equals(rsPlayers.get(i).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.member"))) {
+                    playerRole = ChatColor.GREEN + LocalizationUtils.langCheck(language, "MEMBER");
+                }
+                playerHead_lore.add(playerRole);
+                playerHead_lore.add(ChatColor.DARK_RED + rsPlayers.get(i).get("Kills").toString() + "\uD83D\uDDE1");
+                playerHead_lore.add(ChatColor.DARK_GREEN + rsPlayers.get(i).get("Donations").toString() + "$");
+                playerHead_meta.setLore(playerHead_lore);
+                playerHead_meta.setOwner(rsPlayers.get(i).get("PlayerName").toString());
+                playerHead.setItemMeta(playerHead_meta);
                 membersMenuGUI.addItem(playerHead);
             }
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-            ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
-            ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
-            BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "MEMBERS_BACK_TO_MENU")));
-            ArrayList<String> BackToMenu_lore = new ArrayList<>();
-            BackToMenu_lore.add(ChatColor.GRAY + LocalizationUtils.langCheck(language, "MEMBERS_BACK_TO_MENU_DESCRIPTION"));
-            BackToMenu_meta.setLore(BackToMenu_lore);
-            BackToMenu.setItemMeta(BackToMenu_meta);
-            for (int n = 27; n <= 35; n++) {
-                membersMenuGUI.setItem(n, BackToMenu);
-            }
+        ItemStack previous = new ItemStack(Material.ARROW, 1);
+        ItemMeta previous_meta = previous.getItemMeta();
+        previous_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + LocalizationUtils.langCheck(language, "PREVIOUS_PAGE")));
+        ArrayList<String> previous_lore = new ArrayList<>();
+        previous_lore.add(ChatColor.GRAY + LocalizationUtils.langCheck(language, "PREVIOUS_PAGE_DESCRIPTION"));
+        previous_meta.setLore(previous_lore);
+        previous.setItemMeta(previous_meta);
+        membersMenuGUI.setItem(28, previous);
 
-            player.openInventory(membersMenuGUI);
+        ItemStack next = new ItemStack(Material.ARROW, 1);
+        ItemMeta next_meta = next.getItemMeta();
+        next_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + LocalizationUtils.langCheck(language, "NEXT_PAGE")));
+        ArrayList<String> next_lore = new ArrayList<>();
+        next_lore.add(ChatColor.GRAY + LocalizationUtils.langCheck(language, "NEXT_PAGE_DESCRIPTION"));
+        next_meta.setLore(next_lore);
+        next.setItemMeta(next_meta);
+        membersMenuGUI.setItem(34, next);
+
+        ItemStack BackToMenu = new ItemStack(Material.STRUCTURE_VOID, 1);
+        ItemMeta BackToMenu_meta = BackToMenu.getItemMeta();
+        BackToMenu_meta.setDisplayName(ChatColor.RESET + (ChatColor.AQUA + LocalizationUtils.langCheck(language, "MEMBERS_BACK_TO_MENU")));
+        ArrayList<String> BackToMenu_lore = new ArrayList<>();
+        BackToMenu_lore.add(ChatColor.GRAY + LocalizationUtils.langCheck(language, "MEMBERS_BACK_TO_MENU_DESCRIPTION"));
+        BackToMenu_meta.setLore(BackToMenu_lore);
+        BackToMenu.setItemMeta(BackToMenu_meta);
+        membersMenuGUI.setItem(31, BackToMenu);
+
+        player.openInventory(membersMenuGUI);
+
+        return pageNumber;
     }
 
     public static void openMemberMenu(Player player, SqliteDriver sql, String selectedPlayerName) {
@@ -129,21 +128,17 @@ public class MenuClanUtils {
         ArrayList<String> playerSelected_lore = new ArrayList<>();
         try {
             List<Map<String, Object>> rsplayerSelectedPlayer = sql.sqlSelectData("ClanRole, Kills, Donations", "PLAYERS", "PlayerName = '" + selectedPlayerName + "'");
-            String playerSelectedRole = (String) rsplayerSelectedPlayer.get(0).get("ClanRole");
-            Integer playerSelectedKills = (Integer) rsplayerSelectedPlayer.get(0).get("Kills");
-            Integer playerSelectedDonations = (Integer) rsplayerSelectedPlayer.get(0).get("Donations");
-
             String setPlayerRole = null;
-            if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                setPlayerRole = LocalizationUtils.langCheck(language, "LEADER");
-            } else if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
-                setPlayerRole = LocalizationUtils.langCheck(language, "ELDER");
-            } else if (Objects.equals(playerSelectedRole, UnitedClans.getInstance().getConfig().getString("roles.member"))) {
-                setPlayerRole = LocalizationUtils.langCheck(language, "MEMBER");
+            if (Objects.equals(rsplayerSelectedPlayer.get(0).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                setPlayerRole = ChatColor.DARK_PURPLE + LocalizationUtils.langCheck(language, "LEADER");
+            } else if (Objects.equals(rsplayerSelectedPlayer.get(0).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                setPlayerRole = ChatColor.GOLD + LocalizationUtils.langCheck(language, "ELDER");
+            } else if (Objects.equals(rsplayerSelectedPlayer.get(0).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.member"))) {
+                setPlayerRole = ChatColor.GREEN + LocalizationUtils.langCheck(language, "MEMBER");
             }
-            playerSelected_lore.add(ChatColor.DARK_PURPLE + setPlayerRole);
-            playerSelected_lore.add(ChatColor.DARK_PURPLE + playerSelectedKills.toString() + "\uD83D\uDDE1");
-            playerSelected_lore.add(ChatColor.DARK_PURPLE + playerSelectedDonations.toString() + "$");
+            playerSelected_lore.add(setPlayerRole);
+            playerSelected_lore.add(ChatColor.DARK_RED + rsplayerSelectedPlayer.get(0).get("Kills").toString() + "\uD83D\uDDE1");
+            playerSelected_lore.add(ChatColor.DARK_GREEN + rsplayerSelectedPlayer.get(0).get("Donations").toString() + "$");
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }

@@ -1,6 +1,7 @@
 package unitedclans.command;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -75,7 +76,11 @@ public class InviteClanCommand implements CommandExecutor {
             List<Map<String, Object>> rsClan = sql.sqlSelectData("ClanName, CountMembers", "CLANS", "ClanID = " + getClanID);
             String clanName = (String) rsClan.get(0).get("ClanName");
             Integer countMembers = (Integer) rsClan.get(0).get("CountMembers");
-            if (countMembers >= 25) {
+
+            Integer max = 25;
+            max = GeneralUtils.setDefaultValue(max, "clan-max-player");
+
+            if (countMembers >= max) {
                 return GeneralUtils.checkUtil(playerSender, language, "YOUR_CLAN_MAX", true);
             }
 

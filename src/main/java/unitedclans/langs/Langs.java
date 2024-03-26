@@ -64,9 +64,9 @@ public class Langs {
         NO_RIGHTS_LETTER("messages.no-rights-letter", "§eYou do not have enough rights to write a letter to the clan "),
         NO_LETTER_WRITTEN("messages.no-letter-written", "§eThe clan§r §b§lLeader§r §ehas not yet written letters to the players "),
         INVALID_TOP("messages.invalid-top", "§cIncorrect top name "),
-        TITLE_KILLS_TOP("messages.title-kills-top", "§5§l⏴-------TOP KILLS-------⏵§r "),
-        TITLE_MONEY_TOP("messages.title-money-top", "§5§l⏴-------TOP MONEY-------⏵§r "),
-        TITLE_END("messages.title-end", "§5§l⏴---------------------⏵§r "),
+        TITLE_KILLS_TOP("messages.title-kills-top", "§b§l⏴-------§r§e§lTOP KILLS§r§b§l-------⏵§r "),
+        TITLE_MONEY_TOP("messages.title-money-top", "§b§l⏴-------§r§e§lTOP MONEY§r§b§l-------⏵§r "),
+        TITLE_END("messages.title-end", "§b§l⏴---------------------⏵§r "),
         TITLE_EMPTY_TOP("messages.title-empty-top", "Top empty "),
 
         CLAN_MENU("menu-gui.clan-menu.inventory-name", "Clan menu "),
@@ -80,6 +80,10 @@ public class Langs {
         TOP_CLANS_DESCRIPTION("menu-gui.clan-menu.top-clans-description", "Opens list of the best clans "),
 
         MEMBERS_MENU("menu-gui.members-menu.inventory-name", "Members menu "),
+        PREVIOUS_PAGE("menu-gui.members-menu.previous-page", "Previous page "),
+        PREVIOUS_PAGE_DESCRIPTION("menu-gui.members-menu.previous-page-description", "Opens previous page "),
+        NEXT_PAGE("menu-gui.members-menu.next-page", "Next page "),
+        NEXT_PAGE_DESCRIPTION("menu-gui.members-menu.next-page-description", "Opens next page "),
         MEMBERS_BACK_TO_MENU("menu-gui.members-menu.members-back-to-menu", "Go back "),
         MEMBERS_BACK_TO_MENU_DESCRIPTION("menu-gui.members-menu.members-back-to-menu-description", "Opens main clan menu "),
 
@@ -251,9 +255,9 @@ public class Langs {
         NO_RIGHTS_LETTER("messages.no-rights-letter", "§eУ вас недостаточно прав, чтобы написать письмо клану "),
         NO_LETTER_WRITTEN("messages.no-letter-written", "§b§lГлава§r §eклана еще не писал писем для игроков "),
         INVALID_TOP("messages.invalid-top", "§cНекорректное имя топа "),
-        TITLE_KILLS_TOP("messages.title-kills-top", "§5§l⏴-------ТОП ПО КИЛАМ-------⏵§r "),
-        TITLE_MONEY_TOP("messages.title-money-top", "§5§l⏴-------ТОП ПО ВАЛЮТЕ-------⏵§r "),
-        TITLE_END("messages.title-end", "§5§l⏴---------------------⏵§r "),
+        TITLE_KILLS_TOP("messages.title-kills-top", "§b§l⏴-------§r§e§lТОП ПО КИЛАМ§r§b§l-------⏵§r "),
+        TITLE_MONEY_TOP("messages.title-money-top", "§b§l⏴-------§r§e§lТОП ПО ВАЛЮТЕ§r§b§l-------⏵§r "),
+        TITLE_END("messages.title-end", "§b§l⏴---------------------⏵§r "),
         TITLE_EMPTY_TOP("messages.title-empty-top", "Топ пустой "),
 
         CLAN_MENU("menu-gui.clan-menu.inventory-name", "Меню клана "),
@@ -267,6 +271,10 @@ public class Langs {
         TOP_CLANS_DESCRIPTION("menu-gui.clan-menu.top-clans-description", "Открывает список лучших кланов "),
 
         MEMBERS_MENU("menu-gui.members-menu.inventory-name", "Меню участников "),
+        PREVIOUS_PAGE("menu-gui.members-menu.previous-page", "Предыдущая страница "),
+        PREVIOUS_PAGE_DESCRIPTION("menu-gui.members-menu.previous-page-description", "Открывает предыдущую страницу "),
+        NEXT_PAGE("menu-gui.members-menu.next-page", "Следующая страница "),
+        NEXT_PAGE_DESCRIPTION("menu-gui.members-menu.next-page-description", "Открывает следующую страницу "),
         MEMBERS_BACK_TO_MENU("menu-gui.members-menu.members-back-to-menu", "Вернуться назад "),
         MEMBERS_BACK_TO_MENU_DESCRIPTION("menu-gui.members-menu.members-back-to-menu-description", "Открывает основное меню клана "),
 
@@ -351,7 +359,7 @@ public class Langs {
         LEADER("roles.leader", "Глава "),
         ELDER("roles.elder", "Старейшина "),
         MEMBER("roles.member", "Участник "),
-        NO_CLAN("roles.no-clan", "NoClan ");
+        NO_CLAN("roles.no-clan", "НетКлана ");
         private String path;
         private String msg;
         private static YamlConfiguration LANG;

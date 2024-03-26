@@ -24,8 +24,21 @@ public class GeneralUtils {
         return digits;
     }
 
+    public static int setDefaultValue(Integer value, String pathConfig) {
+        String valueDefaultConfig = UnitedClans.getInstance().getConfig().getString(pathConfig);
+        if (GeneralUtils.checkDigits(valueDefaultConfig)) {
+            Integer valueDefault = new Integer(valueDefaultConfig);
+
+            if (valueDefault >= 0 && valueDefault <= 64) {
+                value = valueDefault;
+            }
+        }
+
+        return value;
+    }
+
     public static void removeItems (Player player, Integer value) {
-        int itemsRemoved = 0;
+        Integer itemsRemoved = 0;
         for (ItemStack itemStack : player.getInventory()) {
             if (itemStack == null) {
                 continue;
@@ -35,8 +48,8 @@ public class GeneralUtils {
                 continue;
             }
 
-            int amount = itemStack.getAmount();
-            int itemsToRemove = Math.min(value - itemsRemoved, amount);
+            Integer amount = itemStack.getAmount();
+            Integer itemsToRemove = Math.min(value - itemsRemoved, amount);
             itemStack.setAmount(amount - itemsToRemove);
             itemsRemoved += itemsToRemove;
 
