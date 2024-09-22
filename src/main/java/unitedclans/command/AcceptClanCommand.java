@@ -34,15 +34,18 @@ public class AcceptClanCommand implements CommandExecutor {
             return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
         }
 
-        List<Map<String, Object>> rsInvitation = dbDriver.selectData("clan_id", "invitations", "WHERE uuid = ?", uuid);
-        if (rsInvitation.isEmpty()) {
+        if (!UnitedClans.getInstance().invitations.containsKey(uuid)) {
             return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_INVITED", true);
         }
-        int ClanID = (int) rsInvitation.get(0).get("clan_id");
+
+        int ClanID = UnitedClans.getInstance().invitations.get(uuid);
 
         List<Map<String, Object>> rsClan = dbDriver.selectData("count_members, clan_name", "clans", "WHERE clan_id = ?", ClanID);
         int countMembers = (int) rsClan.get(0).get("count_members");
-        if (countMembers >= 25) {
+
+        int max = GeneralUtils.setDefaultValue(25, "clan-max-player", 1, 100);
+
+        if (countMembers >= max) {
             return GeneralUtils.checkUtil(playerSender, language, "THIS_CLAN_MAX", true);
         }
         String clanName = (String) rsClan.get(0).get("clan_name");
@@ -70,7 +73,8 @@ public class AcceptClanCommand implements CommandExecutor {
         Map<String, Object> updateMapClans = new HashMap<>();
         updateMapClans.put("count_members", countMembers + 1);
         dbDriver.updateData("clans", updateMapClans, "clan_id = ?", ClanID);
-        dbDriver.deleteData("invitations", "uuid = ?", uuid);
+
+        UnitedClans.getInstance().invitations.remove(uuid);
 
         ShowClanUtils.showClan(plugin, dbDriver);
 

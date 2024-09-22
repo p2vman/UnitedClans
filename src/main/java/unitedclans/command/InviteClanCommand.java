@@ -38,13 +38,13 @@ public class InviteClanCommand implements CommandExecutor {
         }
 
         String playerNameInput = args[0];
-        Player playerName = plugin.getServer().getPlayer(playerNameInput);
+        Player invitedPlayer = plugin.getServer().getPlayer(playerNameInput);
 
-        if (playerName == null) {
+        if (invitedPlayer == null) {
             return GeneralUtils.checkUtil(playerSender, language, "WRONG_PLAYER_NAME", true);
         }
 
-        if (uuid == playerName.getUniqueId()) {
+        if (uuid == invitedPlayer.getUniqueId()) {
             return GeneralUtils.checkUtil(playerSender, language, "SEND_INVITATION_YOURSELF", true);
         }
 
@@ -56,7 +56,7 @@ public class InviteClanCommand implements CommandExecutor {
             return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
         }
 
-        List<Map<String, Object>> rsInvitedPlayer = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", playerName.getUniqueId());
+        List<Map<String, Object>> rsInvitedPlayer = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", invitedPlayer.getUniqueId());
         int ClanID = (int) rsInvitedPlayer.get(0).get("clan_id");
 
         if (ClanID != 0) {
@@ -67,8 +67,7 @@ public class InviteClanCommand implements CommandExecutor {
             return GeneralUtils.checkUtil(playerSender, language, "NO_RIGHTS_INVITE", true);
         }
 
-        List<Map<String, Object>> rsInviteChecker = dbDriver.selectData("uuid", "invitations", "WHERE uuid = ?", playerName.getUniqueId());
-        if (!rsInviteChecker.isEmpty()) {
+        if (UnitedClans.getInstance().invitations.containsKey(invitedPlayer.getUniqueId())) {
             return GeneralUtils.checkUtil(playerSender, language, "ALREADY_SENT_INVITATION", true);
         }
 
@@ -82,27 +81,23 @@ public class InviteClanCommand implements CommandExecutor {
             return GeneralUtils.checkUtil(playerSender, language, "YOUR_CLAN_MAX", true);
         }
 
-        Map<String, Object> insertMap = new HashMap<>();
-        insertMap.put("uuid", playerName.getUniqueId());
-        insertMap.put("player_name", playerName.getName());
-        insertMap.put("clan_id", getClanID);
-        dbDriver.insertData("invitations", insertMap);
+        UnitedClans.getInstance().invitations.put(invitedPlayer.getUniqueId(), getClanID);
 
         String msgInvitation = LocalizationUtils.langCheck(language, "INVITATION");
         TextComponent msgAccept = new TextComponent(LocalizationUtils.langCheck(language, "ACCEPT"));
         msgAccept.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(LocalizationUtils.langCheck(language, "CLICK_INVITE"))));
         msgAccept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ucaccept"));
-        playerName.sendMessage(msgInvitation.replace("%clan%", clanName).replace("%player%", sender.getName()));
-        playerName.sendMessage(msgAccept);
+        invitedPlayer.sendMessage(msgInvitation.replace("%clan%", clanName).replace("%player%", sender.getName()));
+        invitedPlayer.sendMessage(msgAccept);
         sender.sendMessage(LocalizationUtils.langCheck(language, "INVITATION_SENT"));
         playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
-        plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " invited " + playerName.getName() + " to the " + clanName + " clan");
+        plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " invited " + invitedPlayer.getName() + " to the " + clanName + " clan");
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
             @Override
             public void run() {
-                dbDriver.deleteData("invitations", "uuid = ?", playerName.getUniqueId());
+                UnitedClans.getInstance().invitations.remove(invitedPlayer.getUniqueId());
             }
         }, 1200);
 

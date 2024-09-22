@@ -9,9 +9,14 @@ import unitedclans.langs.DefaultConfig;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.DatabaseDriver;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public final class UnitedClans extends JavaPlugin implements Listener {
     private static UnitedClans instance;
     private DatabaseDriver dbDriver;
+    public Map<UUID, Integer> invitations = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -22,7 +27,6 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         dbDriver = new DatabaseDriver("jdbc:sqlite:" + getDataFolder() + "/ucdatabase.db");
         dbDriver.createTable("players", "uuid TEXT NOT NULL PRIMARY KEY", "player_name TEXT", "clan_id INTEGER", "clan_role TEXT", "kills INTEGER", "donations INTEGER", "letter_read INTEGER");
         dbDriver.createTable("clans", "clan_id INTEGER NOT NULL PRIMARY KEY", "clan_name TEXT", "clan_color TEXT", "count_members INTEGER", "bank INTEGER", "kills INTEGER");
-        dbDriver.createTable("invitations", "uuid TEXT NOT NULL PRIMARY KEY", "player_name TEXT", "clan_id INTEGER");
         dbDriver.createTable("letters", "clan_id TEXT NOT NULL PRIMARY KEY", "letter TEXT");
 
         getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "╔═╗╔═╗╔═══╗" + "\u001B[0m");
