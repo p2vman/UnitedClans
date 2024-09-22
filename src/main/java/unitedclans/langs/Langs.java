@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Langs {
     public enum LangEN {
+        SUCCESS_RELOAD_CONFIG("messages.success-reload-config", "§aThe plugin config was successfully reloaded"),
         INVALID_COMMAND("messages.invalid-command", "§cThe command was entered incorrectly "),
         WRONG_CLAN_NAME("messages.wrong-clan-name", "§cWrong clan name "),
         LENGTH_CLAN_NAME("messages.length-clan-name", "§cThe clan name can only be in the range from 3 to 12 characters "),
@@ -200,6 +201,7 @@ public class Langs {
     }
 
     public enum LangRU {
+        SUCCESS_RELOAD_CONFIG("messages.success-reload-config", "§aКонфигурация плагина была успешно перезагружена"),
         INVALID_COMMAND("messages.invalid-command", "§cНекорректная команда "),
         WRONG_CLAN_NAME("messages.wrong-clan-name", "§cНеверное название клана "),
         LENGTH_CLAN_NAME("messages.length-clan-name", "§cНазвание клана может содержать от 3 до 12 символов "),

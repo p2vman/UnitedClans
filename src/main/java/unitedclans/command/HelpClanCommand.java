@@ -24,6 +24,9 @@ public class HelpClanCommand implements CommandExecutor {
                     "§bCommand:§r §euchelp§r \n" +
                     "§bDescription:§r §eThis command allows you to display all possible plugin commands§r \n" +
                     "§bUsage:§r §e/<command>§r \n \n" +
+                    "§bCommand:§r §eucreloadconfig§r \n" +
+                    "§bDescription:§r §eThis command allows you to reload the plugin config§r \n" +
+                    "§bUsage:§r §e/<command>§r \n \n" +
                     "§bCommand:§r §eucinfo§r \n" +
                     "§bDescription:§r §eThis command allows you to view information about the clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name (not necessary)>§r \n \n" +
@@ -75,6 +78,9 @@ public class HelpClanCommand implements CommandExecutor {
                     "§bКоманда:§r §euchelp§r \n" +
                     "§bОписание:§r §eЭта команда позволяет отображать все возможные команды плагина§r \n" +
                     "§bИспользование:§r §e/<command>§r \n \n" +
+                    "§bКоманда:§r §eucreloadconfig§r \n" +
+                    "§bОписание:§r §eЭта команда позволяет перезагрузить конфигурацию плагина§r \n" +
+                    "§bИспользование:§r §e/<command>§r \n \n" +
                     "§bКоманда:§r §eucinfo§r \n" +
                     "§bОписание:§r §eЭта команда позволяет просмотреть информацию о клане§r \n" +
                     "§bИспользование:§r §e/<command> <clan name (not necessary)>§r \n \n" +
@@ -118,13 +124,16 @@ public class HelpClanCommand implements CommandExecutor {
                     "§bОписание:§r §eЭта команда позволяет открыть топ кланов§r \n" +
                     "§bИспользование:§r §e/<command> <top name>§r \n \n" +
                     "§bКоманда:§r §eucletter§r \n" +
-                    "§bОписание:§r §eДанная команда позволяет создать и просмотреть письмо клану§r \n" +
+                    "§bОписание:§r §eЭта команда позволяет создать и просмотреть письмо клану§r \n" +
                     "§bИспользование:§r §e/<command> <letter (not necessary)>§r \n" +
                     "§b§l⏴--------------------------⏵§r");
         } else {
             sender.sendMessage("§b§l⏴-------§r§e§lUnitedClans§r§b§l-------⏵§r \n" +
                     "§bCommand:§r §euchelp§r \n" +
                     "§bDescription:§r §eThis command allows you to display all possible plugin commands§r \n" +
+                    "§bUsage:§r §e/<command>§r \n \n" +
+                    "§bCommand:§r §eucreloadconfig§r \n" +
+                    "§bDescription:§r §eThis command allows you to reload the plugin config§r \n" +
                     "§bUsage:§r §e/<command>§r \n \n" +
                     "§bCommand:§r §eucinfo§r \n" +
                     "§bDescription:§r §eThis command allows you to view information about the clan§r \n" +

@@ -12,6 +12,13 @@ commands:
     usage: /<command>
     aliases:
       - uch
+  ucreloadconfig:
+    description: This command allows you to reload the plugin config
+    permission: unitedclans.ucreloadconfig
+    usage: /<command>
+    aliases:
+      - ucreload
+      - ucrc
   ucinfo:
     description: This command allows you to view information about the clan
     permission: unitedclans.ucinfo
@@ -110,6 +117,9 @@ permissions:
   unitedclans.uchelp:
     description: Permission to use command uchelp
     default: true
+  unitedclans.ucreloadconfig:
+    description: Permission to use command ucreloadconfig
+    default: op
   unitedclans.ucinfo:
     description: Permission to use command ucinfo
     default: true

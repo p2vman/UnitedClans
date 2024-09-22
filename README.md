@@ -8,6 +8,7 @@ All technical settings and features presented here are for the latest version of
 ## Commands
 Here are all the commands that can be used in the plugin:
 * `/uchelp` - This command allows you to display all possible plugin commands
+* `/ucreloadconfig` - This command allows you to reload the plugin config
 * `/ucinfo <clan name (not necessary)>` - This command allows you to view information about the clan
 * `/uccreate <clan name> <color>` - This command allows you to create a clan
 * `/ucdelete <clan name>` - This command allows you to delete a clan
@@ -46,6 +47,29 @@ roles:
 * `server-currency` - This parameter is responsible for the server currency that the plugin will use as the main one
 * `clan-creation-price` - This parameter is responsible for the cost of creating a clan, in the currency specified in the `server-currency` parameter (the value must not be less than `0` and greater than `64`)
 * `roles` - These parameters are responsible for setting up roles in the plugin, *I don't recommend touching them*
+
+## Permissions
+The plugin has permissions:
+
+| **Permissions**                  | **Meaning**                                |
+|----------------------------------|--------------------------------------------|
+| `unitedclans.uchelp`             | Permission to use command `uchelp`         |
+| `unitedclans.ucreloadconfig`     | Permission to use command `ucreloadconfig` |
+| `unitedclans.ucinfo`             | Permission to use command `ucinfo`         |
+| `unitedclans.uccreate`           | Permission to use command `uccreate`       |
+| `unitedclans.ucdelete`           | Permission to use command `ucdelete`       |
+| `unitedclans.ucinvite`           | Permission to use command `ucinvite`       |
+| `unitedclans.ucaccept`           | Permission to use command `ucaccept`       |
+| `unitedclans.uckick`             | Permission to use command `uckick`         |
+| `unitedclans.ucleave`            | Permission to use command `ucleave`        |
+| `unitedclans.ucsetrole`          | Permission to use command `ucsetrole`      |
+| `unitedclans.ucmenu`             | Permission to use command `ucmenu`         |
+| `unitedclans.ucchat`             | Permission to use command `ucchat`         |
+| `unitedclans.ucchangeleader`     | Permission to use command `ucchangeleader` |
+| `unitedclans.ucbankdeposit`      | Permission to use command `ucbankdeposit`  |
+| `unitedclans.ucbankwithdraw`     | Permission to use command `ucbankwithdraw` |
+| `unitedclans.uctop`              | Permission to use command `uctop`          |
+| `unitedclans.ucletter`           | Permission to use command `ucletter`       |
 
 ## Dependencies
 In the **UnitedClans** plugin it is possible to use external placeholders `PlaceholderAPI`, which allow you to get clan names, player roles and various clan points.

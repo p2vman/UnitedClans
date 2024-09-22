@@ -38,6 +38,8 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new PlayerKillEventHandler(dbDriver), this);
         getServer().getPluginCommand("uchelp").setExecutor(new HelpClanCommand());
         getServer().getPluginCommand("uchelp").setTabCompleter(new HelpClanTabCompleter());
+        getServer().getPluginCommand("ucreloadconfig").setExecutor(new ReloadConfigCommand(this));
+        getServer().getPluginCommand("ucreloadconfig").setTabCompleter(new ReloadConfigTabCompleter());
         getServer().getPluginCommand("ucinfo").setExecutor(new InfoClanCommand(dbDriver));
         getServer().getPluginCommand("ucinfo").setTabCompleter(new InfoClanTabCompleter(dbDriver));
         getServer().getPluginCommand("uccreate").setExecutor(new CreateClanCommand(this, dbDriver));
