@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 
-
 public enum DefaultConfig {
     LANG("lang", "en_en"),
     CLAN_MSG_PATTERN("clan-msg-pattern", "%clan% [%sender%]:%message%"),

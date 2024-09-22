@@ -4,8 +4,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class TopClansTabCompleter implements TabCompleter {
     @Override
@@ -17,7 +18,7 @@ public class TopClansTabCompleter implements TabCompleter {
             topList.add("money");
             List<String> tops = null;
             for (String top : topList) {
-                if (top.toString().toLowerCase().startsWith(inputTop)) {
+                if (top.toLowerCase().startsWith(inputTop)) {
                     if (tops == null) {
                         tops = new ArrayList<>();
                     }

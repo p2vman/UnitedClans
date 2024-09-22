@@ -8,9 +8,7 @@ import org.bukkit.entity.Player;
 import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 
-
 public class HelpClanCommand implements CommandExecutor {
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;

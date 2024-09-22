@@ -4,16 +4,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import unitedclans.utils.SqliteDriver;
+import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-
 public class InfoClanTabCompleter implements TabCompleter {
-    private SqliteDriver sql;
-    public InfoClanTabCompleter(SqliteDriver sql) {
-        this.sql = sql;
+    private final DatabaseDriver dbDriver;
+
+    public InfoClanTabCompleter(DatabaseDriver dbDriver) {
+        this.dbDriver = dbDriver;
     }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
@@ -24,11 +25,11 @@ public class InfoClanTabCompleter implements TabCompleter {
                 }
 
                 String inputClan = args[0].toLowerCase();
-                List<Map<String, Object>> rsClans = sql.sqlSelectData("ClanName", "CLANS");
+                List<Map<String, Object>> rsClans = dbDriver.selectData("clan_name", "clans", null);
 
                 ArrayList<String> clans = new ArrayList<>();
                 for (Map<String, Object> i : rsClans) {
-                    String clanName = (String) i.get("ClanName");
+                    String clanName = (String) i.get("clan_name");
                     clans.add(clanName);
                 }
 

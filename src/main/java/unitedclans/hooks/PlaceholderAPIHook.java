@@ -9,18 +9,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import unitedclans.UnitedClans;
 import unitedclans.utils.LocalizationUtils;
-import unitedclans.utils.SqliteDriver;
+import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
-
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     private final JavaPlugin plugin;
-    private SqliteDriver sql;
-    public PlaceholderAPIHook(JavaPlugin plugin, SqliteDriver sql) {
+    private final DatabaseDriver dbDriver;
+
+    public PlaceholderAPIHook(JavaPlugin plugin, DatabaseDriver dbDriver) {
         this.plugin = plugin;
-        this.sql = sql;
+        this.dbDriver = dbDriver;
     }
 
     @Override
@@ -46,115 +46,88 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
             Player player = offlinePlayer.getPlayer();
 
             if (params.equals("clanName")) {
-                try {
-                    List<Map<String, Object>> rsClanID = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-                    Integer clanID = (Integer) rsClanID.get(0).get("ClanID");
+                List<Map<String, Object>> rsClanID = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", player.getUniqueId());
+                int clanID = (int) rsClanID.get(0).get("clan_id");
 
-                    if (clanID != 0) {
-                        List<Map<String, Object>> rsClanName = sql.sqlSelectData("ClanName, ClanColor", "CLANS", "ClanID = " + clanID);
-                        String clanName = (String) rsClanName.get(0).get("ClanName");
-                        String clanColor = (String) rsClanName.get(0).get("ClanColor");
+                if (clanID != 0) {
+                    List<Map<String, Object>> rsClanName = dbDriver.selectData("clan_name, clan_color", "clans", "WHERE clan_id = ?", clanID);
+                    String clanName = (String) rsClanName.get(0).get("clan_name");
+                    String clanColor = (String) rsClanName.get(0).get("clan_color");
 
-                        return ChatColor.valueOf(clanColor) + (ChatColor.BOLD + clanName + ChatColor.RESET) + " ";
-                    }
-
-                    return "";
-                } catch (Exception e) {
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                    return ChatColor.valueOf(clanColor) + (ChatColor.BOLD + clanName + ChatColor.RESET) + " ";
                 }
+
+                return "";
             } else if (params.equals("clanCountMembers")) {
-                try {
-                    List<Map<String, Object>> rsClanID = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-                    Integer clanID = (Integer) rsClanID.get(0).get("ClanID");
+                List<Map<String, Object>> rsClanID = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", player.getUniqueId());
+                int clanID = (int) rsClanID.get(0).get("clan_id");
 
-                    if (clanID != 0) {
-                        List<Map<String, Object>> rsClanCountMembers = sql.sqlSelectData("CountMembers", "CLANS", "ClanID = " + clanID);
-                        Integer countMembers = (Integer) rsClanCountMembers.get(0).get("CountMembers");
+                if (clanID != 0) {
+                    List<Map<String, Object>> rsClanCountMembers = dbDriver.selectData("count_members", "clans", "WHERE clan_id = ?", clanID);
+                    int countMembers = (int) rsClanCountMembers.get(0).get("count_members");
 
-                        return ChatColor.YELLOW + countMembers.toString() + "☠ " + ChatColor.RESET;
-                    }
-
-                    return "";
-                } catch (Exception e) {
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                    return ChatColor.YELLOW + String.valueOf(countMembers) + "☠ " + ChatColor.RESET;
                 }
+
+                return "";
             } else if (params.equals("clanKills")) {
-                try {
-                    List<Map<String, Object>> rsClanID = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-                    Integer clanID = (Integer) rsClanID.get(0).get("ClanID");
+                List<Map<String, Object>> rsClanID = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", player.getUniqueId());
+                int clanID = (int) rsClanID.get(0).get("clan_id");
 
-                    if (clanID != 0) {
-                        List<Map<String, Object>> rsClanKills = sql.sqlSelectData("Kills", "CLANS", "ClanID = " + clanID);
-                        Integer clanKills = (Integer) rsClanKills.get(0).get("Kills");
+                if (clanID != 0) {
+                    List<Map<String, Object>> rsClanKills = dbDriver.selectData("kills", "clans", "WHERE clan_id = ?", clanID);
+                    int clanKills = (int) rsClanKills.get(0).get("kills");
 
-                        return ChatColor.DARK_RED + clanKills.toString() + "\uD83D\uDDE1 " + ChatColor.RESET;
-                    }
-
-                    return "";
-                } catch (Exception e) {
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                    return ChatColor.DARK_RED + String.valueOf(clanKills) + "\uD83D\uDDE1 " + ChatColor.RESET;
                 }
+
+                return "";
             } else if (params.equals("clanBank")) {
-                try {
-                    List<Map<String, Object>> rsClanID = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-                    Integer clanID = (Integer) rsClanID.get(0).get("ClanID");
+                List<Map<String, Object>> rsClanID = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", player.getUniqueId());
+                int clanID = (int) rsClanID.get(0).get("clan_id");
 
-                    if (clanID != 0) {
-                        List<Map<String, Object>> rsClanBank = sql.sqlSelectData("Bank", "CLANS", "ClanID = " + clanID);
-                        Integer clanBank = (Integer) rsClanBank.get(0).get("Bank");
+                if (clanID != 0) {
+                    List<Map<String, Object>> rsClanBank = dbDriver.selectData("bank", "clans", "WHERE clan_id = ?", clanID);
+                    int clanBank = (int) rsClanBank.get(0).get("bank");
 
-                        return ChatColor.DARK_GREEN + clanBank.toString() + "$ " + ChatColor.RESET;
-                    }
-
-                    return "";
-                } catch (Exception e) {
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                    return ChatColor.DARK_GREEN + String.valueOf(clanBank) + "$ " + ChatColor.RESET;
                 }
+
+                return "";
             } else if (params.equals("playerRole")) {
-                try {
-                    List<Map<String, Object>> rsPlayerRole = sql.sqlSelectData("ClanRole", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-                    String playerRole = (String) rsPlayerRole.get(0).get("ClanRole");
+                List<Map<String, Object>> rsPlayerRole = dbDriver.selectData("clan_role", "players", "WHERE uuid = ?", player.getUniqueId());
+                String playerRole = (String) rsPlayerRole.get(0).get("clan_role");
 
-                    if (!playerRole.equals(UnitedClans.getInstance().getConfig().getString("roles.no-clan"))) {
-                        String color = "WHITE";
-                        String role = "";
-                        if (playerRole.equals(UnitedClans.getInstance().getConfig().getString("roles.member"))) {
-                            color = "GREEN";
-                            role = LocalizationUtils.langCheck(language, "MEMBER");
-                        } else if (playerRole.equals(UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
-                            color = "GOLD";
-                            role = LocalizationUtils.langCheck(language, "ELDER");
-                        } else if (playerRole.equals(UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                            color = "DARK_PURPLE";
-                            role = LocalizationUtils.langCheck(language, "LEADER");
-                        }
-                        return ChatColor.valueOf(color) + role + ChatColor.RESET;
+                if (!playerRole.equals(UnitedClans.getInstance().getConfig().getString("roles.no-clan"))) {
+                    String color = "WHITE";
+                    String role = "";
+                    if (playerRole.equals(UnitedClans.getInstance().getConfig().getString("roles.member"))) {
+                        color = "GREEN";
+                        role = LocalizationUtils.langCheck(language, "MEMBER");
+                    } else if (playerRole.equals(UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                        color = "GOLD";
+                        role = LocalizationUtils.langCheck(language, "ELDER");
+                    } else if (playerRole.equals(UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                        color = "DARK_PURPLE";
+                        role = LocalizationUtils.langCheck(language, "LEADER");
                     }
-
-                    return "";
-                } catch (Exception e) {
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                    return ChatColor.valueOf(color) + role + ChatColor.RESET;
                 }
+
+                return "";
             } else if (params.equals("playerKills")) {
-                try {
-                    List<Map<String, Object>> rsPlayerKills = sql.sqlSelectData("Kills", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-                    Integer playerKills = (Integer) rsPlayerKills.get(0).get("Kills");
+                List<Map<String, Object>> rsPlayerKills = dbDriver.selectData("kills", "players", "WHERE uuid = ?", player.getUniqueId());
+                int playerKills = (int) rsPlayerKills.get(0).get("kills");
 
-                    return ChatColor.DARK_RED + playerKills.toString() + "\uD83D\uDDE1 " + ChatColor.RESET;
-                } catch (Exception e) {
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
-                }
+                return ChatColor.DARK_RED + String.valueOf(playerKills) + "\uD83D\uDDE1 " + ChatColor.RESET;
             } else if (params.equals("playerDonations")) {
-                try {
-                    List<Map<String, Object>> rsPlayerDonations = sql.sqlSelectData("Donations", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-                    Integer playerDonations = (Integer) rsPlayerDonations.get(0).get("Donations");
+                List<Map<String, Object>> rsPlayerDonations = dbDriver.selectData("donations", "players", "WHERE uuid = ?", player.getUniqueId());
+                int playerDonations = (int) rsPlayerDonations.get(0).get("donations");
 
-                    return ChatColor.DARK_GREEN + playerDonations.toString() + "$ " + ChatColor.RESET;
-                } catch (Exception e) {
-                    System.err.println(e.getClass().getName() + ": " + e.getMessage());
-                }
+                return ChatColor.DARK_GREEN + String.valueOf(playerDonations) + "$ " + ChatColor.RESET;
             }
         }
+
         return null;
     }
 }

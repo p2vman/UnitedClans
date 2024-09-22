@@ -7,23 +7,23 @@ import unitedclans.handler.*;
 import unitedclans.hooks.PlaceholderAPIHook;
 import unitedclans.langs.DefaultConfig;
 import unitedclans.utils.LocalizationUtils;
-import unitedclans.utils.SqliteDriver;
-
+import unitedclans.utils.DatabaseDriver;
 
 public final class UnitedClans extends JavaPlugin implements Listener {
     private static UnitedClans instance;
-    private SqliteDriver sql;
+    private DatabaseDriver dbDriver;
+
     @Override
     public void onEnable() {
         instance = this;
         DefaultConfig.createDefaultConfigFile(this);
         LocalizationUtils.loadLang(this);
 
-        try {
-            sql = new SqliteDriver(getDataFolder() + "/ucdatabase.db");
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
+        dbDriver = new DatabaseDriver("jdbc:sqlite:" + getDataFolder() + "/ucdatabase.db");
+        dbDriver.createTable("players", "uuid TEXT NOT NULL PRIMARY KEY", "player_name TEXT", "clan_id INTEGER", "clan_role TEXT", "kills INTEGER", "donations INTEGER", "letter_read INTEGER");
+        dbDriver.createTable("clans", "clan_id INTEGER NOT NULL PRIMARY KEY", "clan_name TEXT", "clan_color TEXT", "count_members INTEGER", "bank INTEGER", "kills INTEGER");
+        dbDriver.createTable("invitations", "uuid TEXT NOT NULL PRIMARY KEY", "player_name TEXT", "clan_id INTEGER");
+        dbDriver.createTable("letters", "clan_id TEXT NOT NULL PRIMARY KEY", "letter TEXT");
 
         getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "╔═╗╔═╗╔═══╗" + "\u001B[0m");
         getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "║ ║║ ║║ ╔═╝" + "\u001B[0m");
@@ -33,56 +33,54 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getLogger().info("[UnitedClans] " + "\u001B[96m" + "╚════╝╚═══╝" + "\u001B[0m");
         getServer().getLogger().info("[UnitedClans] UnitedClans is enabled");
 
-        getServer().getPluginManager().registerEvents(new ClanMenuInventoryHandler(this, sql), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this, sql), this);
-        getServer().getPluginManager().registerEvents(new PlayerKillEventHandler(sql), this);
-        getServer().getPluginCommand("createclan").setExecutor(new CreateClanCommand(this, sql));
+        getServer().getPluginManager().registerEvents(new ClanMenuInventoryHandler(this, dbDriver), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this, dbDriver), this);
+        getServer().getPluginManager().registerEvents(new PlayerKillEventHandler(dbDriver), this);
+        getServer().getPluginCommand("createclan").setExecutor(new CreateClanCommand(this, dbDriver));
         getServer().getPluginCommand("createclan").setTabCompleter(new CreateClanTabCompleter());
-        getServer().getPluginCommand("deleteclan").setExecutor(new DeleteClanCommand(this, sql));
+        getServer().getPluginCommand("deleteclan").setExecutor(new DeleteClanCommand(this, dbDriver));
         getServer().getPluginCommand("deleteclan").setTabCompleter(new DeleteClanTabCompleter());
-        getServer().getPluginCommand("inviteclan").setExecutor(new InviteClanCommand(this, sql));
+        getServer().getPluginCommand("inviteclan").setExecutor(new InviteClanCommand(this, dbDriver));
         getServer().getPluginCommand("inviteclan").setTabCompleter(new InviteClanTabCompleter());
-        getServer().getPluginCommand("acceptclan").setExecutor(new AcceptClanCommand(this, sql));
+        getServer().getPluginCommand("acceptclan").setExecutor(new AcceptClanCommand(this, dbDriver));
         getServer().getPluginCommand("acceptclan").setTabCompleter(new AcceptClanTabCompleter());
-        getServer().getPluginCommand("kickclan").setExecutor(new KickClanCommand(this, sql));
-        getServer().getPluginCommand("kickclan").setTabCompleter(new KickClanTabCompleter(sql));
-        getServer().getPluginCommand("leaveclan").setExecutor(new LeaveClanCommand(this, sql));
+        getServer().getPluginCommand("kickclan").setExecutor(new KickClanCommand(this, dbDriver));
+        getServer().getPluginCommand("kickclan").setTabCompleter(new KickClanTabCompleter(dbDriver));
+        getServer().getPluginCommand("leaveclan").setExecutor(new LeaveClanCommand(this, dbDriver));
         getServer().getPluginCommand("leaveclan").setTabCompleter(new LeaveClanTabCompleter());
-        getServer().getPluginCommand("setroleclan").setExecutor(new SetRoleClanCommand(this, sql));
-        getServer().getPluginCommand("setroleclan").setTabCompleter(new SetRoleClanTabCompleter(sql));
-        getServer().getPluginCommand("menuclan").setExecutor(new MenuClanCommand(sql));
+        getServer().getPluginCommand("setroleclan").setExecutor(new SetRoleClanCommand(this, dbDriver));
+        getServer().getPluginCommand("setroleclan").setTabCompleter(new SetRoleClanTabCompleter(dbDriver));
+        getServer().getPluginCommand("menuclan").setExecutor(new MenuClanCommand(dbDriver));
         getServer().getPluginCommand("menuclan").setTabCompleter(new MenuClanTabCompleter());
-        getServer().getPluginCommand("chatclan").setExecutor(new ChatClanCommand(this, sql));
+        getServer().getPluginCommand("chatclan").setExecutor(new ChatClanCommand(this, dbDriver));
         getServer().getPluginCommand("chatclan").setTabCompleter(new ChatClanTabCompleter());
-        getServer().getPluginCommand("changeleaderclan").setExecutor(new ChangeLeaderClanCommand(this, sql));
-        getServer().getPluginCommand("changeleaderclan").setTabCompleter(new ChangeLeaderClanTabCompleter(sql));
-        getServer().getPluginCommand("bankdepositclan").setExecutor(new BankDepositClanCommand(this, sql));
+        getServer().getPluginCommand("changeleaderclan").setExecutor(new ChangeLeaderClanCommand(this, dbDriver));
+        getServer().getPluginCommand("changeleaderclan").setTabCompleter(new ChangeLeaderClanTabCompleter(dbDriver));
+        getServer().getPluginCommand("bankdepositclan").setExecutor(new BankDepositClanCommand(this, dbDriver));
         getServer().getPluginCommand("bankdepositclan").setTabCompleter(new BankDepositClanTabCompleter());
-        getServer().getPluginCommand("bankwithdrawclan").setExecutor(new BankWithdrawClanCommand(this, sql));
+        getServer().getPluginCommand("bankwithdrawclan").setExecutor(new BankWithdrawClanCommand(this, dbDriver));
         getServer().getPluginCommand("bankwithdrawclan").setTabCompleter(new BankWithdrawClanTabCompleter());
-        getServer().getPluginCommand("topclans").setExecutor(new TopClansCommand(sql));
+        getServer().getPluginCommand("topclans").setExecutor(new TopClansCommand(dbDriver));
         getServer().getPluginCommand("topclans").setTabCompleter(new TopClansTabCompleter());
-        getServer().getPluginCommand("letterclan").setExecutor(new LetterClanCommand(this, sql));
+        getServer().getPluginCommand("letterclan").setExecutor(new LetterClanCommand(this, dbDriver));
         getServer().getPluginCommand("letterclan").setTabCompleter(new LetterClanTabCompleter());
         getServer().getPluginCommand("helpclan").setExecutor(new HelpClanCommand());
         getServer().getPluginCommand("helpclan").setTabCompleter(new HelpClanTabCompleter());
-        getServer().getPluginCommand("infoclan").setExecutor(new InfoClanCommand(sql));
-        getServer().getPluginCommand("infoclan").setTabCompleter(new InfoClanTabCompleter(sql));
+        getServer().getPluginCommand("infoclan").setExecutor(new InfoClanCommand(dbDriver));
+        getServer().getPluginCommand("infoclan").setTabCompleter(new InfoClanTabCompleter(dbDriver));
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlaceholderAPIHook(this, sql).register();
+            new PlaceholderAPIHook(this, dbDriver).register();
         }
     }
 
     @Override
     public void onDisable() {
         getServer().getLogger().info("[UnitedClans] UnitedClans is disabled");
-        try {
-            sql.connection.close();
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
+        dbDriver.closeConnection();
     }
 
-    public static UnitedClans getInstance() {return instance;}
+    public static UnitedClans getInstance() {
+        return instance;
+    }
 }

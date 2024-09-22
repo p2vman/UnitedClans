@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import unitedclans.UnitedClans;
 
-
 public class GeneralUtils {
     public static boolean checkUtil(Player player, String language, String msg, Boolean value) {
         player.sendMessage(LocalizationUtils.langCheck(language, msg));
@@ -24,10 +23,10 @@ public class GeneralUtils {
         return digits;
     }
 
-    public static int setDefaultValue(Integer value, String pathConfig, Integer minValue, Integer maxValue) {
+    public static int setDefaultValue(int value, String pathConfig, int minValue, int maxValue) {
         String valueDefaultConfig = UnitedClans.getInstance().getConfig().getString(pathConfig);
         if (GeneralUtils.checkDigits(valueDefaultConfig)) {
-            Integer valueDefault = new Integer(valueDefaultConfig);
+            int valueDefault = Integer.parseInt(valueDefaultConfig);
 
             if (valueDefault >= minValue && valueDefault <= maxValue) {
                 value = valueDefault;
@@ -37,8 +36,8 @@ public class GeneralUtils {
         return value;
     }
 
-    public static void removeItems(Player player, Integer value) {
-        Integer itemsRemoved = 0;
+    public static void removeItems(Player player, int value) {
+        int itemsRemoved = 0;
         for (ItemStack itemStack : player.getInventory()) {
             if (itemStack == null) {
                 continue;
@@ -48,8 +47,8 @@ public class GeneralUtils {
                 continue;
             }
 
-            Integer amount = itemStack.getAmount();
-            Integer itemsToRemove = Math.min(value - itemsRemoved, amount);
+            int amount = itemStack.getAmount();
+            int itemsToRemove = Math.min(value - itemsRemoved, amount);
             itemStack.setAmount(amount - itemsToRemove);
             itemsRemoved += itemsToRemove;
 

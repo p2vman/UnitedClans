@@ -8,7 +8,6 @@ import unitedclans.UnitedClans;
 
 import java.util.*;
 
-
 public class MenuClanUtils {
     public static void openClanMenu(Player player) {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
@@ -62,37 +61,34 @@ public class MenuClanUtils {
         player.openInventory(clanMenuGUI);
     }
 
-    public static int openMembersMenu(Player player, SqliteDriver sql, Integer pageNumber) {
+    public static int openMembersMenu(Player player, DatabaseDriver dbDriver, int pageNumber) {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Inventory membersMenuGUI = Bukkit.createInventory(player, 36, ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBERS_MENU"));
-        try {
-            List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-            Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
 
-            List<Map<String, Object>> rsPlayers = sql.sqlSelectData("PlayerName, ClanRole, Kills, Donations", "PLAYERS", "ClanID = " + PlayerClanID);
-            for (int i = pageNumber * 27; i < rsPlayers.size(); i++) {
-                ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD, 1);
-                SkullMeta playerHead_meta = (SkullMeta) playerHead.getItemMeta();
-                playerHead_meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + (String) rsPlayers.get(i).get("PlayerName")));
-                ArrayList<String> playerHead_lore = new ArrayList<>();
-                String playerRole = null;
-                if (Objects.equals(rsPlayers.get(i).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                    playerRole = ChatColor.DARK_PURPLE + LocalizationUtils.langCheck(language, "LEADER");
-                } else if (Objects.equals(rsPlayers.get(i).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
-                    playerRole = ChatColor.GOLD + LocalizationUtils.langCheck(language, "ELDER");
-                } else if (Objects.equals(rsPlayers.get(i).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.member"))) {
-                    playerRole = ChatColor.GREEN + LocalizationUtils.langCheck(language, "MEMBER");
-                }
-                playerHead_lore.add(playerRole);
-                playerHead_lore.add(ChatColor.DARK_RED + rsPlayers.get(i).get("Kills").toString() + "\uD83D\uDDE1");
-                playerHead_lore.add(ChatColor.DARK_GREEN + rsPlayers.get(i).get("Donations").toString() + "$");
-                playerHead_meta.setLore(playerHead_lore);
-                playerHead_meta.setOwner(rsPlayers.get(i).get("PlayerName").toString());
-                playerHead.setItemMeta(playerHead_meta);
-                membersMenuGUI.addItem(playerHead);
+        List<Map<String, Object>> rsPlayerClan = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", player.getUniqueId());
+        int PlayerClanID = (int) rsPlayerClan.get(0).get("clan_id");
+
+        List<Map<String, Object>> rsPlayers = dbDriver.selectData("player_name, clan_role, kills, donations", "players", "WHERE clan_id = ?", PlayerClanID);
+        for (int i = pageNumber * 27; i < rsPlayers.size(); i++) {
+            ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD, 1);
+            SkullMeta playerHead_meta = (SkullMeta) playerHead.getItemMeta();
+            playerHead_meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + (String) rsPlayers.get(i).get("player_name")));
+            ArrayList<String> playerHead_lore = new ArrayList<>();
+            String playerRole = null;
+            if (Objects.equals(rsPlayers.get(i).get("clan_role"), UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+                playerRole = ChatColor.DARK_PURPLE + LocalizationUtils.langCheck(language, "LEADER");
+            } else if (Objects.equals(rsPlayers.get(i).get("clan_role"), UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+                playerRole = ChatColor.GOLD + LocalizationUtils.langCheck(language, "ELDER");
+            } else if (Objects.equals(rsPlayers.get(i).get("clan_role"), UnitedClans.getInstance().getConfig().getString("roles.member"))) {
+                playerRole = ChatColor.GREEN + LocalizationUtils.langCheck(language, "MEMBER");
             }
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            playerHead_lore.add(playerRole);
+            playerHead_lore.add(ChatColor.DARK_RED + rsPlayers.get(i).get("kills").toString() + "\uD83D\uDDE1");
+            playerHead_lore.add(ChatColor.DARK_GREEN + rsPlayers.get(i).get("donations").toString() + "$");
+            playerHead_meta.setLore(playerHead_lore);
+            playerHead_meta.setOwner(rsPlayers.get(i).get("player_name").toString());
+            playerHead.setItemMeta(playerHead_meta);
+            membersMenuGUI.addItem(playerHead);
         }
 
         ItemStack previous = new ItemStack(Material.ARROW, 1);
@@ -127,7 +123,7 @@ public class MenuClanUtils {
         return pageNumber;
     }
 
-    public static void openMemberMenu(Player player, SqliteDriver sql, String selectedPlayerName) {
+    public static void openMemberMenu(Player player, DatabaseDriver dbDriver, String selectedPlayerName) {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Inventory memberMenuGUI = Bukkit.createInventory(player, 9, ChatColor.BOLD + LocalizationUtils.langCheck(language, "MEMBER_MENU"));
 
@@ -135,22 +131,20 @@ public class MenuClanUtils {
         SkullMeta playerSelected_meta = (SkullMeta) playerSelected.getItemMeta();
         playerSelected_meta.setDisplayName(ChatColor.RESET + (ChatColor.WHITE + selectedPlayerName));
         ArrayList<String> playerSelected_lore = new ArrayList<>();
-        try {
-            List<Map<String, Object>> rsplayerSelectedPlayer = sql.sqlSelectData("ClanRole, Kills, Donations", "PLAYERS", "PlayerName = '" + selectedPlayerName + "'");
-            String setPlayerRole = null;
-            if (Objects.equals(rsplayerSelectedPlayer.get(0).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
-                setPlayerRole = ChatColor.DARK_PURPLE + LocalizationUtils.langCheck(language, "LEADER");
-            } else if (Objects.equals(rsplayerSelectedPlayer.get(0).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
-                setPlayerRole = ChatColor.GOLD + LocalizationUtils.langCheck(language, "ELDER");
-            } else if (Objects.equals(rsplayerSelectedPlayer.get(0).get("ClanRole"), UnitedClans.getInstance().getConfig().getString("roles.member"))) {
-                setPlayerRole = ChatColor.GREEN + LocalizationUtils.langCheck(language, "MEMBER");
-            }
-            playerSelected_lore.add(setPlayerRole);
-            playerSelected_lore.add(ChatColor.DARK_RED + rsplayerSelectedPlayer.get(0).get("Kills").toString() + "\uD83D\uDDE1");
-            playerSelected_lore.add(ChatColor.DARK_GREEN + rsplayerSelectedPlayer.get(0).get("Donations").toString() + "$");
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+
+        List<Map<String, Object>> rsplayerSelectedPlayer = dbDriver.selectData("clan_role, kills, donations", "players", "WHERE player_name = ?", selectedPlayerName);
+        String setPlayerRole = null;
+        if (Objects.equals(rsplayerSelectedPlayer.get(0).get("clan_role"), UnitedClans.getInstance().getConfig().getString("roles.leader"))) {
+            setPlayerRole = ChatColor.DARK_PURPLE + LocalizationUtils.langCheck(language, "LEADER");
+        } else if (Objects.equals(rsplayerSelectedPlayer.get(0).get("clan_role"), UnitedClans.getInstance().getConfig().getString("roles.elder"))) {
+            setPlayerRole = ChatColor.GOLD + LocalizationUtils.langCheck(language, "ELDER");
+        } else if (Objects.equals(rsplayerSelectedPlayer.get(0).get("clan_role"), UnitedClans.getInstance().getConfig().getString("roles.member"))) {
+            setPlayerRole = ChatColor.GREEN + LocalizationUtils.langCheck(language, "MEMBER");
         }
+        playerSelected_lore.add(setPlayerRole);
+        playerSelected_lore.add(ChatColor.DARK_RED + rsplayerSelectedPlayer.get(0).get("kills").toString() + "\uD83D\uDDE1");
+        playerSelected_lore.add(ChatColor.DARK_GREEN + rsplayerSelectedPlayer.get(0).get("donations").toString() + "$");
+
         playerSelected_meta.setLore(playerSelected_lore);
         playerSelected_meta.setOwner(selectedPlayerName);
         playerSelected.setItemMeta(playerSelected_meta);
@@ -267,7 +261,7 @@ public class MenuClanUtils {
         player.openInventory(confirmRoleMenuGUI);
     }
 
-    public static void openBankMenu(Player player, SqliteDriver sql) {
+    public static void openBankMenu(Player player, DatabaseDriver dbDriver) {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Inventory clanBankGUI = Bukkit.createInventory(player, 36, ChatColor.BOLD + LocalizationUtils.langCheck(language, "BANK_CLAN_MENU"));
 
@@ -284,18 +278,16 @@ public class MenuClanUtils {
         ItemMeta accountBank_meta = accountBank.getItemMeta();
         accountBank_meta.setDisplayName(ChatColor.RESET + (ChatColor.GOLD + LocalizationUtils.langCheck(language, "BANK_ACCOUNT")));
         ArrayList<String> accountBank_lore = new ArrayList<>();
-        try {
-            List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + player.getUniqueId() + "'");
-            Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
 
-            List<Map<String, Object>> rsBank = sql.sqlSelectData("Bank", "CLANS", "ClanID = " + PlayerClanID);
-            Integer bankAmount = (Integer) rsBank.get(0).get("Bank");
+        List<Map<String, Object>> rsPlayerClan = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", player.getUniqueId());
+        int PlayerClanID = (int) rsPlayerClan.get(0).get("clan_id");
 
-            String msgAmount = LocalizationUtils.langCheck(language, "BANK_ACCOUNT_DESCRIPTION");
-            accountBank_lore.add(ChatColor.GOLD + msgAmount.replace("%value%", bankAmount.toString()));
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
+        List<Map<String, Object>> rsBank = dbDriver.selectData("bank", "clans", "WHERE clan_id = ?", PlayerClanID);
+        int bankAmount = (int) rsBank.get(0).get("bank");
+
+        String msgAmount = LocalizationUtils.langCheck(language, "BANK_ACCOUNT_DESCRIPTION");
+        accountBank_lore.add(ChatColor.GOLD + msgAmount.replace("%value%", String.valueOf(bankAmount)));
+
         accountBank_meta.setLore(accountBank_lore);
         accountBank.setItemMeta(accountBank_meta);
         clanBankGUI.setItem(13, accountBank);

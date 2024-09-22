@@ -7,7 +7,6 @@ import unitedclans.langs.Langs.*;
 import java.io.File;
 import java.io.IOException;
 
-
 public class LocalizationUtils {
     public static String langCheck(String cfgLang, String msgTitle) {
         String msg = null;

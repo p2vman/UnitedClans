@@ -7,15 +7,15 @@ import org.bukkit.entity.Player;
 import unitedclans.UnitedClans;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.MenuClanUtils;
-import unitedclans.utils.SqliteDriver;
+import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-
 public class MenuClanCommand implements CommandExecutor {
-    private SqliteDriver sql;
-    public MenuClanCommand(SqliteDriver sql) {
-        this.sql = sql;
+    private final DatabaseDriver dbDriver;
+
+    public MenuClanCommand(DatabaseDriver dbDriver) {
+        this.dbDriver = dbDriver;
     }
 
     @Override
@@ -24,21 +24,19 @@ public class MenuClanCommand implements CommandExecutor {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
         UUID uuid = playerSender.getUniqueId();
-        try {
-            if (args.length != 0) {
-                return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
-            }
 
-            List<Map<String, Object>> rsPlayerClan = sql.sqlSelectData("ClanID", "PLAYERS", "UUID = '" + uuid + "'");
-            Integer PlayerClanID = (Integer) rsPlayerClan.get(0).get("ClanID");
-            if (PlayerClanID == 0) {
-                return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
-            }
-
-            MenuClanUtils.openClanMenu(playerSender);
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        if (args.length != 0) {
+            return GeneralUtils.checkUtil(playerSender, language, "INVALID_COMMAND", false);
         }
+
+        List<Map<String, Object>> rsPlayerClan = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", uuid);
+        int PlayerClanID = (int) rsPlayerClan.get(0).get("clan_id");
+        if (PlayerClanID == 0) {
+            return GeneralUtils.checkUtil(playerSender, language, "YOU_NOT_MEMBER_CLAN", true);
+        }
+
+        MenuClanUtils.openClanMenu(playerSender);
+
         return true;
     }
 }
