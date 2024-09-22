@@ -46,7 +46,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 MenuClanUtils.openClanSettingsMenu(player);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§6" + LocalizationUtils.langCheck(language, "CLAN_INFO"))) {
-                plugin.getServer().dispatchCommand(player, "infoclan");
+                plugin.getServer().dispatchCommand(player, "ucinfo");
                 player.closeInventory();
             }
             event.setCancelled(true);
@@ -89,7 +89,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 MenuClanUtils.openChangeRoleMenu(player);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§c" + LocalizationUtils.langCheck(language, "KICK_MEMBER"))) {
-                plugin.getServer().dispatchCommand(player, "kickclan " + selectedPlayerName);
+                plugin.getServer().dispatchCommand(player, "uckick " + selectedPlayerName);
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§b" + LocalizationUtils.langCheck(language, "MEMBER_BACK_TO_MENU"))) {
                 pageNumber = MenuClanUtils.openMembersMenu(player, dbDriver, 0);
@@ -100,10 +100,10 @@ public class ClanMenuInventoryHandler implements Listener {
             if (event.getCurrentItem() == null) {
 
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§a" + LocalizationUtils.langCheck(language, "SET_MEMBER"))) {
-                plugin.getServer().dispatchCommand(player, "setroleclan " + selectedPlayerName + " " + UnitedClans.getInstance().getConfig().getString("roles.member"));
+                plugin.getServer().dispatchCommand(player, "ucsetrole " + selectedPlayerName + " " + UnitedClans.getInstance().getConfig().getString("roles.member"));
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§6" + LocalizationUtils.langCheck(language, "SET_ELDER"))) {
-                plugin.getServer().dispatchCommand(player, "setroleclan " + selectedPlayerName + " " + UnitedClans.getInstance().getConfig().getString("roles.elder"));
+                plugin.getServer().dispatchCommand(player, "ucsetrole " + selectedPlayerName + " " + UnitedClans.getInstance().getConfig().getString("roles.elder"));
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§5" + LocalizationUtils.langCheck(language, "SET_LEADER"))) {
                 List<Map<String, Object>> rsPlayerRole = dbDriver.selectData("clan_role", "players", "WHERE uuid = ?", player.getUniqueId());
@@ -134,7 +134,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 List<Map<String, Object>> rsClan = dbDriver.selectData("clan_name", "clans", "WHERE clan_id = ?", ClanID);
                 String ClanName = (String) rsClan.get(0).get("clan_name");
 
-                plugin.getServer().dispatchCommand(player, "changeleaderclan " + ClanName + " " + selectedPlayerName);
+                plugin.getServer().dispatchCommand(player, "ucchangeleader " + ClanName + " " + selectedPlayerName);
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§c" + LocalizationUtils.langCheck(language, "NOT_CONFIRM_ROLE"))) {
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
@@ -164,15 +164,15 @@ public class ClanMenuInventoryHandler implements Listener {
             if (event.getCurrentItem() == null) {
 
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§68$")) {
-                plugin.getServer().dispatchCommand(player, "bankdepositclan 8");
+                plugin.getServer().dispatchCommand(player, "ucbankdeposit 8");
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§616$")) {
-                plugin.getServer().dispatchCommand(player, "bankdepositclan 16");
+                plugin.getServer().dispatchCommand(player, "ucbankdeposit 16");
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§632$")) {
-                plugin.getServer().dispatchCommand(player, "bankdepositclan 32");
+                plugin.getServer().dispatchCommand(player, "ucbankdeposit 32");
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§648$")) {
-                plugin.getServer().dispatchCommand(player, "bankdepositclan 48");
+                plugin.getServer().dispatchCommand(player, "ucbankdeposit 48");
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§664$")) {
-                plugin.getServer().dispatchCommand(player, "bankdepositclan 64");
+                plugin.getServer().dispatchCommand(player, "ucbankdeposit 64");
             } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
                 MenuClanUtils.openBankMenu(player, dbDriver);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
@@ -182,15 +182,15 @@ public class ClanMenuInventoryHandler implements Listener {
             if (event.getCurrentItem() == null) {
 
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§68$")) {
-                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 8");
+                plugin.getServer().dispatchCommand(player, "ucbankwithdraw 8");
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§616$")) {
-                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 16");
+                plugin.getServer().dispatchCommand(player, "ucbankwithdraw 16");
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§632$")) {
-                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 32");
+                plugin.getServer().dispatchCommand(player, "ucbankwithdraw 32");
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§648$")) {
-                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 48");
+                plugin.getServer().dispatchCommand(player, "ucbankwithdraw 48");
             } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals("§664$")) {
-                plugin.getServer().dispatchCommand(player, "bankwithdrawclan 64");
+                plugin.getServer().dispatchCommand(player, "ucbankwithdraw 64");
             } else if (event.getCurrentItem().getType() == Material.STRUCTURE_VOID) {
                 MenuClanUtils.openBankMenu(player, dbDriver);
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
@@ -200,10 +200,10 @@ public class ClanMenuInventoryHandler implements Listener {
             if (event.getCurrentItem() == null) {
 
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§5" + LocalizationUtils.langCheck(language, "KILLS_TOP"))) {
-                plugin.getServer().dispatchCommand(player, "topclans kills");
+                plugin.getServer().dispatchCommand(player, "uctop kills");
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§5" + LocalizationUtils.langCheck(language, "MONEY_TOP"))) {
-                plugin.getServer().dispatchCommand(player, "topclans money");
+                plugin.getServer().dispatchCommand(player, "uctop money");
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§b" + LocalizationUtils.langCheck(language, "TOP_CLAN_BACK_TO_MENU"))) {
                 MenuClanUtils.openClanMenu(player);
@@ -214,7 +214,7 @@ public class ClanMenuInventoryHandler implements Listener {
             if (event.getCurrentItem() == null) {
 
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§6" + LocalizationUtils.langCheck(language, "LETTER_CLAN"))) {
-                plugin.getServer().dispatchCommand(player, "letterclan");
+                plugin.getServer().dispatchCommand(player, "ucletter");
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§c" + LocalizationUtils.langCheck(language, "LEAVE_CLAN"))) {
                 List<Map<String, Object>> rsPlayerRole = dbDriver.selectData("clan_role", "players", "WHERE uuid = ?", player.getUniqueId());
@@ -253,7 +253,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 List<Map<String, Object>> rsClan = dbDriver.selectData("clan_name", "clans", "WHERE clan_id = ?", ClanID);
                 String ClanName = (String) rsClan.get(0).get("clan_name");
 
-                plugin.getServer().dispatchCommand(player, "leaveclan " + ClanName);
+                plugin.getServer().dispatchCommand(player, "ucleave " + ClanName);
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§c" + LocalizationUtils.langCheck(language, "NOT_CONFIRM_LEAVE"))) {
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);
@@ -273,7 +273,7 @@ public class ClanMenuInventoryHandler implements Listener {
                 List<Map<String, Object>> rsClan = dbDriver.selectData("clan_name", "clans", "WHERE clan_id = ?", ClanID);
                 String ClanName = (String) rsClan.get(0).get("clan_name");
 
-                plugin.getServer().dispatchCommand(player, "deleteclan " + ClanName);
+                plugin.getServer().dispatchCommand(player, "ucdelete " + ClanName);
                 player.closeInventory();
             } else if (Objects.equals(event.getCurrentItem().getItemMeta().getDisplayName(), "§c" + LocalizationUtils.langCheck(language, "NOT_CONFIRM_DELETE"))) {
                 player.playSound(player.getLocation(), Sound.BLOCK_STONE_PLACE, 1.0f, 1.0f);

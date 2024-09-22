@@ -91,7 +91,7 @@ public class InviteClanCommand implements CommandExecutor {
         String msgInvitation = LocalizationUtils.langCheck(language, "INVITATION");
         TextComponent msgAccept = new TextComponent(LocalizationUtils.langCheck(language, "ACCEPT"));
         msgAccept.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(LocalizationUtils.langCheck(language, "CLICK_INVITE"))));
-        msgAccept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/acceptclan"));
+        msgAccept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ucaccept"));
         playerName.sendMessage(msgInvitation.replace("%clan%", clanName).replace("%player%", sender.getName()));
         playerName.sendMessage(msgAccept);
         sender.sendMessage(LocalizationUtils.langCheck(language, "INVITATION_SENT"));

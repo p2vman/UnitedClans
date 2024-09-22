@@ -6,88 +6,152 @@ authors: [MouseJava]
 softdepend: [PlaceholderAPI]
 description: The plugin implements the clan system in Minecraft
 commands:
-  infoclan:
+  uchelp:
+    description: This command allows you to display all possible plugin commands
+    permission: unitedclans.uchelp
+    usage: /<command>
+    aliases:
+      - uch
+  ucinfo:
     description: This command allows you to view information about the clan
+    permission: unitedclans.ucinfo
     usage: /<command> <clan name (not necessary)>
     aliases:
-      - ic
-  helpclan:
-    description: This command allows you to display all possible plugin commands
-    usage: /<command>
-    aliases:
-      - hclan
-  createclan:
+      - uci
+  uccreate:
     description: This command allows you to create a clan
+    permission: unitedclans.uccreate
     usage: /<command> <clan name> <color>
     aliases:
-      - cclan
-  deleteclan:
+      - uccr
+  ucdelete:
     description: This command allows you to delete a clan
+    permission: unitedclans.ucdelete
     usage: /<command> <clan name>
     aliases:
-      - dclan
-  inviteclan:
+      - ucd
+  ucinvite:
     description: This command allows you to invite a player to a clan
+    permission: unitedclans.ucinvite
     usage: /<command> <player>
     aliases:
-      - iclan
-  acceptclan:
+      - ucinv
+  ucaccept:
     description: This command allows you to accept an invitation to a clan
+    permission: unitedclans.ucaccept
     usage: /<command>
     aliases:
-      - aclan
-  kickclan:
+      - ucacc
+  uckick:
     description: This command allows you to kick a player from the clan
+    permission: unitedclans.uckick
     usage: /<command> <player>
     aliases:
-      - kclan
-  leaveclan:
+      - uck
+  ucleave:
     description: This command allows the player to leave the clan
+    permission: unitedclans.ucleave
     usage: /<command> <clan name>
     aliases:
-      - lclan
-  setroleclan:
+      - ucl
+  ucsetrole:
     description: This command allows you to set the role of the player
+    permission: unitedclans.ucsetrole
     usage: /<command> <player> <role>
     aliases:
-      - srclan
-  menuclan:
+      - ucsr
+  ucmenu:
     description: This command allows you to open the clan menu
+    permission: unitedclans.ucmenu
     usage: /<command>
     aliases:
-      - mclan
-  chatclan:
+      - ucm
+  ucchat:
     description: This command allows you to send messages to the clan chat
+    permission: unitedclans.ucchat
     usage: /<command> <message>
     aliases:
       - msgclan
       - msgc
-      - cc
-  changeleaderclan:
+      - ucc
+  ucchangeleader:
     description: This command allows you to change the clan Leader
+    permission: unitedclans.ucchangeleader
     usage: /<command> <clan name> <player>
     aliases:
-      - clclan
-  bankdepositclan:
+      - uccl
+  ucbankdeposit:
     description: This command allows you to deposit currency into the clan's bank account
+    permission: unitedclans.ucbankdeposit
     usage: /<command> <number>
     aliases:
-      - bankdclan
-      - bdclan
-  bankwithdrawclan:
+      - ucbankd
+      - ucbd
+  ucbankwithdraw:
     description: This command allows you to withdraw currency from a clan bank account
+    permission: unitedclans.ucbankwithdraw
     usage: /<command> <number>
     aliases:
-      - bankwclan
-      - bwclan
-  topclans:
+      - ucbankw
+      - ucbw
+  uctop:
     description: This command allows you to open the top clans
+    permission: unitedclans.uctop
     usage: /<command> <top name>
     aliases:
-      - tclans
-      - tc
-  letterclan:
+      - uct
+  ucletter:
     description: This command allows you to create and view a letter to the clan
+    permission: unitedclans.ucletter
     usage: /<command> <letter (not necessary)>
     aliases:
-      - letclan
+      - uclet
+permissions:
+  unitedclans.uchelp:
+    description: Permission to use command uchelp
+    default: true
+  unitedclans.ucinfo:
+    description: Permission to use command ucinfo
+    default: true
+  unitedclans.uccreate:
+    description: Permission to use command uccreate
+    default: true
+  unitedclans.ucdelete:
+    description: Permission to use command ucdelete
+    default: true
+  unitedclans.ucinvite:
+    description: Permission to use command ucinvite
+    default: true
+  unitedclans.ucaccept:
+    description: Permission to use command ucaccept
+    default: true
+  unitedclans.uckick:
+    description: Permission to use command uckick
+    default: true
+  unitedclans.ucleave:
+    description: Permission to use command ucleave
+    default: true
+  unitedclans.ucsetrole:
+    description: Permission to use command ucsetrole
+    default: true
+  unitedclans.ucmenu:
+    description: Permission to use command ucmenu
+    default: true
+  unitedclans.ucchat:
+    description: Permission to use command ucchat
+    default: true
+  unitedclans.ucchangeleader:
+    description: Permission to use command ucchangeleader
+    default: true
+  unitedclans.ucbankdeposit:
+    description: Permission to use command ucbankdeposit
+    default: true
+  unitedclans.ucbankwithdraw:
+    description: Permission to use command ucbankwithdraw
+    default: true
+  unitedclans.uctop:
+    description: Permission to use command uctop
+    default: true
+  unitedclans.ucletter:
+    description: Permission to use command ucletter
+    default: true

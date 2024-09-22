@@ -21,154 +21,154 @@ public class HelpClanCommand implements CommandExecutor {
 
         if (language.equals("en_en")) {
             sender.sendMessage("§b§l⏴-------§r§e§lUnitedClans§r§b§l-------⏵§r \n" +
-                    "§bCommand:§r §ehelpclan§r \n" +
+                    "§bCommand:§r §euchelp§r \n" +
                     "§bDescription:§r §eThis command allows you to display all possible plugin commands§r \n" +
                     "§bUsage:§r §e/<command>§r \n \n" +
-                    "§bCommand:§r §einfoclan§r \n" +
+                    "§bCommand:§r §eucinfo§r \n" +
                     "§bDescription:§r §eThis command allows you to view information about the clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name (not necessary)>§r \n \n" +
-                    "§bCommand:§r §ecreateclan§r \n" +
+                    "§bCommand:§r §euccreate§r \n" +
                     "§bDescription:§r §eThis command allows you to create a clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name> <color>§r \n \n" +
-                    "§bCommand:§r §edeleteclan§r \n" +
+                    "§bCommand:§r §eucdelete§r \n" +
                     "§bDescription:§r §eThis command allows you to delete a clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name>§r \n \n" +
-                    "§bCommand:§r §einviteclan§r \n" +
+                    "§bCommand:§r §eucinvite§r \n" +
                     "§bDescription:§r §eThis command allows you to invite a player to a clan§r \n" +
                     "§bUsage:§r §e/<command> <player>§r \n \n" +
-                    "§bCommand:§r §eacceptclan§r \n" +
+                    "§bCommand:§r §eucaccept§r \n" +
                     "§bDescription:§r §eThis command allows you to accept an invitation to a clan§r \n" +
                     "§bUsage:§r §e/<command>§r \n \n" +
-                    "§bCommand:§r §ekickclan§r \n" +
+                    "§bCommand:§r §euckick§r \n" +
                     "§bDescription:§r §eThis command allows you to kick a player from the clan§r \n" +
                     "§bUsage:§r §e/<command> <player>§r \n \n" +
-                    "§bCommand:§r §eleaveclan§r \n" +
+                    "§bCommand:§r §eucleave§r \n" +
                     "§bDescription:§r §eThis command allows the player to leave the clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name>§r \n \n" +
-                    "§bCommand:§r §esetroleclan§r \n" +
+                    "§bCommand:§r §eucsetrole§r \n" +
                     "§bDescription:§r §eThis command allows you to set the role of the player§r \n" +
                     "§bUsage:§r §e/<command> <player> <role>§r \n \n" +
-                    "§bCommand:§r §emenuclan§r \n" +
+                    "§bCommand:§r §eucmenu§r \n" +
                     "§bDescription:§r §eThis command allows you to open the clan menu§r \n" +
                     "§bUsage:§r §e/<command>§r \n \n" +
-                    "§bCommand:§r §echatclan§r \n" +
+                    "§bCommand:§r §eucchat§r \n" +
                     "§bDescription:§r §eThis command allows you to send messages to the clan chat§r \n" +
                     "§bUsage:§r §e/<command> <message>§r \n \n" +
-                    "§bCommand:§r §echangeleaderclan§r \n" +
+                    "§bCommand:§r §eucchangeleader§r \n" +
                     "§bDescription:§r §eThis command allows you to change the clan Leader§r \n" +
                     "§bUsage:§r §e/<command> <clan name> <player>§r \n \n" +
-                    "§bCommand:§r §ebankdepositclan§r \n" +
+                    "§bCommand:§r §eucbankdeposit§r \n" +
                     "§bDescription:§r §eThis command allows you to deposit currency into the clan's bank account§r \n" +
                     "§bUsage:§r §e/<command> <number>§r \n \n" +
-                    "§bCommand:§r §ebankwithdrawclan§r \n" +
+                    "§bCommand:§r §eucbankwithdraw§r \n" +
                     "§bDescription:§r §eThis command allows you to withdraw currency from a clan bank account§r \n" +
                     "§bUsage:§r §e/<command> <number>§r \n \n" +
-                    "§bCommand:§r §etopclans§r \n" +
+                    "§bCommand:§r §euctop§r \n" +
                     "§bDescription:§r §eThis command allows you to open the top clans§r \n" +
                     "§bUsage:§r §e/<command> <top name>§r \n \n" +
-                    "§bCommand:§r §eletterclan§r \n" +
+                    "§bCommand:§r §eucletter§r \n" +
                     "§bDescription:§r §eThis command allows you to create and view a letter to the clan§r \n" +
                     "§bUsage:§r §e/<command> <letter (not necessary)>§r \n" +
                     "§b§l⏴--------------------------⏵§r");
         } else if (language.equals("ru_ru")) {
             sender.sendMessage("§b§l⏴-------§r§e§lUnitedClans§r§b§l-------⏵§r \n" +
-                    "§bКоманда:§r §ehelpclan§r \n" +
+                    "§bКоманда:§r §euchelp§r \n" +
                     "§bОписание:§r §eЭта команда позволяет отображать все возможные команды плагина§r \n" +
                     "§bИспользование:§r §e/<command>§r \n \n" +
-                    "§bКоманда:§r §einfoclan§r \n" +
+                    "§bКоманда:§r §eucinfo§r \n" +
                     "§bОписание:§r §eЭта команда позволяет просмотреть информацию о клане§r \n" +
                     "§bИспользование:§r §e/<command> <clan name (not necessary)>§r \n \n" +
-                    "§bКоманда:§r §ecreateclan§r \n" +
+                    "§bКоманда:§r §euccreate§r \n" +
                     "§bОписание:§r §eЭта команда позволяет создать клан§r \n" +
                     "§bИспользование:§r §e/<command> <clan name> <color>§r \n \n" +
-                    "§bКоманда:§r §edeleteclan§r \n" +
+                    "§bКоманда:§r §eucdelete§r \n" +
                     "§bОписание:§r §eЭта команда позволяет удалить клан§r \n" +
                     "§bИспользование:§r §e/<command> <clan name>§r \n \n" +
-                    "§bКоманда:§r §einviteclan§r \n" +
+                    "§bКоманда:§r §eucinvite§r \n" +
                     "§bОписание:§r §eЭта команда позволяет пригласить игрока в клан§r \n" +
                     "§bИспользование:§r §e/<command> <player>§r \n \n" +
-                    "§bКоманда:§r §eacceptclan§r \n" +
+                    "§bКоманда:§r §eucaccept§r \n" +
                     "§bОписание:§r §eЭта команда позволяет принять приглашение в клан§r \n" +
                     "§bИспользование:§r §e/<command>§r \n \n" +
-                    "§bКоманда:§r §ekickclan§r \n" +
+                    "§bКоманда:§r §euckick§r \n" +
                     "§bОписание:§r §eЭта команда позволяет выгнать игрока из клана§r \n" +
                     "§bИспользование:§r §e/<command> <player>§r \n \n" +
-                    "§bКоманда:§r §eleaveclan§r \n" +
+                    "§bКоманда:§r §eucleave§r \n" +
                     "§bОписание:§r §eЭта команда позволяет игроку выйти из клана§r \n" +
                     "§bИспользование:§r §e/<command> <clan name>§r \n \n" +
-                    "§bКоманда:§r §esetroleclan§r \n" +
+                    "§bКоманда:§r §eucsetrole§r \n" +
                     "§bОписание:§r §eЭта команда позволяет вам установить роль игрока§r \n" +
                     "§bИспользование:§r §e/<command> <player> <role>§r \n \n" +
-                    "§bКоманда:§r §emenuclan§r \n" +
+                    "§bКоманда:§r §eucmenu§r \n" +
                     "§bОписание:§r §eЭта команда позволяет открыть меню клана§r \n" +
                     "§bИспользование:§r §e/<command>§r \n \n" +
-                    "§bКоманда:§r §echatclan§r \n" +
+                    "§bКоманда:§r §eucchat§r \n" +
                     "§bОписание:§r §eЭта команда позволяет отправлять сообщения в чат клана§r \n" +
                     "§bИспользование:§r §e/<command> <message>§r \n \n" +
-                    "§bКоманда:§r §echangeleaderclan§r \n" +
+                    "§bКоманда:§r §eucchangeleader§r \n" +
                     "§bОписание:§r §eЭта команда позволяет сменить Главу клана§r \n" +
                     "§bИспользование:§r §e/<command> <clan name> <player>§r \n \n" +
-                    "§bКоманда:§r §ebankdepositclan§r \n" +
+                    "§bКоманда:§r §eucbankdeposit§r \n" +
                     "§bОписание:§r §eЭта команда позволяет внести валюту на счет кланового банка§r \n" +
                     "§bИспользование:§r §e/<command> <number>§r \n \n" +
-                    "§bКоманда:§r §ebankwithdrawclan§r \n" +
+                    "§bКоманда:§r §eucbankwithdraw§r \n" +
                     "§bОписание:§r §eЭта команда позволяет вывести валюту со счета кланового банка§r \n" +
                     "§bИспользование:§r §e/<command> <number>§r \n \n" +
-                    "§bКоманда:§r §etopclans§r \n" +
+                    "§bКоманда:§r §euctop§r \n" +
                     "§bОписание:§r §eЭта команда позволяет открыть топ кланов§r \n" +
                     "§bИспользование:§r §e/<command> <top name>§r \n \n" +
-                    "§bКоманда:§r §eletterclan§r \n" +
+                    "§bКоманда:§r §eucletter§r \n" +
                     "§bОписание:§r §eДанная команда позволяет создать и просмотреть письмо клану§r \n" +
                     "§bИспользование:§r §e/<command> <letter (not necessary)>§r \n" +
                     "§b§l⏴--------------------------⏵§r");
         } else {
             sender.sendMessage("§b§l⏴-------§r§e§lUnitedClans§r§b§l-------⏵§r \n" +
-                    "§bCommand:§r §ehelpclan§r \n" +
+                    "§bCommand:§r §euchelp§r \n" +
                     "§bDescription:§r §eThis command allows you to display all possible plugin commands§r \n" +
                     "§bUsage:§r §e/<command>§r \n \n" +
-                    "§bCommand:§r §einfoclan§r \n" +
+                    "§bCommand:§r §eucinfo§r \n" +
                     "§bDescription:§r §eThis command allows you to view information about the clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name (not necessary)>§r \n \n" +
-                    "§bCommand:§r §ecreateclan§r \n" +
+                    "§bCommand:§r §euccreate§r \n" +
                     "§bDescription:§r §eThis command allows you to create a clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name> <color>§r \n \n" +
-                    "§bCommand:§r §edeleteclan§r \n" +
+                    "§bCommand:§r §eucdelete§r \n" +
                     "§bDescription:§r §eThis command allows you to delete a clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name>§r \n \n" +
-                    "§bCommand:§r §einviteclan§r \n" +
+                    "§bCommand:§r §eucinvite§r \n" +
                     "§bDescription:§r §eThis command allows you to invite a player to a clan§r \n" +
                     "§bUsage:§r §e/<command> <player>§r \n \n" +
-                    "§bCommand:§r §eacceptclan§r \n" +
+                    "§bCommand:§r §eucaccept§r \n" +
                     "§bDescription:§r §eThis command allows you to accept an invitation to a clan§r \n" +
                     "§bUsage:§r §e/<command>§r \n \n" +
-                    "§bCommand:§r §ekickclan§r \n" +
+                    "§bCommand:§r §euckick§r \n" +
                     "§bDescription:§r §eThis command allows you to kick a player from the clan§r \n" +
                     "§bUsage:§r §e/<command> <player>§r \n \n" +
-                    "§bCommand:§r §eleaveclan§r \n" +
+                    "§bCommand:§r §eucleave§r \n" +
                     "§bDescription:§r §eThis command allows the player to leave the clan§r \n" +
                     "§bUsage:§r §e/<command> <clan name>§r \n \n" +
-                    "§bCommand:§r §esetroleclan§r \n" +
+                    "§bCommand:§r §eucsetrole§r \n" +
                     "§bDescription:§r §eThis command allows you to set the role of the player§r \n" +
                     "§bUsage:§r §e/<command> <player> <role>§r \n \n" +
-                    "§bCommand:§r §emenuclan§r \n" +
+                    "§bCommand:§r §eucmenu§r \n" +
                     "§bDescription:§r §eThis command allows you to open the clan menu§r \n" +
                     "§bUsage:§r §e/<command>§r \n \n" +
-                    "§bCommand:§r §echatclan§r \n" +
+                    "§bCommand:§r §eucchat§r \n" +
                     "§bDescription:§r §eThis command allows you to send messages to the clan chat§r \n" +
                     "§bUsage:§r §e/<command> <message>§r \n \n" +
-                    "§bCommand:§r §echangeleaderclan§r \n" +
+                    "§bCommand:§r §eucchangeleader§r \n" +
                     "§bDescription:§r §eThis command allows you to change the clan Leader§r \n" +
                     "§bUsage:§r §e/<command> <clan name> <player>§r \n \n" +
-                    "§bCommand:§r §ebankdepositclan§r \n" +
+                    "§bCommand:§r §eucbankdeposit§r \n" +
                     "§bDescription:§r §eThis command allows you to deposit currency into the clan's bank account§r \n" +
                     "§bUsage:§r §e/<command> <number>§r \n \n" +
-                    "§bCommand:§r §ebankwithdrawclan§r \n" +
+                    "§bCommand:§r §eucbankwithdraw§r \n" +
                     "§bDescription:§r §eThis command allows you to withdraw currency from a clan bank account§r \n" +
                     "§bUsage:§r §e/<command> <number>§r \n \n" +
-                    "§bCommand:§r §etopclans§r \n" +
+                    "§bCommand:§r §euctop§r \n" +
                     "§bDescription:§r §eThis command allows you to open the top clans§r \n" +
                     "§bUsage:§r §e/<command> <top name>§r \n \n" +
-                    "§bCommand:§r §eletterclan§r \n" +
+                    "§bCommand:§r §eucletter§r \n" +
                     "§bDescription:§r §eThis command allows you to create and view a letter to the clan§r \n" +
                     "§bUsage:§r §e/<command> <letter (not necessary)>§r \n" +
                     "§b§l⏴--------------------------⏵§r");

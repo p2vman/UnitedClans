@@ -258,7 +258,7 @@ public class Langs {
         SUCCESSFULLY_LETTER_MESSAGE("messages.successfully-letter-message", "§bВы успешно написали письмо своему клану "),
         NO_RIGHTS_LETTER("messages.no-rights-letter", "§eУ вас недостаточно прав, чтобы написать письмо клану "),
         NO_LETTER_WRITTEN("messages.no-letter-written", "§b§lГлава§r §eклана еще не писал писем для игроков "),
-        NO_RIGHTS_USE_COMMAND("messages.no-rights-use-command", "§eУ вас недостаточно прав на использование данной команжы "),
+        NO_RIGHTS_USE_COMMAND("messages.no-rights-use-command", "§eУ вас недостаточно прав на использование данной команды "),
         CLAN_NOT_EXIST("messages.clan-not-exist", "§eЭтого клана не существует "),
         INFO_PATTERN("messages.info-pattern", "§bНазвание клана:§r %clan% \n§bГлава клана:§r §5%leader%§r \n§bКоличество участников:§r §e%members%☠§r \n§bКоличество килов:§r §4%kills%\uD83D\uDDE1§r \n§bБанк клана:§r §2%bank%$§r "),
         INVALID_TOP("messages.invalid-top", "§cНекорректное имя топа "),

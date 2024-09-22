@@ -7,22 +7,22 @@ All technical settings and features presented here are for the latest version of
 
 ## Commands
 Here are all the commands that can be used in the plugin:
-* `/helpclan` - This command allows you to display all possible plugin commands
-* `/infoclan <clan name (not necessary)>` - This command allows you to view information about the clan
-* `/createclan <clan name> <color>` - This command allows you to create a clan
-* `/deleteclan <clan name>` - This command allows you to delete a clan
-* `/inviteclan <player>` - This command allows you to invite a player to a clan
-* `/acceptclan` - This command allows you to accept an invitation to a clan
-* `/kickclan <player>` - This command allows you to kick a player from the clan
-* `/leaveclan <clan name>` - This command allows the player to leave the clan
-* `/setroleclan <player> <role>` - This command allows you to set the role of the player
-* `/menuclan` - This command allows you to open the clan menu
-* `/chatclan <message>` - This command allows you to send messages to the clan chat
-* `/changeleaderclan <clan name> <player>` - This command allows you to change the clan Leader
-* `/bankdepositclan <number>` - This command allows you to deposit currency into the clan's bank account
-* `/bankwithdrawclan <number>` - This command allows you to withdraw currency from a clan bank account
-* `/topclans <top name>` - This command allows you to open the top clans
-* `/letterclan <letter (not necessary)>` - This command allows you to create and view a letter to the clan
+* `/uchelp` - This command allows you to display all possible plugin commands
+* `/ucinfo <clan name (not necessary)>` - This command allows you to view information about the clan
+* `/uccreate <clan name> <color>` - This command allows you to create a clan
+* `/ucdelete <clan name>` - This command allows you to delete a clan
+* `/ucinvite <player>` - This command allows you to invite a player to a clan
+* `/ucaccept` - This command allows you to accept an invitation to a clan
+* `/uckick <player>` - This command allows you to kick a player from the clan
+* `/ucleave <clan name>` - This command allows the player to leave the clan
+* `/ucsetrole <player> <role>` - This command allows you to set the role of the player
+* `/ucmenu` - This command allows you to open the clan menu
+* `/ucchat <message>` - This command allows you to send messages to the clan chat
+* `/ucchangeleader <clan name> <player>` - This command allows you to change the clan Leader
+* `/ucbankdeposit <number>` - This command allows you to deposit currency into the clan's bank account
+* `/ucbankwithdraw <number>` - This command allows you to withdraw currency from a clan bank account
+* `/uctop <top name>` - This command allows you to open the top clans
+* `/ucletter <letter (not necessary)>` - This command allows you to create and view a letter to the clan
 
 ## Config
 When the server starts, the config file will be automatically created in this path: `plugins/UnitedClans/config.yml`
