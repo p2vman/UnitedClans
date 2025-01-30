@@ -1,16 +1,29 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 
-public class HelpClanCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+@AbstractCommand.Command(
+        name = "uchelp",
+        description = "This command allows you to display all possible plugin commands",
+        permission = "unitedclans.uchelp",
+        aliases = {
+                "uch"
+        }
+)
+public class HelpClan extends AbstractCommand {
+    public HelpClan(DatabaseDriver driver) {
+        super(driver);
+    }
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -185,5 +198,10 @@ public class HelpClanCommand implements CommandExecutor {
         playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        return new ArrayList<>();
     }
 }

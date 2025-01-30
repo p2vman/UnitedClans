@@ -1,31 +1,33 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
-import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-public class CreateClanCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
-    private final DatabaseDriver dbDriver;
-
-    public CreateClanCommand(JavaPlugin plugin, DatabaseDriver dbDriver) {
-        this.plugin = plugin;
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "uccreate",
+        description = "This command allows you to create a clan",
+        permission = "unitedclans.uccreate",
+        aliases = {
+                "uccr"
+        },
+        usageMessage = "/<command> <clan name> <color>"
+)
+public class CreateClan extends AbstractCommand {
+    public CreateClan(DatabaseDriver driver) {
+        super(driver);
     }
 
     @Override
-    public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -108,5 +110,29 @@ public class CreateClanCommand implements CommandExecutor {
         plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " created the " + clanNameInput + " clan");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("<clan name>");
+        } else if (args.length == 2) {
+            String inputColor = args[1].toUpperCase();
+            String[] colorCollection = new String[] {"AQUA", "BLACK", "BLUE", "DARK_AQUA", "DARK_BLUE", "DARK_GRAY", "DARK_GREEN", "DARK_PURPLE" ,"DARK_RED", "GOLD", "GRAY", "GREEN", "LIGHT_PURPLE", "RED", "WHITE", "YELLOW"};
+            List<String> colorNames = null;
+            for (String color:colorCollection) {
+                if (color.startsWith(inputColor)) {
+                    if (colorNames == null) {
+                        colorNames = new ArrayList<>();
+                    }
+                    colorNames.add(color);
+                }
+            }
+            if (colorNames != null) {
+                Collections.sort(colorNames);
+            }
+            return colorNames;
+        }
+        return new ArrayList<>();
     }
 }

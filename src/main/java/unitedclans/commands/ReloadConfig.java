@@ -1,24 +1,31 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 
-public class ReloadConfigCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
+import java.util.ArrayList;
+import java.util.List;
 
-    public ReloadConfigCommand(JavaPlugin plugin) {
-        this.plugin = plugin;
+@AbstractCommand.Command(
+        name = "ucreloadconfig",
+        description = "This command allows you to reload the plugin config",
+        permission = "unitedclans.ucreloadconfig",
+        aliases = {
+                "ucreload",
+                "ucrc"
+        }
+)
+public class ReloadConfig extends AbstractCommand {
+    public ReloadConfig(DatabaseDriver driver) {
+        super(driver);
     }
-
     @Override
-    public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         String language = UnitedClans.getInstance().getConfig().getString("lang");
 
         if (args.length != 0) {
@@ -43,5 +50,10 @@ public class ReloadConfigCommand implements CommandExecutor {
         plugin.getServer().getLogger().info("[UnitedClans] The plugin config was successfully reloaded");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        return new ArrayList<>();
     }
 }

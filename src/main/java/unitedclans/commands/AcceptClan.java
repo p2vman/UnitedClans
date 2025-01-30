@@ -1,30 +1,32 @@
-package unitedclans.command;
+package unitedclans.commands;
+
 
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
+import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
-import unitedclans.utils.GeneralUtils;
-import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-public class AcceptClanCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
-    private final DatabaseDriver dbDriver;
-
-    public AcceptClanCommand(JavaPlugin plugin, DatabaseDriver dbDriver) {
-        this.plugin = plugin;
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "ucaccept",
+        description = "This command allows you to accept an invitation to a clan",
+        permission = "unitedclans.ucaccept",
+        aliases = {
+                "ucacc"
+        }
+)
+public class AcceptClan extends AbstractCommand {
+    public AcceptClan(DatabaseDriver driver) {
+        super(driver);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -81,5 +83,10 @@ public class AcceptClanCommand implements CommandExecutor {
         plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " joined the " + clanName + " clan");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        return new ArrayList<>();
     }
 }

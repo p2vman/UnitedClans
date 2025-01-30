@@ -1,17 +1,19 @@
 package unitedclans;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import unitedclans.command.*;
+import unitedclans.commands.*;
 import unitedclans.handler.*;
 import unitedclans.hooks.PlaceholderAPIHook;
 import unitedclans.langs.DefaultConfig;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.DatabaseDriver;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public final class UnitedClans extends JavaPlugin implements Listener {
     private static UnitedClans instance;
@@ -40,43 +42,40 @@ public final class UnitedClans extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new ClanMenuInventoryHandler(this, dbDriver), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinEventHandler(this, dbDriver), this);
         getServer().getPluginManager().registerEvents(new PlayerKillEventHandler(dbDriver), this);
-        getServer().getPluginCommand("uchelp").setExecutor(new HelpClanCommand());
-        getServer().getPluginCommand("uchelp").setTabCompleter(new HelpClanTabCompleter());
-        getServer().getPluginCommand("ucreloadconfig").setExecutor(new ReloadConfigCommand(this));
-        getServer().getPluginCommand("ucreloadconfig").setTabCompleter(new ReloadConfigTabCompleter());
-        getServer().getPluginCommand("ucinfo").setExecutor(new InfoClanCommand(dbDriver));
-        getServer().getPluginCommand("ucinfo").setTabCompleter(new InfoClanTabCompleter(dbDriver));
-        getServer().getPluginCommand("uccreate").setExecutor(new CreateClanCommand(this, dbDriver));
-        getServer().getPluginCommand("uccreate").setTabCompleter(new CreateClanTabCompleter());
-        getServer().getPluginCommand("ucdelete").setExecutor(new DeleteClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucdelete").setTabCompleter(new DeleteClanTabCompleter());
-        getServer().getPluginCommand("ucinvite").setExecutor(new InviteClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucinvite").setTabCompleter(new InviteClanTabCompleter());
-        getServer().getPluginCommand("ucaccept").setExecutor(new AcceptClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucaccept").setTabCompleter(new AcceptClanTabCompleter());
-        getServer().getPluginCommand("uckick").setExecutor(new KickClanCommand(this, dbDriver));
-        getServer().getPluginCommand("uckick").setTabCompleter(new KickClanTabCompleter(dbDriver));
-        getServer().getPluginCommand("ucleave").setExecutor(new LeaveClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucleave").setTabCompleter(new LeaveClanTabCompleter());
-        getServer().getPluginCommand("ucsetrole").setExecutor(new SetRoleClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucsetrole").setTabCompleter(new SetRoleClanTabCompleter(dbDriver));
-        getServer().getPluginCommand("ucmenu").setExecutor(new MenuClanCommand(dbDriver));
-        getServer().getPluginCommand("ucmenu").setTabCompleter(new MenuClanTabCompleter());
-        getServer().getPluginCommand("ucchat").setExecutor(new ChatClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucchat").setTabCompleter(new ChatClanTabCompleter());
-        getServer().getPluginCommand("ucchangeleader").setExecutor(new ChangeLeaderClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucchangeleader").setTabCompleter(new ChangeLeaderClanTabCompleter(dbDriver));
-        getServer().getPluginCommand("ucbankdeposit").setExecutor(new BankDepositClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucbankdeposit").setTabCompleter(new BankDepositClanTabCompleter());
-        getServer().getPluginCommand("ucbankwithdraw").setExecutor(new BankWithdrawClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucbankwithdraw").setTabCompleter(new BankWithdrawClanTabCompleter());
-        getServer().getPluginCommand("uctop").setExecutor(new TopClansCommand(dbDriver));
-        getServer().getPluginCommand("uctop").setTabCompleter(new TopClansTabCompleter());
-        getServer().getPluginCommand("ucletter").setExecutor(new LetterClanCommand(this, dbDriver));
-        getServer().getPluginCommand("ucletter").setTabCompleter(new LetterClanTabCompleter());
+
+        List<Command> commands = new ArrayList<>();
+        commands.add(new AcceptClan(dbDriver));
+        commands.add(new BankDepositClan(dbDriver));
+        commands.add(new BankWithdrawClan(dbDriver));
+        commands.add(new ChangeLeaderClan(dbDriver));
+        commands.add(new ChatClan(dbDriver));
+        commands.add(new CreateClan(dbDriver));
+        commands.add(new DeleteClan(dbDriver));
+        commands.add(new HelpClan(dbDriver));
+        commands.add(new InfoClan(dbDriver));
+        commands.add(new InviteClan(dbDriver));
+        commands.add(new KickClan(dbDriver));
+        commands.add(new LeaveClan(dbDriver));
+        commands.add(new LetterClan(dbDriver));
+        commands.add(new MenuClan(dbDriver));
+        commands.add(new ReloadConfig(dbDriver));
+        commands.add(new SetRoleClan(dbDriver));
+        commands.add(new TopClans(dbDriver));
+
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PlaceholderAPIHook(this, dbDriver).register();
+        }
+
+        try {
+
+            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            CommandMap map = (CommandMap)commandMapField.get(Bukkit.getServer());
+
+            map.registerAll(getName(), commands);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

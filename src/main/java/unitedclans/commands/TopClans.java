@@ -1,27 +1,34 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
-import unitedclans.utils.DatabaseDriver;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-public class TopClansCommand implements CommandExecutor {
-    private final DatabaseDriver dbDriver;
-
-    public TopClansCommand(DatabaseDriver dbDriver) {
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "uctop",
+        description = "This command allows you to open the top clans",
+        permission = "unitedclans.uctop",
+        aliases = {
+                "uct"
+        },
+        usageMessage = "/<command> <top name>"
+)
+public class TopClans extends AbstractCommand {
+    public TopClans(DatabaseDriver driver) {
+        super(driver);
     }
-
     @Override
-    public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -70,5 +77,29 @@ public class TopClansCommand implements CommandExecutor {
         playerSender.playSound(playerSender.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            String inputTop = args[0].toLowerCase();
+            ArrayList<String> topList = new ArrayList<>();
+            topList.add("kills");
+            topList.add("money");
+            List<String> tops = null;
+            for (String top : topList) {
+                if (top.toLowerCase().startsWith(inputTop)) {
+                    if (tops == null) {
+                        tops = new ArrayList<>();
+                    }
+                    tops.add(top);
+                }
+            }
+            if (tops != null) {
+                Collections.sort(tops);
+            }
+            return tops;
+        }
+        return new ArrayList<>();
     }
 }

@@ -1,30 +1,32 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
-import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-public class KickClanCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
-    private final DatabaseDriver dbDriver;
 
-    public KickClanCommand(JavaPlugin plugin, DatabaseDriver dbDriver) {
-        this.plugin = plugin;
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "uckick",
+        description = "This command allows you to kick a player from the clan",
+        permission = "unitedclans.uckick",
+        aliases = {
+                "uck"
+        },
+        usageMessage = "/<command> <player>"
+)
+public class KickClan extends AbstractCommand {
+    public KickClan(DatabaseDriver driver) {
+        super(driver);
     }
-
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -109,5 +111,44 @@ public class KickClanCommand implements CommandExecutor {
         plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " kicked " + playerName + " from the " + KickedPlayerClanName + " clan");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            Player playerSender = (Player) sender;
+            UUID uuid = playerSender.getUniqueId();
+            String inputPlayer = args[0].toLowerCase();
+            List<Map<String, Object>> rsSender = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", uuid);
+            int ClanID = (int) rsSender.get(0).get("clan_id");
+
+            if (ClanID == 0) {
+                return new ArrayList<>();
+            }
+
+            List<Map<String, Object>> rsPlayerClan = dbDriver.selectData("player_name", "players", "WHERE clan_id = ?", ClanID);
+            ArrayList<String> onlinePlayers = new ArrayList<>();
+            for (Map<String, Object> i : rsPlayerClan) {
+                String playerName = (String) i.get("player_name");
+                onlinePlayers.add(playerName);
+            }
+
+            List<String> onlinePlayerName = null;
+            for (String onlinePlayer : onlinePlayers) {
+                if (onlinePlayer.toString().toLowerCase().startsWith(inputPlayer)) {
+                    if (onlinePlayerName == null) {
+                        onlinePlayerName = new ArrayList<>();
+                    }
+                    onlinePlayerName.add(onlinePlayer);
+                }
+            }
+
+            if (onlinePlayerName != null) {
+                Collections.sort(onlinePlayerName);
+            }
+
+            return onlinePlayerName;
+        }
+        return new ArrayList<>();
     }
 }

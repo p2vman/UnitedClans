@@ -1,29 +1,31 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
-import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-public class LetterClanCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
-    private final DatabaseDriver dbDriver;
+@AbstractCommand.Command(
+        name = "ucletter",
+        description = "This command allows you to create and view a letter to the clan",
+        permission = "unitedclans.ucletter",
+        aliases = {
+                "uclet"
+        },
+        usageMessage = "/<command> <letter (not necessary)>"
+)
 
-    public LetterClanCommand(JavaPlugin plugin, DatabaseDriver dbDriver) {
-        this.plugin = plugin;
-        this.dbDriver = dbDriver;
+public class LetterClan extends AbstractCommand {
+    public LetterClan(DatabaseDriver driver) {
+        super(driver);
     }
-
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -95,5 +97,13 @@ public class LetterClanCommand implements CommandExecutor {
         plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " wrote a letter to the " + ClanName + " clan");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("<letter (not necessary)>");
+        }
+        return new ArrayList<>();
     }
 }

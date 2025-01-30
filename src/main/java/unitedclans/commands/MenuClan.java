@@ -1,25 +1,31 @@
-package unitedclans.command;
+package unitedclans.commands;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.MenuClanUtils;
-import unitedclans.utils.DatabaseDriver;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class MenuClanCommand implements CommandExecutor {
-    private final DatabaseDriver dbDriver;
-
-    public MenuClanCommand(DatabaseDriver dbDriver) {
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "ucmenu",
+        description = "This command allows you to open the clan menu",
+        permission = "unitedclans.ucmenu",
+        aliases = {
+                "ucm"
+        }
+)
+public class MenuClan extends AbstractCommand {
+    public MenuClan(DatabaseDriver driver) {
+        super(driver);
     }
-
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -38,5 +44,10 @@ public class MenuClanCommand implements CommandExecutor {
         MenuClanUtils.openClanMenu(playerSender);
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        return new ArrayList<>();
     }
 }

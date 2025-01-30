@@ -1,31 +1,33 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
-import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-public class BankWithdrawClanCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
-    private final DatabaseDriver dbDriver;
-
-    public BankWithdrawClanCommand(JavaPlugin plugin, DatabaseDriver dbDriver) {
-        this.plugin = plugin;
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "ucbankwithdraw",
+        description = "This command allows you to withdraw currency from a clan bank account",
+        permission = "unitedclans.ucbankwithdraw",
+        aliases = {
+                "ucbankw",
+                "ucbw"
+        },
+        usageMessage = "/<command> <number>"
+)
+public class BankWithdrawClan extends AbstractCommand {
+    public BankWithdrawClan(DatabaseDriver driver) {
+        super(driver);
     }
-
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -93,5 +95,13 @@ public class BankWithdrawClanCommand implements CommandExecutor {
         plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " withdrew " + withdraw + "$ from the " + senderClanName + " clan bank");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("<number>");
+        }
+        return new ArrayList<>();
     }
 }

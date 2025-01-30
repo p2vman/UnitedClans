@@ -1,30 +1,31 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
 import unitedclans.utils.ShowClanUtils;
-import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-public class LeaveClanCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
-    private final DatabaseDriver dbDriver;
-
-    public LeaveClanCommand(JavaPlugin plugin, DatabaseDriver dbDriver) {
-        this.plugin = plugin;
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "ucleave",
+        description = "This command allows the player to leave the clan",
+        permission = "unitedclans.ucleave",
+        aliases = {
+                "ucl"
+        },
+        usageMessage = "/<command> <clan name>"
+)
+public class LeaveClan extends AbstractCommand {
+    public LeaveClan(DatabaseDriver driver) {
+        super(driver);
     }
-
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -98,5 +99,13 @@ public class LeaveClanCommand implements CommandExecutor {
         plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " left the " + getClanName + " clan");
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("<clan name>");
+        }
+        return new ArrayList<>();
     }
 }

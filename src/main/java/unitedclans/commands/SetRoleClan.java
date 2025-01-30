@@ -1,29 +1,30 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
-import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-public class SetRoleClanCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
-    private final DatabaseDriver dbDriver;
-
-    public SetRoleClanCommand(JavaPlugin plugin, DatabaseDriver dbDriver) {
-        this.plugin = plugin;
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "ucsetrole",
+        description = "This command allows you to set the role of the player",
+        permission = "unitedclans.ucsetrole",
+        aliases = {
+                "ucsr"
+        },
+        usageMessage = "/<command> <player> <role>"
+)
+public class SetRoleClan extends AbstractCommand {
+    public SetRoleClan(DatabaseDriver driver) {
+        super(driver);
     }
-
     @Override
-    public boolean onCommand( CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -96,5 +97,62 @@ public class SetRoleClanCommand implements CommandExecutor {
         plugin.getServer().getLogger().info("[UnitedClans] " + playerSender.getName() + " gave " + playerNameInput + " the role of " + setPlayerRole);
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            Player playerSender = (Player) sender;
+            UUID uuid = playerSender.getUniqueId();
+            String inputPlayer = args[0].toLowerCase();
+
+            List<Map<String, Object>> rsSender = dbDriver.selectData("clan_id", "players", "WHERE uuid = ?", uuid);
+            int ClanID = (int) rsSender.get(0).get("clan_id");
+
+            if (ClanID == 0) {
+                return new ArrayList<>();
+            }
+
+            List<Map<String, Object>> rsPlayerClan = dbDriver.selectData("player_name", "players", "WHERE clan_id = ?", ClanID);
+            ArrayList<String> onlinePlayers = new ArrayList<>();
+            for (Map<String, Object> i : rsPlayerClan) {
+                String playerName = (String) i.get("player_name");
+                onlinePlayers.add(playerName);
+            }
+            List<String> onlinePlayerName = null;
+            for (String onlinePlayer : onlinePlayers) {
+                if (onlinePlayer.toString().toLowerCase().startsWith(inputPlayer)) {
+                    if (onlinePlayerName == null) {
+                        onlinePlayerName = new ArrayList<>();
+                    }
+                    onlinePlayerName.add(onlinePlayer);
+                }
+            }
+
+            if (onlinePlayerName != null) {
+                Collections.sort(onlinePlayerName);
+            }
+
+            return onlinePlayerName;
+        } else if (args.length == 2) {
+            String inputRole = args[1].toLowerCase();
+            ArrayList<String> rolesList = new ArrayList<>();
+            rolesList.add(UnitedClans.getInstance().getConfig().getString("roles.elder"));
+            rolesList.add(UnitedClans.getInstance().getConfig().getString("roles.member"));
+            List<String> roles = null;
+            for (String role : rolesList) {
+                if (role.toString().toLowerCase().startsWith(inputRole)) {
+                    if (roles == null) {
+                        roles = new ArrayList<>();
+                    }
+                    roles.add(role);
+                }
+            }
+            if (roles != null) {
+                Collections.sort(roles);
+            }
+            return roles;
+        }
+        return new ArrayList<>();
     }
 }

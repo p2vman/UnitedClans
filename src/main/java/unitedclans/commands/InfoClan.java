@@ -1,27 +1,33 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import unitedclans.UnitedClans;
+import unitedclans.utils.DatabaseDriver;
 import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.LocalizationUtils;
-import unitedclans.utils.DatabaseDriver;
 
 import java.util.*;
 
-public class InfoClanCommand implements CommandExecutor {
-    private final DatabaseDriver dbDriver;
 
-    public InfoClanCommand(DatabaseDriver dbDriver) {
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "ucinfo",
+        description = "This command allows you to view information about the clan",
+        permission = "unitedclans.ucinfo",
+        aliases = {
+                "uci"
+        },
+        usageMessage = "/<command> <clan name (not necessary)>"
+)
+public class InfoClan extends AbstractCommand {
+    public InfoClan(DatabaseDriver driver) {
+        super(driver);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -75,5 +81,45 @@ public class InfoClanCommand implements CommandExecutor {
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            try {
+                Player playerSender = (Player) sender;
+                if (!playerSender.isOp()) {
+                    return new ArrayList<>();
+                }
+
+                String inputClan = args[0].toLowerCase();
+                List<Map<String, Object>> rsClans = dbDriver.selectData("clan_name", "clans", null);
+
+                ArrayList<String> clans = new ArrayList<>();
+                for (Map<String, Object> i : rsClans) {
+                    String clanName = (String) i.get("clan_name");
+                    clans.add(clanName);
+                }
+
+                List<String> clanNames = null;
+                for (String clan : clans) {
+                    if (clan.toString().toLowerCase().startsWith(inputClan)) {
+                        if (clanNames == null) {
+                            clanNames = new ArrayList<>();
+                        }
+                        clanNames.add(clan);
+                    }
+                }
+
+                if (clanNames != null) {
+                    Collections.sort(clanNames);
+                }
+
+                return clanNames;
+            } catch (Exception e) {
+                System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            }
+        }
+        return new ArrayList<>();
     }
 }

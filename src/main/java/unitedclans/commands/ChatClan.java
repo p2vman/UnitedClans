@@ -1,28 +1,33 @@
-package unitedclans.command;
+package unitedclans.commands;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import unitedclans.UnitedClans;
-import unitedclans.utils.GeneralUtils;
 import unitedclans.utils.DatabaseDriver;
+import unitedclans.utils.GeneralUtils;
 
 import java.util.*;
 
-public class ChatClanCommand implements CommandExecutor {
-    private final JavaPlugin plugin;
-    private final DatabaseDriver dbDriver;
 
-    public ChatClanCommand(JavaPlugin plugin, DatabaseDriver dbDriver) {
-        this.plugin = plugin;
-        this.dbDriver = dbDriver;
+@AbstractCommand.Command(
+        name = "ucchat",
+        description = "This command allows you to send messages to the clan chat",
+        permission = "unitedclans.ucchat",
+        aliases = {
+                "msgclan",
+                "msgc",
+                "ucc"
+        },
+        usageMessage = "/<command> <message>"
+)
+public class ChatClan extends AbstractCommand {
+    public ChatClan(DatabaseDriver dbDriver) {
+        super(dbDriver);
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return true;
         String language = UnitedClans.getInstance().getConfig().getString("lang");
         Player playerSender = (Player) sender;
@@ -59,5 +64,13 @@ public class ChatClanCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("<message>");
+        }
+        return new ArrayList<>();
     }
 }
